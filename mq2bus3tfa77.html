@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CRO Audit — freshjuice.cz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--g0:#052e16;--g1:#14532d;--g2:#15803d;--g3:#16a34a;--g4:#22c55e;--g5:#86efac;--g6:#dcfce7;--g7:#f0fdf4;--red:#dc2626;--red-lt:#fee2e2;--amber:#d97706;--amber-lt:#fef3c7;--blue:#1d4ed8;--blue-lt:#dbeafe;--gray0:#111827;--gray1:#374151;--gray2:#6b7280;--gray3:#d1d5db;--gray4:#f9fafb;--white:#ffffff;--radius:12px;--shadow:0 20px 60px rgba(0,0,0,.12),0 4px 16px rgba(0,0,0,.08);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:#111827;color:#fff;overflow-x:hidden;}
+/* NAV */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:56px;background:rgba(5,46,22,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(134,239,172,.15);}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.1rem;color:#86efac;}
+.nav-links{display:flex;gap:.25rem;}
+.nav-btn{padding:.45rem 1.1rem;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;color:rgba(255,255,255,.65);background:transparent;transition:all .2s;}
+.nav-btn:hover,.nav-btn.active{color:#fff;background:rgba(134,239,172,.15);}
+.nav-score{font-size:.78rem;font-weight:600;color:#dc2626;background:#fee2e2;padding:.35rem .85rem;border-radius:20px;}
+/* SLIDES */
+.slide{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 0 60px;position:relative;}
+/* SLIDE 1 */
+#slide-title{background:linear-gradient(135deg,#052e16 0%,#0a4a25 50%,#052e16 100%);overflow:hidden;}
+.title-orbs{position:absolute;inset:0;pointer-events:none;}
+.orb{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(34,197,94,.25) 0%,transparent 70%);}
+.orb1{width:600px;height:600px;top:-200px;right:-150px;}
+.orb2{width:400px;height:400px;bottom:-100px;left:-100px;}
+.orb3{width:300px;height:300px;top:50%;right:25%;transform:translateY(-50%);background:radial-gradient(circle,rgba(134,239,172,.12) 0%,transparent 70%);}
+.title-content{max-width:1100px;margin:0 auto;padding:0 3rem;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;position:relative;z-index:1;}
+.title-label{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#86efac;background:rgba(134,239,172,.12);border:1px solid rgba(134,239,172,.25);padding:.4rem 1rem;border-radius:20px;margin-bottom:1.5rem;}
+.title-label::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.title-h1{font-family:'Playfair Display',serif;font-size:clamp(3rem,5vw,5rem);font-weight:900;line-height:1.05;color:#fff;margin-bottom:1rem;}
+.title-h1 span{color:#22c55e;}
+.title-sub{font-size:1.15rem;color:rgba(255,255,255,.6);font-weight:300;line-height:1.6;margin-bottom:2.5rem;max-width:520px;}
+.title-agenda{display:flex;gap:.75rem;flex-wrap:wrap;}
+.agenda-pill{display:flex;align-items:center;gap:.6rem;padding:.6rem 1.2rem;border-radius:10px;border:1px solid rgba(134,239,172,.2);background:rgba(134,239,172,.06);font-size:.85rem;color:rgba(255,255,255,.8);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.agenda-pill:hover{background:rgba(134,239,172,.15);border-color:rgba(134,239,172,.4);color:#fff;}
+.agenda-pill .num{color:#22c55e;font-weight:700;font-size:.8rem;}
+.score-cards{display:flex;flex-direction:column;gap:1rem;}
+.score-card{background:rgba(255,255,255,.05);border:1px solid rgba(134,239,172,.15);border-radius:12px;padding:1.4rem 2rem;text-align:center;min-width:180px;}
+.score-val{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;line-height:1;margin-bottom:.4rem;}
+.score-card:nth-child(1) .score-val{color:#dc2626;}
+.score-card:nth-child(2) .score-val{color:#22c55e;}
+.score-card:nth-child(3) .score-val{color:#d97706;}
+.score-lbl{font-size:.78rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;}
+/* SLIDE 2 */
+#slide-current{background:#0d1117;padding:80px 0;}
+.slide-header{max-width:1200px;margin:0 auto;padding:0 3rem 2rem;display:flex;align-items:flex-end;justify-content:space-between;}
+.slide-num{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:rgba(134,239,172,.2);line-height:1;margin-right:1rem;}
+.slide-title-block{display:flex;align-items:flex-end;gap:1rem;}
+.slide-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:#fff;}
+.slide-sub{font-size:.9rem;color:#6b7280;margin-left:.5rem;margin-bottom:.35rem;}
+.slide-badge{font-size:.75rem;font-weight:700;padding:.35rem .9rem;border-radius:20px;background:#fee2e2;color:#dc2626;}
+.browser-wrap{max-width:1200px;margin:0 auto;padding:0 3rem;display:grid;grid-template-columns:280px 1fr;gap:2rem;align-items:start;}
+.issues-panel{position:sticky;top:80px;}
+.issues-panel-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#6b7280;margin-bottom:1rem;font-weight:600;}
+.issue-btn{width:100%;text-align:left;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.9rem 1rem;margin-bottom:.6rem;cursor:pointer;transition:all .22s;display:flex;align-items:flex-start;gap:.75rem;color:rgba(255,255,255,.7);font-family:'DM Sans',sans-serif;}
+.issue-btn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);color:#fff;}
+.issue-btn.active{border-color:#dc2626;background:rgba(220,38,38,.08);color:#fff;}
+.issue-sev{font-size:.62rem;font-weight:700;padding:.2rem .55rem;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.sev-crit{background:#fee2e2;color:#dc2626;}
+.sev-high{background:#fef3c7;color:#d97706;}
+.sev-med{background:#dbeafe;color:#1d4ed8;}
+.issue-btn-text{font-size:.84rem;line-height:1.4;}
+.issue-btn-text strong{display:block;font-size:.88rem;margin-bottom:.2rem;}
+.browser-frame{border-radius:14px;overflow:hidden;box-shadow:var(--shadow);background:#1e1e1e;}
+.browser-chrome{background:#2d2d2d;padding:.6rem 1rem;display:flex;align-items:center;gap:.75rem;}
+.traffic-lights{display:flex;gap:.4rem;}
+.tl{width:10px;height:10px;border-radius:50%;}
+.tl-r{background:#ff5f56;}.tl-y{background:#ffbd2e;}.tl-g{background:#27c93f;}
+.url-bar{flex:1;background:#3c3c3c;border-radius:6px;padding:.3rem .75rem;font-size:.75rem;color:#aaa;text-align:center;}
+.screenshot-container{position:relative;}
+.screenshot-img{width:100%;display:block;}
+.hotspot{position:absolute;border-radius:6px;border:2.5px solid transparent;cursor:pointer;transition:all .2s;}
+.hotspot:hover,.hotspot.active{border-color:#dc2626;background:rgba(220,38,38,.12);box-shadow:0 0 0 4px rgba(220,38,38,.15);}
+.hotspot-label{position:absolute;top:-32px;left:0;background:#dc2626;color:#fff;font-size:.65rem;font-weight:700;padding:.25rem .65rem;border-radius:4px;white-space:nowrap;opacity:0;transition:opacity .15s;pointer-events:none;z-index:10;}
+.hotspot:hover .hotspot-label,.hotspot.active .hotspot-label{opacity:1;}
+/* POPUPS */
+.issue-popup{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .25s;}
+.issue-popup.visible{opacity:1;pointer-events:auto;}
+.popup-card{background:#16191f;border:1px solid rgba(255,255,255,.1);border-radius:20px;width:min(900px,92vw);max-height:88vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.5);transform:translateY(20px) scale(.97);transition:transform .28s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.issue-popup.visible .popup-card{transform:translateY(0) scale(1);}
+.popup-top{display:grid;grid-template-columns:1fr 1fr;border-radius:20px 20px 0 0;overflow:hidden;}
+.popup-problem{padding:2rem;background:linear-gradient(135deg,#1a0a0a,#1e0d0d);border-right:1px solid rgba(255,255,255,.06);}
+.popup-solution{padding:2rem;background:linear-gradient(135deg,#071a10,#091e14);}
+.popup-section-label{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.label-problem{color:#dc2626;}
+.label-solution{color:#22c55e;}
+.popup-section-label::before{content:'';width:16px;height:2px;border-radius:1px;}
+.label-problem::before{background:#dc2626;}
+.label-solution::before{background:#22c55e;}
+.popup-issue-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:#fff;margin-bottom:.75rem;line-height:1.3;}
+.popup-problem-text,.popup-fix-text{font-size:.9rem;line-height:1.65;color:rgba(255,255,255,.72);}
+.popup-bottom{padding:1.5rem 2rem;border-top:1px solid rgba(255,255,255,.06);}
+.popup-img-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#6b7280;margin-bottom:.75rem;font-weight:600;}
+.popup-screenshot{width:100%;border-radius:10px;display:block;border:1px solid rgba(255,255,255,.08);}
+.popup-close{position:absolute;top:1.25rem;right:1.25rem;width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .15s;font-family:'DM Sans',sans-serif;}
+.popup-close:hover{background:rgba(255,255,255,.2);}
+/* WF */
+.wf-panel{background:#0d1117;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1rem;font-size:.8rem;}
+.wf-nav{background:#fff;border-radius:6px;padding:.6rem 1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;}
+.wf-nav-item{padding:.3rem .75rem;border-radius:6px;font-size:.72rem;font-weight:600;background:#f3f4f6;color:#374151;white-space:nowrap;}
+.wf-nav-cta{background:#15803d;color:#fff;margin-left:auto;padding:.3rem .9rem;border-radius:6px;font-size:.72rem;font-weight:700;}
+.wf-hero-block{background:#f0fdf4;border-radius:6px;padding:1rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:.5rem;}
+.wf-h1{font-size:.95rem;font-weight:800;color:#14532d;line-height:1.3;margin-bottom:.5rem;}
+.wf-p{font-size:.7rem;color:#374151;margin-bottom:.5rem;line-height:1.4;}
+.wf-btn{display:inline-block;background:#15803d;color:#fff;padding:.35rem .85rem;border-radius:6px;font-size:.7rem;font-weight:700;margin-right:.4rem;margin-bottom:.35rem;}
+.wf-btn-sec{background:#fff;color:#15803d;border:1.5px solid #15803d;}
+.wf-trust{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.35rem;}
+.wf-trust-item{background:#dcfce7;color:#15803d;padding:.2rem .5rem;border-radius:10px;font-size:.62rem;font-weight:600;}
+.wf-img-ph{background:#d1fae5;border-radius:8px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;color:#15803d;font-size:.75rem;font-weight:600;}
+.wf-usp-bar{background:#15803d;border-radius:6px;padding:.5rem 1rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.5rem;}
+.wf-usp-item{color:#fff;font-size:.65rem;font-weight:600;}
+.wf-cats{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;margin-bottom:.5rem;}
+.wf-cat{background:#fff;border:1px solid #d1fae5;border-radius:6px;padding:.5rem;}
+.wf-cat-name{font-size:.65rem;font-weight:700;color:#14532d;margin-bottom:.25rem;}
+.wf-cat-desc{font-size:.58rem;color:#6b7280;line-height:1.3;}
+.wf-cat-price{font-size:.62rem;font-weight:700;color:#15803d;margin-top:.25rem;}
+.wf-prods{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+.wf-prod{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:.75rem;}
+.wf-prod-badge{background:#fef3c7;color:#92400e;font-size:.55rem;font-weight:700;padding:.15rem .4rem;border-radius:10px;display:inline-block;margin-bottom:.4rem;}
+.wf-prod-img{background:#f0fdf4;border-radius:4px;height:50px;margin-bottom:.4rem;display:flex;align-items:center;justify-content:center;color:#15803d;font-size:.65rem;font-weight:600;}
+.wf-prod-name{font-size:.65rem;font-weight:700;color:#111;}
+.wf-prod-price{font-size:.7rem;font-weight:700;color:#15803d;margin-top:.2rem;}
+.wf-reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+.wf-review{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:.75rem;}
+.wf-stars{color:#d97706;font-size:.7rem;margin-bottom:.3rem;}
+.wf-review-text{font-size:.62rem;color:#374151;line-height:1.4;font-style:italic;margin-bottom:.3rem;}
+.wf-reviewer{font-size:.6rem;color:#6b7280;font-weight:600;}
+.road-step{display:flex;align-items:flex-start;gap:.85rem;padding:.85rem 1rem;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);margin-bottom:.4rem;}
+.road-step-icon{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:#15803d;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;margin-top:1px;}
+.road-step-text{font-size:.88rem;color:rgba(255,255,255,.8);line-height:1.5;}
+.road-step-text strong{color:#fff;display:block;font-size:.9rem;}
+/* SLIDE 3 */
+#slide-improved{background:linear-gradient(180deg,#071a10 0%,#0a2218 100%);}
+.improved-layout{max-width:1200px;margin:0 auto;padding:0 3rem;}
+.browser-full{border-radius:16px;overflow:hidden;box-shadow:var(--shadow);background:#1e1e1e;margin-top:2rem;}
+.section-intro{max-width:1200px;margin:0 auto;padding:0 3rem 2rem;}
+.tag-pill{display:inline-flex;gap:.4rem;align-items:center;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:.35rem .9rem;border-radius:20px;margin-bottom:1rem;}
+.tag-improved{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2);}
+.tag-roadmap{background:rgba(29,78,216,.1);color:#60a5fa;border:1px solid rgba(29,78,216,.2);}
+h2.sec-title{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:.5rem;}
+p.sec-sub{font-size:.95rem;color:#6b7280;}
+/* SLIDE 4 */
+#slide-roadmap{background:#0d1117;}
+.roadmap-grid{max-width:1100px;margin:0 auto;padding:0 3rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.road-card{appearance:none;-webkit-appearance:none;font-family:'DM Sans',sans-serif;color:inherit;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1.4rem 1.5rem;cursor:pointer;transition:all .22s;display:flex;align-items:flex-start;gap:1rem;}
+.road-card:hover{background:rgba(134,239,172,.06);border-color:rgba(134,239,172,.25);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.road-num{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;}
+.road-content{flex:1;}
+.road-title{font-weight:600;font-size:.95rem;color:#fff;margin-bottom:.3rem;}
+.road-detail{font-size:.8rem;color:#6b7280;line-height:1.5;}
+.road-meta{display:flex;gap:.5rem;align-items:center;margin-top:.75rem;flex-wrap:wrap;}
+.road-effort{font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:20px;}
+.effort-low{background:#dcfce7;color:#16a34a;}
+.effort-med{background:#fef3c7;color:#d97706;}
+.road-stars{font-size:.85rem;color:#d97706;}
+.road-week{margin-left:auto;font-size:.7rem;font-weight:600;color:#6b7280;background:rgba(255,255,255,.05);padding:.2rem .6rem;border-radius:6px;}
+.road-click-hint{font-size:.7rem;color:rgba(134,239,172,.5);margin-top:.5rem;transition:color .2s;}
+.road-card:hover .road-click-hint{color:rgba(134,239,172,.9);}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(134,239,172,.2);border-radius:3px;}
+.score-card-clickable{cursor:pointer;transition:border-color .2s,background .2s;}
+.score-card-clickable:hover{border-color:rgba(220,38,38,.5);background:rgba(220,38,38,.06);}
+.score-hint{font-size:.68rem;color:rgba(220,38,38,.6);margin-top:.5rem;transition:color .2s;}
+.score-card-clickable:hover .score-hint{color:#dc2626;}
+.score-popup{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .25s;}
+.score-popup.visible{opacity:1;pointer-events:auto;}
+.score-popup-card{background:#16191f;border:1px solid rgba(220,38,38,.25);border-radius:20px;width:min(820px,92vw);max-height:88vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.6);transform:translateY(20px) scale(.97);transition:transform .28s cubic-bezier(.34,1.56,.64,1);position:relative;padding:2.5rem;}
+.score-popup.visible .score-popup-card{transform:translateY(0) scale(1);}
+.score-criteria{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.5rem 0;}
+.score-criterion{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:1rem 1.1rem;display:flex;align-items:flex-start;gap:.85rem;}
+.sc-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:.3rem;flex-shrink:0;}
+.sc-bar-bg{width:6px;height:52px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;position:relative;}
+.sc-bar-fill{position:absolute;bottom:0;left:0;width:100%;border-radius:3px;}
+.sc-score-num{font-size:.65rem;font-weight:700;}
+.sc-title{font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.25rem;}
+.sc-desc{font-size:.75rem;color:#6b7280;line-height:1.5;}
+.roast-section{border-top:1px solid rgba(255,255,255,.08);padding-top:1.5rem;}
+.roast-label{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#dc2626;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.roast-label::before{content:'';width:16px;height:2px;background:#dc2626;border-radius:1px;}
+.roast-quote{font-size:.88rem;color:rgba(255,255,255,.72);line-height:1.75;font-style:italic;border-left:2px solid rgba(220,38,38,.4);padding-left:1rem;}
+.score-card-clickable{cursor:pointer;transition:border-color .2s,background .2s;}.score-card-clickable:hover{border-color:rgba(134,239,172,.35);background:rgba(134,239,172,.05);}.score-hint{font-size:.68rem;margin-top:.4rem;}.gl-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:.85rem 1rem;margin-bottom:.1rem;}.gl-term{font-size:.9rem;font-weight:700;color:#86efac;margin-bottom:.3rem;}.gl-def{font-size:.82rem;color:rgba(255,255,255,.72);line-height:1.6;}</style>
+</head>
+<body>
+<nav class="top-nav">
+  <div class="nav-logo">freshjuice.cz — CRO Audit</div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="goToSlide('slide-title')">Úvod</button>
+    <button class="nav-btn" onclick="goToSlide('slide-current')">01 Aktuální stav</button>
+    <button class="nav-btn" onclick="goToSlide('slide-improved')">02 Navrhovaná podoba</button>
+    <button class="nav-btn" onclick="goToSlide('slide-roadmap')">03 Roadmapa</button>
+  </div>
+  <button onclick="openGlossary()" style="padding:.4rem .85rem;border-radius:8px;border:1px solid rgba(134,239,172,.3);background:transparent;color:#86efac;cursor:pointer;font-size:.8rem;font-weight:500;margin-right:.5rem;">&#128214; Slovníček</button><div class="nav-score">Conversion score: 35/100</div>
+</nav>
+
+<!-- ═══════════════════════════ SLIDE 1: TITLE ═══════════════════════════ -->
+<section class="slide" id="slide-title">
+  <div class="title-orbs">
+    <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  </div>
+  <div class="title-content">
+    <div>
+      <div class="title-label">CRO Audit · 6. ČERVNA 2026</div>
+      <h1 class="title-h1">freshjuice<span>.cz</span><br>má potenciál<br>+55.5% konverzí</h1>
+      <p class="title-sub">Analýza homepage odhalila 10 prioritních bodů, které zákazníky odrazují od nákupu. Ukážeme kde problém je a jak ho opravit.</p>
+      <div class="title-agenda">
+        <button class="agenda-pill" onclick="goToSlide('slide-current')"><span class="num">01</span> Aktuální stav webu</button>
+        <button class="agenda-pill" onclick="goToSlide('slide-improved')"><span class="num">02</span> Navrhovaná podoba</button>
+        <button class="agenda-pill" onclick="goToSlide('slide-roadmap')"><span class="num">03</span> Roadmapa oprav</button>
+      </div><div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:14px;padding:1.25rem 1.5rem;margin-top:1.5rem;max-width:520px;"><div style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#86efac;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem;">ODHADOVANÝ PŘÍNOS OPRAV<span title="Vzorec: 100 návštěvníků/den × 30 dní × 2 % konverze × 3 000 Kč objednávka × 55.5 % potenciál oprav" style="cursor:help;width:15px;height:15px;border-radius:50%;border:1px solid rgba(134,239,172,.5);display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;color:rgba(134,239,172,.8);">?</span></div><div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;"><div><div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#22c55e;">+99 900 Kč</div><div style="font-size:.72rem;color:rgba(255,255,255,.5);">měsíčně navíc (odhad)</div></div><div style="font-size:.78rem;color:rgba(255,255,255,.55);line-height:1.6;">Při 100 návštěvnících/den a konverzi 2 %. <span style="color:rgba(134,239,172,.7);">Skutečný dopad závisí na Vašem provozu.</span></div></div></div><div style="background:rgba(220,38,38,.05);border:1px solid rgba(220,38,38,.2);border-radius:14px;padding:1.25rem 1.5rem;margin-top:.75rem;max-width:520px;"><div style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#dc2626;margin-bottom:.75rem;">&#128293; TENTO TÝDEN ZAČNĚTE TĚMITO</div><div style="display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.55rem;"><div style="width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;">1</div><div style="font-size:.82rem;color:rgba(255,255,255,.85);line-height:1.45;">Přestat schovávat hlavní sdělení do slideru (a dát jasný headline + CTA)</div></div><div style="display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.55rem;"><div style="width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;">2</div><div style="font-size:.82rem;color:rgba(255,255,255,.85);line-height:1.45;">Zviditelnit USP hned nahoře (důvěra v prvních 5 vteřinách)</div></div><div style="display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.55rem;"><div style="width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;">3</div><div style="font-size:.82rem;color:rgba(255,255,255,.85);line-height:1.45;">Opravit a sjednotit cesty v kategoriích (zbytečné úniky a 404 riziko)</div></div></div>
+    </div>
+    <div class="score-cards">
+      <div class="score-card score-card-clickable" onclick="openScore()" title="Klikněte pro vysvětlení">
+        <div class="score-val">35</div>
+        <div class="score-lbl">Conversion score</div>
+        <div class="score-hint">? jak jsme to změřili</div>
+      </div>
+      <div class="score-card score-card-clickable" onclick="openPotential()" style="cursor:pointer;"><div class="score-val">+55.5%</div><div class="score-lbl">Potenciál opravami</div><div class="score-hint" style="color:rgba(134,239,172,.6);font-size:.68rem;margin-top:.4rem;">? jak jsme to spočítali</div></div>
+      <div class="score-card score-card-clickable" onclick="goToSlide('slide-current')" style="cursor:pointer;"><div class="score-val">10</div><div class="score-lbl">Prioritních bodů</div><div class="score-hint" style="color:rgba(217,119,6,.6);font-size:.68rem;margin-top:.4rem;">→ zobrazit detail</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ SLIDE 2: CURRENT ═══════════════════════════ -->
+<section class="slide" id="slide-current">
+  <div class="slide-header">
+    <div class="slide-title-block">
+      <span class="slide-num">01</span>
+      <div>
+        <div class="slide-title">Aktuální stav webu</div>
+        <div class="slide-sub">Klikněte na červenou oblast — zobrazí se problém + grafický návrh řešení</div>
+      </div>
+    </div>
+    <span class="slide-badge">ROAST</span>
+  </div>
+  <div class="browser-wrap">
+    <div class="issues-panel">
+      <div class="issues-panel-title">Nalezené problémy</div><button class="issue-btn" id="ib-1" onclick="openIssue(1)"><span class="issue-sev sev-crit">KRITICKÉ</span><div class="issue-btn-text"><strong>Přestat schovávat hlavní sdělení do slideru (a dát jasný headline + CTA)</strong>Slider jsou jen proklikové obrázky bez textu a bez primární výzvy…</div></button><button class="issue-btn" id="ib-2" onclick="openIssue(2)"><span class="issue-sev sev-crit">KRITICKÉ</span><div class="issue-btn-text"><strong>Zviditelnit USP hned nahoře (důvěra v prvních 5 vteřinách)</strong>USP (doprava zdarma, 20 let zkušeností, osobní přístup) jsou až p…</div></button><button class="issue-btn" id="ib-3" onclick="openIssue(3)"><span class="issue-sev sev-high">VYSOKÉ</span><div class="issue-btn-text"><strong>Opravit a sjednotit cesty v kategoriích (zbytečné úniky a 404 riziko)</strong>V crossroad odkaz „Šněkové“ míří na `/kat/snekove-odstavnovace/`,…</div></button><button class="issue-btn" id="ib-4" onclick="openIssue(4)"><span class="issue-sev sev-high">VYSOKÉ</span><div class="issue-btn-text"><strong>Homepage produkty: přidat „Do košíku“ a rychlou volbu variant</strong>Na produktových kartách je jen „Detail“. To prodlužuje cestu k ná…</div></button><button class="issue-btn" id="ib-5" onclick="openIssue(5)"><span class="issue-sev sev-high">VYSOKÉ</span><div class="issue-btn-text"><strong>Přidat „Výběrového průvodce“ jako rozcestník podle potřeby (ne jen podle kategorie)</strong>Rozcestník je čistě kategoriální (odšťavňovače/citrusovače/mixéry…</div></button><button class="issue-btn" id="ib-6" onclick="openIssue(6)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Přidat sociální důkaz (recenze/ratings) – teď chybí úplně</strong>Na homepage není žádná sekce recenzí, hodnocení ani „kolik zákazn…</div></button><button class="issue-btn" id="ib-7" onclick="openIssue(7)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Navigace: omezit odliv na externí web „Čerstvé šťávy“</strong>V hlavním menu je odkaz „Čerstvé šťávy“ na freshup.cz – odvádí čá…</div></button><button class="issue-btn" id="ib-8" onclick="openIssue(8)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Mobilní menu: odstranit duplicitu „Pronájem“ a zpřehlednit</strong>V `.mob-nav__menu` je „Pronájem“ dvakrát (menu-item-941 a menu-it…</div></button><button class="issue-btn" id="ib-9" onclick="openIssue(9)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Vyhledávání: zlepšit mikrocopy a přidat našeptávač</strong>Placeholder „hledaný výraz“ je slabý a vyhledávání bez našeptávač…</div></button><button class="issue-btn" id="ib-10" onclick="openIssue(10)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Články na homepage: dát jim jasnou roli (a přidat CTA zpět na nákup)</strong>Sekce `.hp-news` („Články“) je pro část návštěv odklon od nákupu …</div></button>
+    </div>
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="traffic-lights"><div class="tl tl-r"></div><div class="tl tl-y"></div><div class="tl tl-g"></div></div>
+        <div class="url-bar">https://freshjuice.cz</div>
+      </div>
+      <div class="screenshot-container">
+        <img class="screenshot-img" id="hero-screenshot" src="" alt="freshjuice.cz homepage">
+        <div class="hotspot" data-issue="1" style="top:7%;left:0%;width:100%;height:22%;"><span class="hotspot-label">⚠ Přestat schovávat hlavní sdělení do slid — klikněte</span></div>
+        <div class="hotspot" data-issue="2" style="top:43%;left:0%;width:100%;height:7%;"><span class="hotspot-label">⚠ Zviditelnit USP hned nahoře (důvěra v pr — klikněte</span></div>
+        <div class="hotspot" data-issue="3" style="top:29%;left:0%;width:100%;height:14%;"><span class="hotspot-label">⚠ Opravit a sjednotit cesty v kategoriích  — klikněte</span></div>
+        <div class="hotspot" data-issue="4" style="top:50%;left:0%;width:100%;height:14%;"><span class="hotspot-label">⚠ Homepage produkty: přidat „Do košíku“ a  — klikněte</span></div>
+        <div class="hotspot" data-issue="6" style="top:64%;left:0%;width:100%;height:9%;"><span class="hotspot-label">⚠ Přidat sociální důkaz (recenze/ratings)  — klikněte</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ SLIDE 3: IMPROVED ═══════════════════════════ -->
+<section class="slide" id="slide-improved">
+  <div class="section-intro"><div class="tag-pill tag-improved">✓ Navrhovaná podoba</div><h2 class="sec-title">Jak by stránka měla vypadat</h2><p class="sec-sub">Wireframe navrhovaných úprav — přesná představa pro zákazníka i webmastera. Celkem <strong>6 sekcí</strong> k opravě.</p></div><div class="improved-layout"><div class="browser-full"><div class="browser-chrome"><div class="traffic-lights"><div class="tl tl-r"></div><div class="tl tl-y"></div><div class="tl tl-g"></div></div><div class="url-bar" style="color:#86efac;">https://freshjuice.cz ✓ po opravách</div></div><div style="background:#fff;font-family:'DM Sans',sans-serif;"><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">NAV</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Navigace: omezit odliv na externí web „Čerstvé šťávy“</span></div><div style="padding:.65rem 1rem .8rem;"><div style="display:flex;align-items:center;gap:.4rem;background:#fff;border:1px solid #e5e7eb;border-radius:7px;padding:.4rem .75rem;flex-wrap:wrap;"><div style="height:20px;min-width:60px;background:#d1fae5;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.52rem;font-weight:700;color:#15803d;">LOGO</div><div style="display:flex;gap:.05rem;flex:1;"><span style="padding:.2rem .45rem;font-size:.62rem;color:#374151;font-weight:500;">Produkty</span><span style="padding:.2rem .45rem;font-size:.62rem;color:#374151;font-weight:500;">Služby</span><span style="padding:.2rem .45rem;font-size:.62rem;color:#374151;font-weight:500;">O nás</span><span style="padding:.2rem .45rem;font-size:.62rem;color:#374151;font-weight:500;">Kontakt</span></div><span style="background:#15803d;color:#fff;padding:.25rem .65rem;border-radius:5px;font-size:.62rem;font-weight:700;white-space:nowrap;">Vybrat →</span></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">HERO</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fee2e2;color:#dc2626;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Přestat schovávat hlavní sdělení do slideru (a dát jasn</span></div><div style="padding:.65rem 1rem .8rem;"><div style="display:grid;grid-template-columns:1.2fr .8fr;gap:1rem;align-items:center;min-height:110px;"><div><div style="display:inline-flex;align-items:center;gap:.3rem;background:#dcfce7;border:1px solid #86efac;border-radius:20px;padding:.18rem .55rem;font-size:.56rem;font-weight:700;color:#15803d;margin-bottom:.4rem;">⭐ Prémiové odšťavňovače pro domácnost i </div><div style="font-size:.95rem;font-weight:800;color:#14532d;line-height:1.18;margin-bottom:.35rem;">Prémiové odšťavňovače pro domácnost i gastro</div><div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.4rem;"><span style="background:#15803d;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;font-size:.68rem;box-shadow:0 2px 8px rgba(21,128,61,.22);">Zobrazit produkty →</span></div><div style="display:flex;gap:.35rem;flex-wrap:wrap;"><span style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:.18rem .48rem;border-radius:20px;font-size:.58rem;font-weight:600;">✓ H1: „Prémiové odšťavňovače pro domácnost i gastro“</span><span style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:.18rem .48rem;border-radius:20px;font-size:.58rem;font-weight:600;">✓ Subheadline: „Pomůžeme vybrat správný typ. 20 let zkušeností. Doprava zdarma nad 5 000 Kč.“</span><span style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:.18rem .48rem;border-radius:20px;font-size:.58rem;font-weight:600;">✓ CTA1: „Vybrat odšťavňovač“ (odkaz na /kat/odstavnovace/)</span></div></div><div style="background:#f0fdf4;border-radius:8px;min-height:90px;display:flex;align-items:center;justify-content:center;font-size:.62rem;color:#86efac;font-weight:600;border:1px dashed #86efac;">📷 Foto produktu</div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">CATS</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fef3c7;color:#d97706;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Opravit a sjednotit cesty v kategoriích (zbytečné úniky</span></div><div style="padding:.65rem 1rem .8rem;"><div style="font-size:.72rem;font-weight:700;color:#14532d;text-align:center;margin-bottom:.45rem;">Co hledáte?</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;"><div style="background:#fff;border:1px solid #d1fae5;border-radius:7px;padding:.55rem .45rem;text-align:center;"><div style="font-size:.9rem;margin-bottom:.2rem;">🍎</div><div style="font-size:.62rem;font-weight:700;color:#14532d;line-height:1.2;margin-bottom:0;">Kategorie 1</div><div style="background:#15803d;color:#fff;padding:.18rem .35rem;border-radius:4px;font-size:.55rem;font-weight:700;">Zobrazit →</div></div><div style="background:#fff;border:1px solid #d1fae5;border-radius:7px;padding:.55rem .45rem;text-align:center;"><div style="font-size:.9rem;margin-bottom:.2rem;">⚡</div><div style="font-size:.62rem;font-weight:700;color:#14532d;line-height:1.2;margin-bottom:0;">Kategorie 2</div><div style="background:#15803d;color:#fff;padding:.18rem .35rem;border-radius:4px;font-size:.55rem;font-weight:700;">Zobrazit →</div></div><div style="background:#fff;border:1px solid #d1fae5;border-radius:7px;padding:.55rem .45rem;text-align:center;"><div style="font-size:.9rem;margin-bottom:.2rem;">🍊</div><div style="font-size:.62rem;font-weight:700;color:#14532d;line-height:1.2;margin-bottom:0;">Kategorie 3</div><div style="background:#15803d;color:#fff;padding:.18rem .35rem;border-radius:4px;font-size:.55rem;font-weight:700;">Zobrazit →</div></div><div style="background:#fff;border:1px solid #d1fae5;border-radius:7px;padding:.55rem .45rem;text-align:center;"><div style="font-size:.9rem;margin-bottom:.2rem;">🥤</div><div style="font-size:.62rem;font-weight:700;color:#14532d;line-height:1.2;margin-bottom:0;">Kategorie 4</div><div style="background:#15803d;color:#fff;padding:.18rem .35rem;border-radius:4px;font-size:.55rem;font-weight:700;">Zobrazit →</div></div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">USP</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fee2e2;color:#dc2626;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Zviditelnit USP hned nahoře (důvěra v prvních 5 vteřiná</span></div><div style="padding:.65rem 1rem .8rem;"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;background:#14532d;border-radius:7px;padding:.55rem .75rem;"><div style="display:flex;align-items:center;gap:.35rem;"><span style="font-size:.85rem;">🚚</span><span style="color:#fff;font-size:.62rem;font-weight:600;line-height:1.3;">„Doprava zdarma nad 5 000 Kč (CZ/SK)“</span></div><div style="display:flex;align-items:center;gap:.35rem;"><span style="font-size:.85rem;">🏆</span><span style="color:#fff;font-size:.62rem;font-weight:600;line-height:1.3;">„Poradíme s výběrem: volejte +420 774 631 631“</span></div><div style="display:flex;align-items:center;gap:.35rem;"><span style="font-size:.85rem;">⭐</span><span style="color:#fff;font-size:.62rem;font-weight:600;line-height:1.3;">„Jen ověřené značky (Hurom…)“</span></div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">PRODUCTS</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fef3c7;color:#d97706;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Homepage produkty: přidat „Do košíku“ a rychlou volbu v</span></div><div style="padding:.65rem 1rem .8rem;"><div style="font-size:.72rem;font-weight:700;color:#14532d;text-align:center;margin-bottom:.45rem;">Bestsellery</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;"><div style="background:#fff;border:1px solid #e5e7eb;border-radius:7px;overflow:hidden;"><div style="background:#fef9c3;color:#a16207;font-size:.52rem;font-weight:700;padding:.22rem .45rem;">⭐ NEJOBLÍBENĚjŠÍ</div><div style="background:#f9fafb;height:55px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#9ca3af;">📷 foto</div><div style="padding:.35rem .45rem;"><div style="font-size:.62rem;font-weight:700;color:#111;margin-bottom:.22rem;">Primární: „Přidat do košíku“</div><div style="background:#15803d;color:#fff;padding:.18rem .35rem;border-radius:4px;font-size:.55rem;font-weight:700;text-align:center;">Vybrat →</div></div></div><div style="background:#fff;border:1px solid #e5e7eb;border-radius:7px;overflow:hidden;"><div style="background:#dbeafe;color:#1e40af;font-size:.52rem;font-weight:700;padding:.22rem .45rem;">CENA/VÝKON</div><div style="background:#f9fafb;height:55px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#9ca3af;">📷 foto</div><div style="padding:.35rem .45rem;"><div style="font-size:.62rem;font-weight:700;color:#111;margin-bottom:.22rem;">Sekundární: „Zobrazit detail</div><div style="background:#15803d;color:#fff;padding:.18rem .35rem;border-radius:4px;font-size:.55rem;font-weight:700;text-align:center;">Vybrat →</div></div></div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">SOCIAL</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Přidat sociální důkaz (recenze/ratings) – teď chybí úpl</span></div><div style="padding:.65rem 1rem .8rem;"><div style="font-size:.72rem;font-weight:700;color:#14532d;text-align:center;margin-bottom:.45rem;">Co říkají zákazníci</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;"><div style="background:#fff;border:1px solid #e5e7eb;border-radius:7px;padding:.48rem .55rem;"><div style="color:#f59e0b;font-size:.7rem;margin-bottom:.18rem;">★★★★★</div><div style="font-size:.6rem;color:#374151;font-style:italic;line-height:1.4;margin-bottom:.25rem;">„Nadpis: „Hodnocení zákazníků““</div><div style="font-size:.55rem;color:#9ca3af;">Jana K. · Ověřený zákazník</div></div><div style="background:#fff;border:1px solid #e5e7eb;border-radius:7px;padding:.48rem .55rem;"><div style="color:#f59e0b;font-size:.7rem;margin-bottom:.18rem;">★★★★★</div><div style="font-size:.6rem;color:#374151;font-style:italic;line-height:1.4;margin-bottom:.25rem;">„3–6 recenzí + průměrné hodnocení (např. „4,8/5“)“</div><div style="font-size:.55rem;color:#9ca3af;">Tomáš M. · Ověřený zákazník</div></div><div style="background:#fff;border:1px solid #e5e7eb;border-radius:7px;padding:.48rem .55rem;"><div style="color:#f59e0b;font-size:.7rem;margin-bottom:.18rem;">★★★★★</div><div style="font-size:.6rem;color:#374151;font-style:italic;line-height:1.4;margin-bottom:.25rem;">„pokud máte Heureka/Zboží.cz, přidat badge + počet recenzí“</div><div style="font-size:.55rem;color:#9ca3af;">Lucie P. · Ověřený zákazník</div></div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">FOOTER</span><span style="font-size:.58rem;color:#9ca3af;">bez změny</span></div><div style="padding:.65rem 1rem .8rem;"><div style="height:36px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#9ca3af;">FOOTER — bez doporučení</div></div></div></div></div></div>
+</section>
+
+<!-- ═════════ SLIDE 4: ROADMAP ═════════ -->
+<section class="slide" id="slide-roadmap">
+  <div class="section-intro">
+    <div class="tag-pill tag-roadmap">03 Roadmapa</div>
+    <h2 class="sec-title">Co opravit a v jakém pořadí</h2>
+    <p class="sec-sub">Klikněte na libovolnou kartu — otevře se náhled změny a přesné instrukce pro webmastera.</p>
+  </div>
+  <div class="roadmap-grid"><button class="road-card" onclick="openRoad(1)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">1</div><div class="road-content"><div class="road-title">Přestat schovávat hlavní sdělení do slideru (a dát jasný headline + CTA)</div><div class="road-detail">Do hero přidat statický nadpis, podnadpis a 2 CTA tlačítka nad slider (nebo slid…</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fee2e2;color:#dc2626;border:1px solid rgba(220,38,38,.3);">⚡ KRITICKÉ</span><span class="road-effort effort-med">🔧 Střední effort</span><span class="road-week">Týden 1</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(2)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">2</div><div class="road-content"><div class="road-title">Zviditelnit USP hned nahoře (důvěra v prvních 5 vteřinách)</div><div class="road-detail">Přesunout `.hp-usp` nad `.hp-crossroads` (ideálně přímo pod hero) a doplnit konk…</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fee2e2;color:#dc2626;border:1px solid rgba(220,38,38,.3);">⚡ KRITICKÉ</span><span class="road-effort effort-med">🔧 Střední effort</span><span class="road-week">Týden 1</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(3)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">3</div><div class="road-content"><div class="road-title">Opravit a sjednotit cesty v kategoriích (zbytečné úniky a 404 riziko)</div><div class="road-detail">Sjednotit URL ve všech odkazech podle skutečné kategorie ve WooCommerce. Pokud m…</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fef3c7;color:#d97706;border:1px solid rgba(217,119,6,.3);">⚡ VYSOKÉ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 1</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(4)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">4</div><div class="road-content"><div class="road-title">Homepage produkty: přidat „Do košíku“ a rychlou volbu variant</div><div class="road-detail">Na `.product-card` přidat primární CTA „Do košíku“ (AJAX add-to-cart) a sekundár…</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fef3c7;color:#d97706;border:1px solid rgba(217,119,6,.3);">⚡ VYSOKÉ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 1</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(5)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">5</div><div class="road-content"><div class="road-title">Přidat „Výběrového průvodce“ jako rozcestník podle potřeby (ne jen podle kategorie)</div><div class="road-detail">Do `.hp-crossroads` doplnit druhý řádek/boxy „Vyberte podle potřeby“:  
+- „Chci …</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fef3c7;color:#d97706;border:1px solid rgba(217,119,6,.3);">⚡ VYSOKÉ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(6)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">6</div><div class="road-content"><div class="road-title">Přidat sociální důkaz (recenze/ratings) – teď chybí úplně</div><div class="road-detail">Mezi `.hp-products` a `.hp-news` vložit blok:  
+- Nadpis: „Hodnocení zákazníků“ …</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(7)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">7</div><div class="road-content"><div class="road-title">Navigace: omezit odliv na externí web „Čerstvé šťávy“</div><div class="road-detail">Přesunout externí odkaz do patičky nebo ho vizuálně označit (ikonka externího od…</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(8)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">8</div><div class="road-content"><div class="road-title">Mobilní menu: odstranit duplicitu „Pronájem“ a zpřehlednit</div><div class="road-detail">Odstranit duplicitní položku a seřadit menu podle priorit (Produkty → Pronájem →…</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(9)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">9</div><div class="road-content"><div class="road-title">Vyhledávání: zlepšit mikrocopy a přidat našeptávač</div><div class="road-detail">Upravte placeholder a přidejte našeptávání produktů:  
+- Placeholder: „Hledejte …</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(10)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">10</div><div class="road-content"><div class="road-title">Články na homepage: dát jim jasnou roli (a přidat CTA zpět na nákup)</div><div class="road-detail">Nechat články, ale doplnit pod nimi „Doporučené produkty z článků“ nebo alespoň …</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button></div>
+</section>
+<div class="score-popup" id="glossary-popup" onclick="if(event.target===this)closeGlossary()"><div class="score-popup-card" style="border-color:rgba(134,239,172,.25);max-width:700px;"><button class="popup-close" onclick="closeGlossary()" style="top:1.25rem;right:1.25rem;">×</button><div style="margin-bottom:1.5rem;"><div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#86efac;margin-bottom:.5rem;">MARKETINGOVÝ SLOVNÍČEK</div><div style="font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:.3rem;">Pojmy v tomto reportu</div><div style="font-size:.85rem;color:#6b7280;">Vysvětlení pojmů používaných v analýze.</div></div><div style="display:flex;flex-direction:column;gap:.5rem;"><div class="gl-item"><div class="gl-term">Hero sekce</div><div class="gl-def">První velká část stránky viditelná bez scrollování. Má zlomek sekundy na to, aby zákazníka zaujala.</div></div><div class="gl-item"><div class="gl-term">Carousel / Slider</div><div class="gl-def">Automaticky se měnící obrázky. Zákazník pasivně kouká místo aby klikal. Snižuje konverze oproti statickému hero bloku.</div></div><div class="gl-item"><div class="gl-term">Headline / H1</div><div class="gl-def">Hlavní nadpis stránky. Měl by jasně říct: co prodáváte, pro koho a proč zrovna u vás.</div></div><div class="gl-item"><div class="gl-term">CTA — Call to Action</div><div class="gl-def">Výzva k akci — tlačítko vedoucí k dalšímu kroku. Silné: Vybrat produkt. Slabé: Detail, Více.</div></div><div class="gl-item"><div class="gl-term">USP — Unique Selling Proposition</div><div class="gl-def">Unikátní prodejní argument — proč koupit právě u vás a ne u konkurence.</div></div><div class="gl-item"><div class="gl-term">Trust signály</div><div class="gl-def">Recenze, hodnocení, certifikáty, loga plateb. Klíčové u prémióvého nebo neznámého zboží.</div></div><div class="gl-item"><div class="gl-term">Konverzní poměr</div><div class="gl-def">Procento návštěvníků, kteří provedou akci. Zvýšení z 2 % na 3 % = o 50 % více prodejů bez více návštěvníků.</div></div><div class="gl-item"><div class="gl-term">Bounce rate</div><div class="gl-def">Procento návštěvníků, kteří odejdou bez interakce. Nad 70 % = stránka nesplňuje očekávání.</div></div><div class="gl-item"><div class="gl-term">Sociální důkaz</div><div class="gl-def">Důkaz, že jiní lidé produkt koupili. Recenze, citace, počet zákazníků přesvědčí lépe než fotografie.</div></div><div class="gl-item"><div class="gl-term">Lead / Poptávka</div><div class="gl-def">Potenciální zákazník, který projevil zájem. Mid-page CTA zachytí i nerozhodnuté.</div></div><div class="gl-item"><div class="gl-term">PDP — Product Detail Page</div><div class="gl-def">Stránka s detailem produktu. CTA zde má zásadní vliv na konverzi.</div></div></div></div></div>
+<!-- POTENTIAL POPUP -->
+<div class="score-popup" id="potential-popup" onclick="if(event.target===this)closePotential()"><div class="score-popup-card"><button class="popup-close" onclick="closePotential()" style="top:1.25rem;right:1.25rem;">×</button><div style="margin-bottom:1.5rem;"><div style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#22c55e;margin-bottom:.5rem;">ODHAD NÁRŬSTU KONVERZÍ</div><div style="font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:#22c55e;line-height:1;margin-bottom:.4rem;" id="pot-pct"></div><div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:.3rem;">Kde ten nárůst vzniká</div></div><div id="potential-items" style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem;"></div><div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:12px;padding:1rem;"><div id="pot-summary" style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:.2rem;"></div></div></div></div>
+
+<!-- ISSUE POPUP -->
+<div class="issue-popup" id="issue-popup" onclick="closeIssueOnBg(event)">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closeIssue()">✕</button>
+    <div class="popup-top">
+      <div class="popup-problem"><div class="popup-section-label label-problem">Problém</div><div class="popup-issue-title" id="popup-title"></div><div class="popup-problem-text" id="popup-problem"></div></div>
+      <div class="popup-solution"><div class="popup-section-label label-solution">Řešení</div><div style="padding-top:2.1rem;"></div><div class="popup-fix-text" id="popup-fix"></div></div>
+    </div>
+    <div class="popup-bottom" id="popup-bottom"></div>
+  </div>
+</div>
+
+<!-- ROAD POPUP -->
+<div class="issue-popup" id="road-popup" onclick="closeRoadOnBg(event)">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closeRoad()">✕</button>
+    <div class="popup-top">
+      <div class="popup-problem"><div class="popup-section-label label-problem">Před — aktuální stav</div><div class="popup-issue-title" id="rp-title"></div><div class="popup-problem-text" id="rp-before"></div></div>
+      <div class="popup-solution"><div class="popup-section-label label-solution">Po opravě</div><div style="padding-top:2.1rem;"></div><div class="popup-fix-text" id="rp-after"></div></div>
+    </div>
+    <div class="popup-bottom" id="rp-body"></div>
+  </div>
+</div>
+
+<!-- SCORE POPUP -->
+<div class="score-popup" id="score-popup" onclick="closeScoreOnBg(event)">
+  <div class="score-popup-card">
+    <button class="popup-close" onclick="closeScore()" style="top:1.25rem;right:1.25rem;">✕</button>
+    <div style="display:flex;align-items:flex-end;gap:1.5rem;margin-bottom:.5rem;">
+      <div>
+        <div style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#dc2626;margin-bottom:.5rem;">CRO SCORE · freshjuice.cz</div>
+        <div style="display:flex;align-items:baseline;gap:.25rem;">
+          <span style="font-family:'Playfair Display',serif;font-size:4.5rem;font-weight:900;color:#dc2626;line-height:1;">35</span>
+          <span style="font-family:'Playfair Display',serif;font-size:2rem;color:rgba(220,38,38,.35);">/100</span>
+        </div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#fff;margin-top:.25rem;">Jak jsme k číslu došli</div>
+        <div style="font-size:.88rem;color:#6b7280;margin-top:.25rem;">Hodnotíme 10 oblastí, každá má váhu 0–20 bodů. Součet = celkové skóre.</div>
+      </div>
+      <div style="margin-left:auto;text-align:right;flex-shrink:0;">
+        <div style="font-size:.75rem;color:#6b7280;margin-bottom:.35rem;">Průměr e-shopů v kategorii</div>
+        <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:#6b7280;">58</div>
+        <div style="font-size:.7rem;color:rgba(134,239,172,.6);margin-top:.25rem;">↑ +23 bodů k dosažení průměru</div>
+      </div>
+    </div>
+
+    <div class="score-criteria"><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:15%;background:#dc2626;"></div></div><div class="sc-score-num" style="color:#dc2626;">3/20</div></div><div><div class="sc-title">Přestat schovávat hlavní sdělení do slideru (a dát jasný headline + CTA)</div><div class="sc-desc">Slider jsou jen proklikové obrázky bez textu a bez primární výzvy k akci. Uživatel neví, co je „nejlepší další…</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:15%;background:#dc2626;"></div></div><div class="sc-score-num" style="color:#dc2626;">4/20</div></div><div><div class="sc-title">Zviditelnit USP hned nahoře (důvěra v prvních 5 vteřinách)</div><div class="sc-desc">USP (doprava zdarma, 20 let zkušeností, osobní přístup) jsou až pod kategoriemi – přitom to je přesně to, co m…</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:35%;background:#d97706;"></div></div><div class="sc-score-num" style="color:#d97706;">8/20</div></div><div><div class="sc-title">Opravit a sjednotit cesty v kategoriích (zbytečné úniky a 404 riziko)</div><div class="sc-desc">V crossroad odkaz „Šněkové“ míří na `/kat/snekove-odstavnovace/`, ale v hlavním menu je `/kat/odstavnovace/sne…</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:35%;background:#d97706;"></div></div><div class="sc-score-num" style="color:#d97706;">9/20</div></div><div><div class="sc-title">Homepage produkty: přidat „Do košíku“ a rychlou volbu variant</div><div class="sc-desc">Na produktových kartách je jen „Detail“. To prodlužuje cestu k nákupu a snižuje počet přidání do košíku z home…</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:35%;background:#d97706;"></div></div><div class="sc-score-num" style="color:#d97706;">10/20</div></div><div><div class="sc-title">Přidat „Výběrového průvodce“ jako rozcestník podle potřeby (ne jen podle kategorie)</div><div class="sc-desc">Rozcestník je čistě kategoriální (odšťavňovače/citrusovače/mixéry), ale lidi často nakupují podle use-case („n…</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:60%;background:#1d4ed8;"></div></div><div class="sc-score-num" style="color:#1d4ed8;">14/20</div></div><div><div class="sc-title">Přidat sociální důkaz (recenze/ratings) – teď chybí úplně</div><div class="sc-desc">Na homepage není žádná sekce recenzí, hodnocení ani „kolik zákazníků už nakoupilo“. To je u dražších spotřebič…</div></div></div></div>
+
+    <div class="roast-section">
+      <div class="roast-label">ROAST — přátelsky, ale bez rukaviček</div>
+      <div class="roast-quote"><p>Na první dobrou: vypadá to jako solidní e‑shop s odšťavňovači… jenže homepage se tváří spíš jako „výkladní skříň WordPress šablony“ než jako stránka, která má rychle dovést člověka k nákupu. Chybí jasná věta „pro koho to je“ a „proč právě u vás“ hned nahoře. Místo toho dostanu velký slider s obrázky bez textu (alt je prázdný) a bez jediné viditelné výzvy k akci. Pokud se zákazník nerozhodl už před příchodem, tak mu moc nepomáháte.</p><p>Header je našlapaný (vyhledávání, telefon, jazyk, přihlášení, košík), což je fajn, ale zároveň to přebíjí hlavní rozhodnutí: co si mám koupit a jak rychle se k tomu dostanu. Navíc v menu je lehký chaos/duplicita (u mobilního menu je „Pronájem“ dvakrát) a odkaz „Čerstvé šťávy“ vede na jiný web (freshup.cz), takže část lidí si můžete sami poslat pryč dřív, než vůbec pochopí nabídku.</p><p>Sekce kategorie (crossroads) je dobrý nápad – jenže je textově strohá a některé odkazy vypadají podezřele (např. „Šněkové“ vede na `/kat/snekove-odstavnovace/`, zatímco v menu máte `/kat/odstavnovace/snekove-odstavnovace/` – pokud to není přesměrované, je to zbytečný únik). USP lišta je konečně něco, co buduje důvěru, ale je schovaná až pod kategoriemi, takže ji spousta lidí ani neuvidí v prvních sekundách.</p><p>A pak „Produkty“: ukazujete jen „Detail“. To je jako mít obchod a říct zákazníkovi „běžte se podívat do skladu“. Na homepage by mělo jít co nejvíc zkrátit cestu k nákupu: přidat do košíku, porovnat, vybrat podle potřeby. Místo sociálního důkazu (recenze, hodnocení, loga, počty prodaných kusů) dáváte „Články“ – obsah je super, ale na homepage e‑shopu obvykle nevyhrává nad důvěrou a prodejními argumenty.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+var domainName="freshjuice.cz";
+document.getElementById("hero-screenshot").src="";
+if(document.getElementById("img-logo"))document.getElementById("img-logo").src="";
+if(document.getElementById("img-juicer"))document.getElementById("img-juicer").style.display="none";
+if(document.getElementById("img-prod1"))document.getElementById("img-prod1").style.display="none";
+if(document.getElementById("img-prod2"))document.getElementById("img-prod2").style.display="none";
+if(document.getElementById("img-prod3"))document.getElementById("img-prod3").style.display="none";
+var SC_POS={"NAV":"center 0.0%","HERO":"center 8.0%","SLIDER":"center 8.0%","CATS":"center 33.0%","USP":"center 48.9%","PRODUCTS":"center 56.9%","CTA":"center 45.5%","SOCIAL":"center 72.8%","FOOTER":"center 100.0%","FULL":"center top"};
+var SECTION_POS={"NAV":{"top":0,"h":7},"HERO":{"top":7,"h":22},"SLIDER":{"top":7,"h":22},"CATS":{"top":29,"h":14},"USP":{"top":43,"h":7},"PRODUCTS":{"top":50,"h":14},"CTA":{"top":40,"h":7},"SOCIAL":{"top":64,"h":9},"FOOTER":{"top":88,"h":7}};
+function buildWireframe(r){
+var sol=(r.solution||r.fix||'');
+var title=(r.title||'');
+var sk=r.screenshotKey||'';
+
+function extractLines(text, prefixes) {
+  var lines = text.split(/[\n\r]+/);
+  var results = [];
+  lines.forEach(function(line) {
+    line = line.trim();
+    for (var i=0; i<prefixes.length; i++) {
+      var p = prefixes[i].toLowerCase();
+      if (line.toLowerCase().startsWith(p)) {
+        results.push(line.substring(prefixes[i].length).replace(/^[:\s]+/, '').trim());
+        break;
+      }
+    }
+  });
+  return results;
+}
+
+function bulletLines(text) {
+  var lines = text.split(/[\n\r]+/);
+  var results = [];
+  lines.forEach(function(line) {
+    line = line.trim();
+    if (line.startsWith('-') || line.startsWith('\u2022') || line.startsWith('\u2013')) {
+      results.push(line.replace(/^[-\u2022\u2013]\s*/, '').trim());
+    }
+  });
+  return results;
+}
+
+function solutionBox(title, sol) {
+  var bullets = bulletLines(sol);
+  var solShort = sol.length > 350 ? sol.substring(0, 350) + '\u2026' : sol;
+  var html = '<div class="wf-panel">';
+  html += '<div style="font-size:.72rem;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">\u2713 Navrhovan\u00e9 \u0159e\u0161en\u00ed</div>';
+  if (bullets.length >= 2) {
+    html += '<ul style="padding-left:1rem;margin:0;">';
+    bullets.slice(0,5).forEach(function(b) {
+      html += '<li style="font-size:.82rem;color:rgba(255,255,255,.85);line-height:1.6;margin-bottom:.3rem;">' + b + '</li>';
+    });
+    html += '</ul>';
+  } else {
+    html += '<div style="font-size:.85rem;color:rgba(255,255,255,.85);line-height:1.6;">' + solShort + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+if(sk==='HERO'||sk==='SLIDER'){
+  var h1s = extractLines(sol, ['H1:', 'Headline:', 'Nadpis:', 'H1 ']);
+  var ctas = extractLines(sol, ['Prim\u00e1rn\u00ed CTA:', 'CTA:', 'Tla\u010d\u00edtko:']);
+  var subs = extractLines(sol, ['Podnadpis:', 'Popis:', 'Podtitul:']);
+  var trusts = bulletLines(sol);
+  var html = '<div class="wf-panel"><div class="wf-hero-block"><div>';
+  html += '<div class="wf-h1">' + (h1s[0] || title) + '</div>';
+  if(subs[0]) html += '<div class="wf-p">' + subs[0] + '</div>';
+  html += '<div>';
+  html += '<span class="wf-btn">' + (ctas[0] || 'Prim\u00e1rn\u00ed CTA \u2192') + '</span>';
+  if(ctas[1]) html += '<span class="wf-btn wf-btn-sec">' + ctas[1] + '</span>';
+  html += '</div>';
+  if(trusts.length>0) {
+    html += '<div class="wf-trust">';
+    trusts.slice(0,3).forEach(function(t){ html += '<span class="wf-trust-item">\u2713 '+t+'</span>'; });
+    html += '</div>';
+  }
+  html += '</div><div class="wf-img-ph">Foto produktu</div></div></div>';
+  return html;
+}
+
+if(sk==='NAV'){
+  var items = extractLines(sol, ['polo\u017eky:', 'menu:', 'navigace:']);
+  var html = '<div class="wf-panel"><div class="wf-nav">';
+  html += '<div style="background:#15803d;color:#fff;padding:.3rem .75rem;border-radius:5px;font-size:.72rem;font-weight:700;">Logo</div>';
+  if(items.length>0) {
+    items[0].split(/[,|]/).slice(0,5).forEach(function(item) {
+      html += '<span class="wf-nav-item">'+item.trim()+'</span>';
+    });
+  } else {
+    html += '<span class="wf-nav-item">Produkty</span><span class="wf-nav-item">Slu\u017eby</span><span class="wf-nav-item">O n\u00e1s</span>';
+  }
+  html += '<div class="wf-nav-cta">Vybrat \u2192</div></div>';
+  html += '<div style="background:#fee2e2;border-radius:6px;padding:.6rem;font-size:.78rem;color:#991b1b;margin-top:.5rem;">\u2715 '+sol.substring(0,120)+'</div>';
+  html += '</div>';
+  return html;
+}
+
+if(sk==='USP'){
+  var uspItems = bulletLines(sol);
+  var html = '<div class="wf-panel"><div class="wf-usp-bar">';
+  if(uspItems.length>=2) {
+    uspItems.slice(0,4).forEach(function(item) {
+      html += '<div class="wf-usp-item">'+item+'</div>';
+    });
+  } else {
+    html += '<div class="wf-usp-item">Doprava zdarma<br>nad 5\u00a0000 K\u010d</div>';
+    html += '<div class="wf-usp-item">20 let v oboru</div>';
+    html += '<div class="wf-usp-item">2\u00a0000+ z\u00e1kazn\u00edk\u016f</div>';
+    html += '<div class="wf-usp-item">Poradenstv\u00ed zdarma</div>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+if(sk==='CATS'){
+  var catItems = bulletLines(sol);
+  var html = '<div class="wf-panel"><div style="font-size:.8rem;font-weight:700;color:#fff;text-align:center;margin-bottom:.6rem;">Co hled\u00e1te?</div><div class="wf-cats">';
+  if(catItems.length>=2) {
+    catItems.slice(0,4).forEach(function(item) {
+      var parts = item.split(':');
+      html += '<div class="wf-cat"><div class="wf-cat-name">'+parts[0].trim()+'</div>';
+      if(parts[1]) html += '<div class="wf-cat-desc">'+parts[1].trim()+'</div>';
+      html += '</div>';
+    });
+  } else {
+    html += '<div class="wf-cat"><div class="wf-cat-name">\u0160nekové</div><div class="wf-cat-desc">Tich\u00fd chod.</div></div>';
+    html += '<div class="wf-cat"><div class="wf-cat-name">Odst\u0159ediv\u00e9</div><div class="wf-cat-desc">Rychl\u00e9.</div></div>';
+    html += '<div class="wf-cat"><div class="wf-cat-name">Citrusova\u010de</div><div class="wf-cat-desc">\u0160\u0165\u00e1va za 30 s.</div></div>';
+    html += '<div class="wf-cat"><div class="wf-cat-name">Pron\u00e1jem</div><div class="wf-cat-desc">Bez z\u00e1vazk\u016f.</div></div>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+if(sk==='PRODUCTS'){
+  var prodItems = bulletLines(sol);
+  var html = '<div class="wf-panel"><div style="font-size:.8rem;font-weight:700;color:#fff;text-align:center;margin-bottom:.6rem;">Nejprod\u00e1van\u011bj\u0161\u00ed modely</div><div class="wf-prods">';
+  html += '<div class="wf-prod"><div class="wf-prod-badge">\u2605 NEJOBL\u00cdBEN\u011aj\u0160\u00cd</div><div class="wf-prod-img">Produkt 1</div><div class="wf-prod-name">Model A</div></div>';
+  html += '<div class="wf-prod"><div class="wf-prod-badge" style="background:#dbeafe;color:#1e40af;">CENA/V\u00ddKON</div><div class="wf-prod-img">Produkt 2</div><div class="wf-prod-name">Model B</div></div>';
+  html += '<div class="wf-prod"><div class="wf-prod-badge" style="background:#f0fdf4;color:#15803d;">PRON\u00c1JEM</div><div class="wf-prod-img">Produkt 3</div><div class="wf-prod-name">Pron\u00e1jem</div></div>';
+  html += '</div>';
+  if(prodItems.length>0) {
+    html += '<div style="margin-top:.75rem;font-size:.75rem;color:#86efac;">\u2192 ';
+    html += prodItems.slice(0,2).join(' | ');
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+if(sk==='SOCIAL'){
+  var socialItems = bulletLines(sol);
+  var html = '<div class="wf-panel"><div style="font-size:.8rem;font-weight:700;color:#fff;text-align:center;margin-bottom:.6rem;">Co \u0159\u00edkaj\u00ed z\u00e1kazn\u00edci</div><div class="wf-reviews">';
+  html += '<div class="wf-review"><div class="wf-stars">\u2605\u2605\u2605\u2605\u2605</div><div class="wf-review-text">"Skvěl\u00fd produkt, tich\u00fd a v\u00fdkonn\u00fd."</div><div class="wf-reviewer">Jana K.</div></div>';
+  html += '<div class="wf-review"><div class="wf-stars">\u2605\u2605\u2605\u2605\u2605</div><div class="wf-review-text">"V\u00fdborn\u00fd servis."</div><div class="wf-reviewer">Tom\u00e1\u0161 M.</div></div>';
+  html += '<div class="wf-review"><div class="wf-stars">\u2605\u2605\u2605\u2605\u2605</div><div class="wf-review-text">"Doporu\u010duji."</div><div class="wf-reviewer">Lucie P.</div></div>';
+  html += '</div>';
+  if(socialItems.length>0){
+    html += '<div style="margin-top:.75rem;font-size:.75rem;color:#86efac;">\u2192 ';
+    html += socialItems.slice(0,2).join(' | ');
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+if(sk==='FOOTER'){
+  var fItems = bulletLines(sol);
+  var html = '<div class="wf-panel">';
+  html += '<div style="background:#0d1117;border-radius:6px;padding:.75rem 1rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;">';
+  html += '<div><div style="font-size:.6rem;font-weight:700;color:#86efac;margin-bottom:.3rem;">\ud83d\udd12 TRUST</div>';
+  html += '<div style="font-size:.6rem;color:rgba(255,255,255,.65);line-height:1.7;">\u2713 Bezpe\u010dn\u00fd n\u00e1kup<br>\u2713 Vr\u00e1cen\u00ed zbo\u017e\u00ed<br>\u2713 Platba kartou</div></div>';
+  html += '<div><div style="font-size:.6rem;font-weight:700;color:#86efac;margin-bottom:.3rem;">\ud83d\udce7 KONTAKT</div>';
+  html += '<div style="font-size:.6rem;color:rgba(255,255,255,.65);line-height:1.7;">Tel: +420 xxx xxx<br>Email: info@...<br>Po\u2013P\u00e1 9\u201317</div></div>';
+  html += '<div><div style="font-size:.6rem;font-weight:700;color:#86efac;margin-bottom:.3rem;">CTA</div>';
+  html += '<div style="background:#15803d;color:#fff;padding:.35rem .6rem;border-radius:5px;font-size:.6rem;font-weight:700;">Pot\u0159ebujete pomoci? \u2192</div></div>';
+  html += '</div>';
+  if(fItems.length>0){
+    html += '<div style="margin-top:.5rem;font-size:.62rem;color:#86efac;">\u2192 ' + fItems.slice(0,3).join(' \u00b7 ') + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+if(sk==='CTA'){
+  var ctaItems = bulletLines(sol);
+  var html = '<div class="wf-panel"><div class="wf-hero-block"><div>';
+  html += '<div class="wf-h1" style="font-size:.82rem;">\u201eNejste si jisti v\u00fdb\u011brem?\u201c</div>';
+  html += '<div class="wf-p">Pom\u016f\u017eeme v\u00e1m vybrat spr\u00e1vn\u00fd model podle va\u0161ich pot\u0159eb.</div>';
+  html += '<span class="wf-btn">Chci doporu\u010dit \u2192</span>';
+  if(ctaItems.length>0){
+    html += '<div class="wf-trust">';
+    ctaItems.slice(0,3).forEach(function(t){ html += '<span class="wf-trust-item">\u2713 '+t+'</span>'; });
+    html += '</div>';
+  }
+  html += '</div><div class="wf-img-ph">Formul\u00e1\u0159 / CTA</div></div></div>';
+  return html;
+}
+
+// Default: show the solution text in a clean box
+return solutionBox(title, sol);
+}
+var issues={"1":{"title":"Přestat schovávat hlavní sdělení do slideru (a dát jasný headline + CTA)","problem":"Slider jsou jen proklikové obrázky bez textu a bez primární výzvy k akci. Uživatel neví, co je „nejlepší další krok“ a proč nakoupit právě tady.","fix":"Do hero přidat statický nadpis, podnadpis a 2 CTA tlačítka nad slider (nebo slider úplně nahradit statickým hero). Copy návrh:  \n• H1: „Prémiové odšťavňovače pro domácnost i gastro“  \n• Subheadline: „Pomůžeme vybrat správný typ. 20 let zkušeností. Doprava zdarma nad 5 000 Kč.“  \n• CTA1: „Vybrat odšťavňovač“ (odkaz na /kat/odstavnovace/)  \n• CTA2: „Potřebuji poradit“ (kotva na kontakt / nebo otevřít tel: +420774631631)","solution":"Do hero přidat statický nadpis, podnadpis a 2 CTA tlačítka nad slider (nebo slider úplně nahradit statickým hero). Copy návrh:  \n• H1: „Prémiové odšťavňovače pro domácnost i gastro“  \n• Subheadline: „Pomůžeme vybrat správný typ. 20 let zkušeností. Doprava zdarma nad 5 000 Kč.“  \n• CTA1: „Vybrat odšťavňovač“ (odkaz na /kat/odstavnovace/)  \n• CTA2: „Potřebuji poradit“ (kotva na kontakt / nebo otevřít tel: +420774631631)","impact":"vysoký (≈ +10–25 % na proklik do katalogu / zahájení nákupu)","sev":"KRITICKÉ","screenshotKey":"HERO"},"2":{"title":"Zviditelnit USP hned nahoře (důvěra v prvních 5 vteřinách)","problem":"USP (doprava zdarma, 20 let zkušeností, osobní přístup) jsou až pod kategoriemi – přitom to je přesně to, co má odlišit e‑shop.","fix":"Přesunout `.hp-usp` nad `.hp-crossroads` (ideálně přímo pod hero) a doplnit konkrétnost:  \n• „Doprava zdarma nad 5 000 Kč (CZ/SK)“  \n• „Poradíme s výběrem: volejte +420 774 631 631“  \n• „Jen ověřené značky (Hurom…)“","solution":"Přesunout `.hp-usp` nad `.hp-crossroads` (ideálně přímo pod hero) a doplnit konkrétnost:  \n• „Doprava zdarma nad 5 000 Kč (CZ/SK)“  \n• „Poradíme s výběrem: volejte +420 774 631 631“  \n• „Jen ověřené značky (Hurom…)“","impact":"střední až vysoký (≈ +5–15 % na proklik do produktů, snížení odchodů)","sev":"KRITICKÉ","screenshotKey":"USP"},"3":{"title":"Opravit a sjednotit cesty v kategoriích (zbytečné úniky a 404 riziko)","problem":"V crossroad odkaz „Šněkové“ míří na `/kat/snekove-odstavnovace/`, ale v hlavním menu je `/kat/odstavnovace/snekove-odstavnovace/`. To zvyšuje riziko 404/přesměrování a rozbíjí konzistenci.","fix":"Sjednotit URL ve všech odkazech podle skutečné kategorie ve WooCommerce. Pokud má být správně podkategorie, upravit na:  \n• „Šněkové“ → `/kat/odstavnovace/snekove-odstavnovace/`  \nA zkontrolovat i další odkazy v `.hp-crossroads__items a`.","solution":"Sjednotit URL ve všech odkazech podle skutečné kategorie ve WooCommerce. Pokud má být správně podkategorie, upravit na:  \n• „Šněkové“ → `/kat/odstavnovace/snekove-odstavnovace/`  \nA zkontrolovat i další odkazy v `.hp-crossroads__items a`.","impact":"střední (≈ +2–6 % méně ztrát na navigaci)","sev":"VYSOKÉ","screenshotKey":"CATS"},"4":{"title":"Homepage produkty: přidat „Do košíku“ a rychlou volbu variant","problem":"Na produktových kartách je jen „Detail“. To prodlužuje cestu k nákupu a snižuje počet přidání do košíku z homepage.","fix":"Na `.product-card` přidat primární CTA „Do košíku“ (AJAX add-to-cart) a sekundární „Detail“. Copy:  \n• Primární: „Přidat do košíku“  \n• Sekundární: „Zobrazit detail“  \nU variant (barvy) zvažte „Vybrat variantu“ místo slepého add-to-cart.","solution":"Na `.product-card` přidat primární CTA „Do košíku“ (AJAX add-to-cart) a sekundární „Detail“. Copy:  \n• Primární: „Přidat do košíku“  \n• Sekundární: „Zobrazit detail“  \nU variant (barvy) zvažte „Vybrat variantu“ místo slepého add-to-cart.","impact":"vysoký (≈ +8–20 % více add-to-cart z homepage)","sev":"VYSOKÉ","screenshotKey":"PRODUCTS"},"5":{"title":"Přidat „Výběrového průvodce“ jako rozcestník podle potřeby (ne jen podle kategorie)","problem":"Rozcestník je čistě kategoriální (odšťavňovače/citrusovače/mixéry), ale lidi často nakupují podle use-case („na celer“, „na gastro provoz“, „snadné čištění“, „tichý chod“).","fix":"Do `.hp-crossroads` doplnit druhý řádek/boxy „Vyberte podle potřeby“:  \n• „Chci maximum šťávy (šnekové)“  \n• „Rychlé odšťavnění (odstředivé)“  \n• „Pro gastro provoz“  \n• „Snadné čištění“  \nKaždý vede na relevantní kategorii/filtr/landing page.","solution":"Do `.hp-crossroads` doplnit druhý řádek/boxy „Vyberte podle potřeby“:  \n• „Chci maximum šťávy (šnekové)“  \n• „Rychlé odšťavnění (odstředivé)“  \n• „Pro gastro provoz“  \n• „Snadné čištění“  \nKaždý vede na relevantní kategorii/filtr/landing page.","impact":"střední až vysoký (≈ +5–12 % proklik do správné části katalogu)","sev":"VYSOKÉ","screenshotKey":"CATS"},"6":{"title":"Přidat sociální důkaz (recenze/ratings) – teď chybí úplně","problem":"Na homepage není žádná sekce recenzí, hodnocení ani „kolik zákazníků už nakoupilo“. To je u dražších spotřebičů zásadní brzda.","fix":"Mezi `.hp-products` a `.hp-news` vložit blok:  \n• Nadpis: „Hodnocení zákazníků“  \n• 3–6 recenzí + průměrné hodnocení (např. „4,8/5“)  \n• pokud máte Heureka/Zboží.cz, přidat badge + počet recenzí  \nCopy: „Přes 1 000 zákazníků si u nás vybralo odšťavňovač“ (jen pokud je pravda).","solution":"Mezi `.hp-products` a `.hp-news` vložit blok:  \n• Nadpis: „Hodnocení zákazníků“  \n• 3–6 recenzí + průměrné hodnocení (např. „4,8/5“)  \n• pokud máte Heureka/Zboží.cz, přidat badge + počet recenzí  \nCopy: „Přes 1 000 zákazníků si u nás vybralo odšťavňovač“ (jen pokud je pravda).","impact":"vysoký (≈ +6–18 % u nových návštěv)","sev":"STŘEDNÍ","screenshotKey":"SOCIAL"},"7":{"title":"Navigace: omezit odliv na externí web „Čerstvé šťávy“","problem":"V hlavním menu je odkaz „Čerstvé šťávy“ na freshup.cz – odvádí část návštěv mimo nákupní záměr na tomto webu.","fix":"Přesunout externí odkaz do patičky nebo ho vizuálně označit (ikonka externího odkazu + text „(externí)“). Alternativně vytvořit interní landing page „Čerstvé šťávy“ s vysvětlením a až z ní odkaz ven.","solution":"Přesunout externí odkaz do patičky nebo ho vizuálně označit (ikonka externího odkazu + text „(externí)“). Alternativně vytvořit interní landing page „Čerstvé šťávy“ s vysvětlením a až z ní odkaz ven.","impact":"střední (≈ +3–8 % více lidí zůstane v nákupním flow)","sev":"STŘEDNÍ","screenshotKey":"NAV"},"8":{"title":"Mobilní menu: odstranit duplicitu „Pronájem“ a zpřehlednit","problem":"V `.mob-nav__menu` je „Pronájem“ dvakrát (menu-item-941 a menu-item-1082). Působí to neprofesionálně a zvyšuje kognitivní zátěž.","fix":"Odstranit duplicitní položku a seřadit menu podle priorit (Produkty → Pronájem → Poradenství/Blog → Kontakty).","solution":"Odstranit duplicitní položku a seřadit menu podle priorit (Produkty → Pronájem → Poradenství/Blog → Kontakty).","impact":"nízký až střední (≈ +1–4 % lepší navigace na mobilu)","sev":"STŘEDNÍ","screenshotKey":"NAV"},"9":{"title":"Vyhledávání: zlepšit mikrocopy a přidat našeptávač","problem":"Placeholder „hledaný výraz“ je slabý a vyhledávání bez našeptávače má nižší použitelnost (hlavně u značek a modelů typu „Hurom H 320N“).","fix":"Upravte placeholder a přidejte našeptávání produktů:  \n• Placeholder: „Hledejte značku nebo model (např. Hurom H320N)“  \n• Implementace: AJAX search suggest (top produkty + kategorie).","solution":"Upravte placeholder a přidejte našeptávání produktů:  \n• Placeholder: „Hledejte značku nebo model (např. Hurom H320N)“  \n• Implementace: AJAX search suggest (top produkty + kategorie).","impact":"střední (≈ +2–7 % u uživatelů, kteří používají search)","sev":"STŘEDNÍ","screenshotKey":"NAV"},"10":{"title":"Články na homepage: dát jim jasnou roli (a přidat CTA zpět na nákup)","problem":"Sekce `.hp-news` („Články“) je pro část návštěv odklon od nákupu a chybí propojení na produkty („co koupit po přečtení“).","fix":"Nechat články, ale doplnit pod nimi „Doporučené produkty z článků“ nebo alespoň CTA:  \n• Nadpis pod články: „Nevíte, co vybrat?“  \n• Tlačítko: „Pomozte mi vybrat odšťavňovač“ → /blog/jak-vybrat-odstavnovac/ nebo průvodce (viz doporučení #5)","solution":"Nechat články, ale doplnit pod nimi „Doporučené produkty z článků“ nebo alespoň CTA:  \n• Nadpis pod články: „Nevíte, co vybrat?“  \n• Tlačítko: „Pomozte mi vybrat odšťavňovač“ → /blog/jak-vybrat-odstavnovac/ nebo průvodce (viz doporučení #5)","impact":"střední (≈ +3–10 % lepší návrat z contentu do nákupu)","sev":"STŘEDNÍ","screenshotKey":"SOCIAL"}};
+var roadItems={"1":{"title":"Přestat schovávat hlavní sdělení do slideru (a dát jasný headline + CTA)","problem":"Slider jsou jen proklikové obrázky bez textu a bez primární výzvy k akci. Uživatel neví, co je „nejlepší další krok“ a proč nakoupit právě tady.","fix":"Do hero přidat statický nadpis, podnadpis a 2 CTA tlačítka nad slider (nebo slider úplně nahradit statickým hero). Copy návrh:  \n- H1: „Prémiové odšťavňovače pro domácnost i gastro“  \n- Subheadline: „Pomůžeme vybrat správný typ. 20 let zkušeností. Doprava zdarma nad 5 000 Kč.“  \n- CTA1: „Vybrat odšťavňovač“ (odkaz na /kat/odstavnovace/)  \n- CTA2: „Potřebuji poradit“ (kotva na kontakt / nebo otevřít tel: +420774631631)","solution":"Do hero přidat statický nadpis, podnadpis a 2 CTA tlačítka nad slider (nebo slider úplně nahradit statickým hero). Copy návrh:  \n- H1: „Prémiové odšťavňovače pro domácnost i gastro“  \n- Subheadline: „Pomůžeme vybrat správný typ. 20 let zkušeností. Doprava zdarma nad 5 000 Kč.“  \n- CTA1: „Vybrat odšťavňovač“ (odkaz na /kat/odstavnovace/)  \n- CTA2: „Potřebuji poradit“ (kotva na kontakt / nebo otevřít tel: +420774631631)","before":"Slider jsou jen proklikové obrázky bez textu a bez primární výzvy k akci. Uživatel neví, co je „nejlepší další krok“ a proč nakoupit právě tady.","after":"Do hero přidat statický nadpis, podnadpis a 2 CTA tlačítka nad slider (nebo slider úplně nahradit statickým hero). Copy návrh:  \n- H1: „Prémiové odšťavňovače pro domácnost i gastro“  \n- Subheadline: „","screenshotKey":"HERO","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Do hero přidat statický nadpis, podnadpis a 2 CTA tlačítka nad slider (nebo slider úplně nahradit statickým hero).</div></div><div class=\"road-step\"><div class=\"road-step-icon\">2</div><div class=\"road-step-text\"><strong>Krok 2</strong> Copy návrh:  \n- H1: „Prémiové odšťavňovače pro domácnost i gastro“  \n- Subheadline: „Pomůžeme vybrat správný typ.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">3</div><div class=\"road-step-text\"><strong>Krok 3</strong> 20 let zkušeností.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">4</div><div class=\"road-step-text\"><strong>Krok 4</strong> Doprava zdarma nad 5 000 Kč.“  \n- CTA1: „Vybrat odšťavňovač“ (odkaz na /kat/odstavnovace/)  \n- CTA2: „Potřebuji poradit“ (kotva na kontakt / nebo otevřít tel: +420774631631).</div></div></div>"},"2":{"title":"Zviditelnit USP hned nahoře (důvěra v prvních 5 vteřinách)","problem":"USP (doprava zdarma, 20 let zkušeností, osobní přístup) jsou až pod kategoriemi – přitom to je přesně to, co má odlišit e‑shop.","fix":"Přesunout `.hp-usp` nad `.hp-crossroads` (ideálně přímo pod hero) a doplnit konkrétnost:  \n- „Doprava zdarma nad 5 000 Kč (CZ/SK)“  \n- „Poradíme s výběrem: volejte +420 774 631 631“  \n- „Jen ověřené značky (Hurom…)“","solution":"Přesunout `.hp-usp` nad `.hp-crossroads` (ideálně přímo pod hero) a doplnit konkrétnost:  \n- „Doprava zdarma nad 5 000 Kč (CZ/SK)“  \n- „Poradíme s výběrem: volejte +420 774 631 631“  \n- „Jen ověřené značky (Hurom…)“","before":"USP (doprava zdarma, 20 let zkušeností, osobní přístup) jsou až pod kategoriemi – přitom to je přesně to, co má odlišit e‑shop.","after":"Přesunout `.hp-usp` nad `.hp-crossroads` (ideálně přímo pod hero) a doplnit konkrétnost:  \n- „Doprava zdarma nad 5 000 Kč (CZ/SK)“  \n- „Poradíme s výběrem: volejte +420 774 631 631“  \n- „Jen ověřené z","screenshotKey":"USP","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Přesunout `.hp-usp` nad `.hp-crossroads` (ideálně přímo pod hero) a doplnit konkrétnost:  \n- „Doprava zdarma nad 5 000 Kč (CZ/SK)“  \n- „Poradíme s výběrem: volejte +420 774 631 631“  \n- „Jen ověřené značky (Hurom…)“.</div></div></div>"},"3":{"title":"Opravit a sjednotit cesty v kategoriích (zbytečné úniky a 404 riziko)","problem":"V crossroad odkaz „Šněkové“ míří na `/kat/snekove-odstavnovace/`, ale v hlavním menu je `/kat/odstavnovace/snekove-odstavnovace/`. To zvyšuje riziko 404/přesměrování a rozbíjí konzistenci.","fix":"Sjednotit URL ve všech odkazech podle skutečné kategorie ve WooCommerce. Pokud má být správně podkategorie, upravit na:  \n- „Šněkové“ → `/kat/odstavnovace/snekove-odstavnovace/`  \nA zkontrolovat i další odkazy v `.hp-crossroads__items a`.","solution":"Sjednotit URL ve všech odkazech podle skutečné kategorie ve WooCommerce. Pokud má být správně podkategorie, upravit na:  \n- „Šněkové“ → `/kat/odstavnovace/snekove-odstavnovace/`  \nA zkontrolovat i další odkazy v `.hp-crossroads__items a`.","before":"V crossroad odkaz „Šněkové“ míří na `/kat/snekove-odstavnovace/`, ale v hlavním menu je `/kat/odstavnovace/snekove-odstavnovace/`. To zvyšuje riziko 404/přesměrování a rozbíjí konzistenci.","after":"Sjednotit URL ve všech odkazech podle skutečné kategorie ve WooCommerce. Pokud má být správně podkategorie, upravit na:  \n- „Šněkové“ → `/kat/odstavnovace/snekove-odstavnovace/`  \nA zkontrolovat i dal","screenshotKey":"CATS","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Sjednotit URL ve všech odkazech podle skutečné kategorie ve WooCommerce.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">2</div><div class=\"road-step-text\"><strong>Krok 2</strong> Pokud má být správně podkategorie, upravit na:  \n- „Šněkové“ → `/kat/odstavnovace/snekove-odstavnovace/`  \nA zkontrolovat i další odkazy v `.hp-crossroads__items a`..</div></div></div>"},"4":{"title":"Homepage produkty: přidat „Do košíku“ a rychlou volbu variant","problem":"Na produktových kartách je jen „Detail“. To prodlužuje cestu k nákupu a snižuje počet přidání do košíku z homepage.","fix":"Na `.product-card` přidat primární CTA „Do košíku“ (AJAX add-to-cart) a sekundární „Detail“. Copy:  \n- Primární: „Přidat do košíku“  \n- Sekundární: „Zobrazit detail“  \nU variant (barvy) zvažte „Vybrat variantu“ místo slepého add-to-cart.","solution":"Na `.product-card` přidat primární CTA „Do košíku“ (AJAX add-to-cart) a sekundární „Detail“. Copy:  \n- Primární: „Přidat do košíku“  \n- Sekundární: „Zobrazit detail“  \nU variant (barvy) zvažte „Vybrat variantu“ místo slepého add-to-cart.","before":"Na produktových kartách je jen „Detail“. To prodlužuje cestu k nákupu a snižuje počet přidání do košíku z homepage.","after":"Na `.product-card` přidat primární CTA „Do košíku“ (AJAX add-to-cart) a sekundární „Detail“. Copy:  \n- Primární: „Přidat do košíku“  \n- Sekundární: „Zobrazit detail“  \nU variant (barvy) zvažte „Vybrat","screenshotKey":"PRODUCTS","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Na `.product-card` přidat primární CTA „Do košíku“ (AJAX add-to-cart) a sekundární „Detail“.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">2</div><div class=\"road-step-text\"><strong>Krok 2</strong> Copy:  \n- Primární: „Přidat do košíku“  \n- Sekundární: „Zobrazit detail“  \nU variant (barvy) zvažte „Vybrat variantu“ místo slepého add-to-cart..</div></div></div>"},"5":{"title":"Přidat „Výběrového průvodce“ jako rozcestník podle potřeby (ne jen podle kategorie)","problem":"Rozcestník je čistě kategoriální (odšťavňovače/citrusovače/mixéry), ale lidi často nakupují podle use-case („na celer“, „na gastro provoz“, „snadné čištění“, „tichý chod“).","fix":"Do `.hp-crossroads` doplnit druhý řádek/boxy „Vyberte podle potřeby“:  \n- „Chci maximum šťávy (šnekové)“  \n- „Rychlé odšťavnění (odstředivé)“  \n- „Pro gastro provoz“  \n- „Snadné čištění“  \nKaždý vede na relevantní kategorii/filtr/landing page.","solution":"Do `.hp-crossroads` doplnit druhý řádek/boxy „Vyberte podle potřeby“:  \n- „Chci maximum šťávy (šnekové)“  \n- „Rychlé odšťavnění (odstředivé)“  \n- „Pro gastro provoz“  \n- „Snadné čištění“  \nKaždý vede na relevantní kategorii/filtr/landing page.","before":"Rozcestník je čistě kategoriální (odšťavňovače/citrusovače/mixéry), ale lidi často nakupují podle use-case („na celer“, „na gastro provoz“, „snadné čištění“, „tichý chod“).","after":"Do `.hp-crossroads` doplnit druhý řádek/boxy „Vyberte podle potřeby“:  \n- „Chci maximum šťávy (šnekové)“  \n- „Rychlé odšťavnění (odstředivé)“  \n- „Pro gastro provoz“  \n- „Snadné čištění“  \nKaždý vede ","screenshotKey":"CATS","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Do `.hp-crossroads` doplnit druhý řádek/boxy „Vyberte podle potřeby“:  \n- „Chci maximum šťávy (šnekové)“  \n- „Rychlé odšťavnění (odstředivé)“  \n- „Pro gastro provoz“  \n- „Snadné čištění“  \nKaždý vede na relevantní kategorii/filtr/landing page..</div></div></div>"},"6":{"title":"Přidat sociální důkaz (recenze/ratings) – teď chybí úplně","problem":"Na homepage není žádná sekce recenzí, hodnocení ani „kolik zákazníků už nakoupilo“. To je u dražších spotřebičů zásadní brzda.","fix":"Mezi `.hp-products` a `.hp-news` vložit blok:  \n- Nadpis: „Hodnocení zákazníků“  \n- 3–6 recenzí + průměrné hodnocení (např. „4,8/5“)  \n- pokud máte Heureka/Zboží.cz, přidat badge + počet recenzí  \nCopy: „Přes 1 000 zákazníků si u nás vybralo odšťavňovač“ (jen pokud je pravda).","solution":"Mezi `.hp-products` a `.hp-news` vložit blok:  \n- Nadpis: „Hodnocení zákazníků“  \n- 3–6 recenzí + průměrné hodnocení (např. „4,8/5“)  \n- pokud máte Heureka/Zboží.cz, přidat badge + počet recenzí  \nCopy: „Přes 1 000 zákazníků si u nás vybralo odšťavňovač“ (jen pokud je pravda).","before":"Na homepage není žádná sekce recenzí, hodnocení ani „kolik zákazníků už nakoupilo“. To je u dražších spotřebičů zásadní brzda.","after":"Mezi `.hp-products` a `.hp-news` vložit blok:  \n- Nadpis: „Hodnocení zákazníků“  \n- 3–6 recenzí + průměrné hodnocení (např. „4,8/5“)  \n- pokud máte Heureka/Zboží.cz, přidat badge + počet recenzí  \nCop","screenshotKey":"SOCIAL","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Mezi `.hp-products` a `.hp-news` vložit blok:  \n- Nadpis: „Hodnocení zákazníků“  \n- 3–6 recenzí + průměrné hodnocení (např.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">2</div><div class=\"road-step-text\"><strong>Krok 2</strong> „4,8/5“)  \n- pokud máte Heureka/Zboží.cz, přidat badge + počet recenzí  \nCopy: „Přes 1 000 zákazníků si u nás vybralo odšťavňovač“ (jen pokud je pravda)..</div></div></div>"},"7":{"title":"Navigace: omezit odliv na externí web „Čerstvé šťávy“","problem":"V hlavním menu je odkaz „Čerstvé šťávy“ na freshup.cz – odvádí část návštěv mimo nákupní záměr na tomto webu.","fix":"Přesunout externí odkaz do patičky nebo ho vizuálně označit (ikonka externího odkazu + text „(externí)“). Alternativně vytvořit interní landing page „Čerstvé šťávy“ s vysvětlením a až z ní odkaz ven.","solution":"Přesunout externí odkaz do patičky nebo ho vizuálně označit (ikonka externího odkazu + text „(externí)“). Alternativně vytvořit interní landing page „Čerstvé šťávy“ s vysvětlením a až z ní odkaz ven.","before":"V hlavním menu je odkaz „Čerstvé šťávy“ na freshup.cz – odvádí část návštěv mimo nákupní záměr na tomto webu.","after":"Přesunout externí odkaz do patičky nebo ho vizuálně označit (ikonka externího odkazu + text „(externí)“). Alternativně vytvořit interní landing page „Čerstvé šťávy“ s vysvětlením a až z ní odkaz ven.","screenshotKey":"NAV","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Přesunout externí odkaz do patičky nebo ho vizuálně označit (ikonka externího odkazu + text „(externí)“).</div></div><div class=\"road-step\"><div class=\"road-step-icon\">2</div><div class=\"road-step-text\"><strong>Krok 2</strong> Alternativně vytvořit interní landing page „Čerstvé šťávy“ s vysvětlením a až z ní odkaz ven..</div></div></div>"},"8":{"title":"Mobilní menu: odstranit duplicitu „Pronájem“ a zpřehlednit","problem":"V `.mob-nav__menu` je „Pronájem“ dvakrát (menu-item-941 a menu-item-1082). Působí to neprofesionálně a zvyšuje kognitivní zátěž.","fix":"Odstranit duplicitní položku a seřadit menu podle priorit (Produkty → Pronájem → Poradenství/Blog → Kontakty).","solution":"Odstranit duplicitní položku a seřadit menu podle priorit (Produkty → Pronájem → Poradenství/Blog → Kontakty).","before":"V `.mob-nav__menu` je „Pronájem“ dvakrát (menu-item-941 a menu-item-1082). Působí to neprofesionálně a zvyšuje kognitivní zátěž.","after":"Odstranit duplicitní položku a seřadit menu podle priorit (Produkty → Pronájem → Poradenství/Blog → Kontakty).","screenshotKey":"NAV","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Odstranit duplicitní položku a seřadit menu podle priorit (Produkty → Pronájem → Poradenství/Blog → Kontakty)..</div></div></div>"},"9":{"title":"Vyhledávání: zlepšit mikrocopy a přidat našeptávač","problem":"Placeholder „hledaný výraz“ je slabý a vyhledávání bez našeptávače má nižší použitelnost (hlavně u značek a modelů typu „Hurom H 320N“).","fix":"Upravte placeholder a přidejte našeptávání produktů:  \n- Placeholder: „Hledejte značku nebo model (např. Hurom H320N)“  \n- Implementace: AJAX search suggest (top produkty + kategorie).","solution":"Upravte placeholder a přidejte našeptávání produktů:  \n- Placeholder: „Hledejte značku nebo model (např. Hurom H320N)“  \n- Implementace: AJAX search suggest (top produkty + kategorie).","before":"Placeholder „hledaný výraz“ je slabý a vyhledávání bez našeptávače má nižší použitelnost (hlavně u značek a modelů typu „Hurom H 320N“).","after":"Upravte placeholder a přidejte našeptávání produktů:  \n- Placeholder: „Hledejte značku nebo model (např. Hurom H320N)“  \n- Implementace: AJAX search suggest (top produkty + kategorie).","screenshotKey":"NAV","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Upravte placeholder a přidejte našeptávání produktů:  \n- Placeholder: „Hledejte značku nebo model (např.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">2</div><div class=\"road-step-text\"><strong>Krok 2</strong> Hurom H320N)“  \n- Implementace: AJAX search suggest (top produkty + kategorie)..</div></div></div>"},"10":{"title":"Články na homepage: dát jim jasnou roli (a přidat CTA zpět na nákup)","problem":"Sekce `.hp-news` („Články“) je pro část návštěv odklon od nákupu a chybí propojení na produkty („co koupit po přečtení“).","fix":"Nechat články, ale doplnit pod nimi „Doporučené produkty z článků“ nebo alespoň CTA:  \n- Nadpis pod články: „Nevíte, co vybrat?“  \n- Tlačítko: „Pomozte mi vybrat odšťavňovač“ → /blog/jak-vybrat-odstavnovac/ nebo průvodce (viz doporučení #5)","solution":"Nechat články, ale doplnit pod nimi „Doporučené produkty z článků“ nebo alespoň CTA:  \n- Nadpis pod články: „Nevíte, co vybrat?“  \n- Tlačítko: „Pomozte mi vybrat odšťavňovač“ → /blog/jak-vybrat-odstavnovac/ nebo průvodce (viz doporučení #5)","before":"Sekce `.hp-news` („Články“) je pro část návštěv odklon od nákupu a chybí propojení na produkty („co koupit po přečtení“).","after":"Nechat články, ale doplnit pod nimi „Doporučené produkty z článků“ nebo alespoň CTA:  \n- Nadpis pod články: „Nevíte, co vybrat?“  \n- Tlačítko: „Pomozte mi vybrat odšťavňovač“ → /blog/jak-vybrat-odstav","screenshotKey":"SOCIAL","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Nechat články, ale doplnit pod nimi „Doporučené produkty z článků“ nebo alespoň CTA:  \n- Nadpis pod články: „Nevíte, co vybrat?“  \n- Tlačítko: „Pomozte mi vybrat odšťavňovač“ → /blog/jak-vybrat-odstavnovac/ nebo průvodce (viz doporučení #5).</div></div></div>"}};
+var screenshots={};
+function getScreenshots(){var full="";var ss={"HERO":null,"CATS":null,"USP":null,"PRODUCTS":null,"SOCIAL":null,"FOOTER":null};return {FULL:full,NAV:ss.NAV||full,HERO:ss.HERO||full,SLIDER:ss.SLIDER||ss.HERO||full,CATS:ss.CATS||full,USP:ss.USP||full,PRODUCTS:ss.PRODUCTS||full,CTA:ss.CTA||ss.HERO||full,SOCIAL:ss.SOCIAL||full,FOOTER:ss.FOOTER||full};}function openIssue(n){
+var issue=issues[n];if(!issue)return;
+document.getElementById('popup-title').textContent=issue.title;
+document.getElementById('popup-problem').innerHTML=(issue.problem||'').replace(/\n/g,'<br>');
+document.getElementById('popup-fix').innerHTML=(issue.fix||'').replace(/\n/g,'<br>');
+var sc=getScreenshots();var html='';
+if(issue.screenshotKey&&sc[issue.screenshotKey]){
+var _imgUrl=sc[issue.screenshotKey]!==sc.FULL?sc[issue.screenshotKey]:sc.FULL;
+var _top=(SECTION_POS[issue.screenshotKey]||{top:0}).top;
+var _ty=sc[issue.screenshotKey]!==sc.FULL?0:_top;
+html+='<div class=\"popup-img-label\">&#128248; Sekce: '+issue.screenshotKey+' &mdash; top: '+_top+'%</div>';
+html+='<div style=\"overflow:hidden;border-radius:10px;border:2px solid #dc2626;height:480px;position:relative;\">'+'<img src=\"'+_imgUrl+'\" style=\"width:100%;height:auto;display:block;transform:translateY(-'+_ty+'%);transform-origin:top left;\">'+'<div style=\"position:absolute;bottom:0;left:0;right:0;background:rgba(220,38,38,.88);padding:.35rem .75rem;font-size:.7rem;font-weight:700;color:#fff;\">&#9888; '+issue.title+'</div>'+'</div>';
+}
+html+='<div class="popup-img-label" style="margin-top:1.25rem;">Grafický návrh řešení</div>';
+html+=buildWireframe(issue);
+if(issue.impact){
+  html+='<div class="popup-img-label" style="margin-top:1rem;">Očekávaný dopad</div>';
+  html+='<div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:.85rem;font-size:.85rem;color:rgba(255,255,255,.8);">'+(issue.impact||'')+'</div>';
+}
+document.getElementById('popup-bottom').innerHTML=html;
+document.querySelectorAll('.issue-btn').forEach(function(b){b.classList.remove('active');});
+var btn=document.getElementById('ib-'+n);if(btn)btn.classList.add('active');
+document.getElementById('issue-popup').classList.add('visible');
+document.body.style.overflow='hidden';
+}
+function closeIssue(){
+document.getElementById('issue-popup').classList.remove('visible');
+document.querySelectorAll('.issue-btn').forEach(function(b){b.classList.remove('active');});
+document.body.style.overflow='';
+}
+function closeIssueOnBg(e){if(e.target===document.getElementById('issue-popup'))closeIssue();}
+function openRoad(n){
+var item=roadItems[n];if(!item)return;
+document.getElementById('rp-title').textContent=item.title;
+document.getElementById('rp-before').innerHTML=(item.before||'').replace(/\n/g,'<br>');
+document.getElementById('rp-after').innerHTML=(item.after||'').replace(/\n/g,'<br>');
+var sc=getScreenshots();var html='';
+if(item.screenshotKey&&sc[item.screenshotKey]){
+var _imgUrl2=sc[item.screenshotKey]!==sc.FULL?sc[item.screenshotKey]:sc.FULL;
+var _top2=(SECTION_POS[item.screenshotKey]||{top:0}).top;
+var _ty2=sc[item.screenshotKey]!==sc.FULL?0:_top2;
+html+='<div class=\"popup-img-label\">&#128248; Aktuální stav k opravě</div>';
+html+='<div style=\"overflow:hidden;border-radius:10px;border:2px solid #dc2626;height:480px;position:relative;\">'+'<img src=\"'+_imgUrl2+'\" style=\"width:100%;height:auto;display:block;transform:translateY(-'+_ty2+'%);transform-origin:top left;\">'+'<div style=\"position:absolute;bottom:0;left:0;right:0;background:rgba(220,38,38,.88);padding:.35rem .75rem;font-size:.7rem;font-weight:700;color:#fff;\">&#9888; '+item.title+'</div>'+'</div>';
+}
+html+='<div class="popup-img-label" style="margin-top:1.25rem;">Grafický návrh změny</div>';
+html+=buildWireframe(item);
+html+='<div class="popup-img-label" style="margin-top:1rem;">Instrukce pro webmastera</div>';
+html+=item.wireframe;
+document.getElementById('rp-body').innerHTML=html;
+document.getElementById('road-popup').classList.add('visible');
+document.body.style.overflow='hidden';
+}
+function closeRoad(){document.getElementById('road-popup').classList.remove('visible');document.body.style.overflow='';}
+function closeRoadOnBg(e){if(e.target===document.getElementById('road-popup'))closeRoad();}
+function openPotential(){document.getElementById("pot-pct").textContent="+55.5%";document.getElementById("pot-summary").textContent="≈ +55.5% — reálně dosažitelné při implementaci";document.getElementById("potential-items").innerHTML="<div style=\"display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.1rem;\"><div style=\"width:36px;height:36px;border-radius:50%;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;flex-shrink:0;\">1</div><div style=\"flex:1;\"><div style=\"font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.15rem;\">Přestat schovávat hlavní sdělení do slideru (a dát jasný headline + CTA)</div><div style=\"font-size:.75rem;color:#6b7280;\">vysoký (≈ +10–25 % na proklik do katalogu / zahájení nákupu)</div></div><div style=\"font-size:1.1rem;font-weight:800;color:#22c55e;white-space:nowrap;\">+22%</div></div><div style=\"display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.1rem;\"><div style=\"width:36px;height:36px;border-radius:50%;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;flex-shrink:0;\">2</div><div style=\"flex:1;\"><div style=\"font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.15rem;\">Zviditelnit USP hned nahoře (důvěra v prvních 5 vteřinách)</div><div style=\"font-size:.75rem;color:#6b7280;\">střední až vysoký (≈ +5–15 % na proklik do produktů, snížení odchodů)</div></div><div style=\"font-size:1.1rem;font-weight:800;color:#22c55e;white-space:nowrap;\">+17%</div></div><div style=\"display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.1rem;\"><div style=\"width:36px;height:36px;border-radius:50%;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;flex-shrink:0;\">3</div><div style=\"flex:1;\"><div style=\"font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.15rem;\">Opravit a sjednotit cesty v kategoriích (zbytečné úniky a 404 riziko)</div><div style=\"font-size:.75rem;color:#6b7280;\">střední (≈ +2–6 % méně ztrát na navigaci)</div></div><div style=\"font-size:1.1rem;font-weight:800;color:#22c55e;white-space:nowrap;\">+11%</div></div><div style=\"display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.1rem;\"><div style=\"width:36px;height:36px;border-radius:50%;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;flex-shrink:0;\">4</div><div style=\"flex:1;\"><div style=\"font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.15rem;\">Homepage produkty: přidat „Do košíku“ a rychlou volbu variant</div><div style=\"font-size:.75rem;color:#6b7280;\">vysoký (≈ +8–20 % více add-to-cart z homepage)</div></div><div style=\"font-size:1.1rem;font-weight:800;color:#22c55e;white-space:nowrap;\">+6%</div></div>";document.getElementById("potential-popup").classList.add("visible");document.body.style.overflow="hidden";}function closePotential(){document.getElementById("potential-popup").classList.remove("visible");document.body.style.overflow="";}
+
+function goToSlide(id) {
+  var el = document.getElementById(id);
+  if (el) el.scrollIntoView({behavior:'smooth'});
+}
+
+// Nav active state
+var sections = ['slide-title','slide-current','slide-improved','slide-roadmap'];
+var navBtns = document.querySelectorAll('.nav-btn');
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      var i = sections.indexOf(e.target.id);
+      navBtns.forEach(function(b,j){b.classList.toggle('active',i===j);});
+    }
+  });
+},{threshold:0.1,rootMargin:'-10% 0px -80% 0px'});
+sections.forEach(function(id){var el=document.getElementById(id);if(el)obs.observe(el);});window.addEventListener('scroll',function(){var t=window.scrollY+100;var a=0;sections.forEach(function(id,i){var el=document.getElementById(id);if(el&&el.offsetTop<=t)a=i;});navBtns.forEach(function(b,j){b.classList.toggle('active',a===j);});},{passive:true});
+
+document.addEventListener('keydown', function(e) {
+  if(e.key==='Escape'){closeIssue();closeRoad();closeScore();}
+});
+
+function openScore() {
+  document.getElementById('score-popup').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+function closeScore() {
+  document.getElementById('score-popup').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+function closeScoreOnBg(e) {
+  if(e.target===document.getElementById('score-popup')) closeScore();
+}
+
+// Event delegation for hotspots
+document.addEventListener("click",function(e){var hs=e.target.closest(".hotspot");if(hs){var n=parseInt(hs.getAttribute("data-issue"));if(n)openIssue(n);}});
+function openGlossary(){var p=document.getElementById("glossary-popup");if(p){p.classList.add("visible");document.body.style.overflow="hidden";}}
+function closeGlossary(){var p=document.getElementById("glossary-popup");if(p){p.classList.remove("visible");document.body.style.overflow="";}}
+</script>
+</body>
+</html>
