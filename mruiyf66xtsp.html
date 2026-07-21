@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CRO Audit — audit.kaitechinvest.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--g0:#052e16;--g1:#14532d;--g2:#15803d;--g3:#16a34a;--g4:#22c55e;--g5:#86efac;--g6:#dcfce7;--g7:#f0fdf4;--red:#dc2626;--red-lt:#fee2e2;--amber:#d97706;--amber-lt:#fef3c7;--blue:#1d4ed8;--blue-lt:#dbeafe;--gray0:#111827;--gray1:#374151;--gray2:#6b7280;--gray3:#d1d5db;--gray4:#f9fafb;--white:#ffffff;--radius:12px;--shadow:0 20px 60px rgba(0,0,0,.12),0 4px 16px rgba(0,0,0,.08);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:#111827;color:#fff;overflow-x:hidden;}
+/* NAV */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:56px;background:rgba(5,46,22,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(134,239,172,.15);}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.1rem;color:#86efac;}
+.nav-links{display:flex;gap:.25rem;}
+.nav-btn{padding:.45rem 1.1rem;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;color:rgba(255,255,255,.65);background:transparent;transition:all .2s;}
+.nav-btn:hover,.nav-btn.active{color:#fff;background:rgba(134,239,172,.15);}
+.nav-score{font-size:.78rem;font-weight:600;color:#dc2626;background:#fee2e2;padding:.35rem .85rem;border-radius:20px;}
+/* SLIDES */
+.slide{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 0 60px;position:relative;}
+/* SLIDE 1 */
+#slide-title{background:linear-gradient(135deg,#052e16 0%,#0a4a25 50%,#052e16 100%);overflow:hidden;}
+.title-orbs{position:absolute;inset:0;pointer-events:none;}
+.orb{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(34,197,94,.25) 0%,transparent 70%);}
+.orb1{width:600px;height:600px;top:-200px;right:-150px;}
+.orb2{width:400px;height:400px;bottom:-100px;left:-100px;}
+.orb3{width:300px;height:300px;top:50%;right:25%;transform:translateY(-50%);background:radial-gradient(circle,rgba(134,239,172,.12) 0%,transparent 70%);}
+.title-content{max-width:1100px;margin:0 auto;padding:0 3rem;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;position:relative;z-index:1;}
+.title-label{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#86efac;background:rgba(134,239,172,.12);border:1px solid rgba(134,239,172,.25);padding:.4rem 1rem;border-radius:20px;margin-bottom:1.5rem;}
+.title-label::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.title-h1{font-family:'Playfair Display',serif;font-size:clamp(3rem,5vw,5rem);font-weight:900;line-height:1.05;color:#fff;margin-bottom:1rem;}
+.title-h1 span{color:#22c55e;}
+.title-sub{font-size:1.15rem;color:rgba(255,255,255,.6);font-weight:300;line-height:1.6;margin-bottom:2.5rem;max-width:520px;}
+.title-agenda{display:flex;gap:.75rem;flex-wrap:wrap;}
+.agenda-pill{display:flex;align-items:center;gap:.6rem;padding:.6rem 1.2rem;border-radius:10px;border:1px solid rgba(134,239,172,.2);background:rgba(134,239,172,.06);font-size:.85rem;color:rgba(255,255,255,.8);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.agenda-pill:hover{background:rgba(134,239,172,.15);border-color:rgba(134,239,172,.4);color:#fff;}
+.agenda-pill .num{color:#22c55e;font-weight:700;font-size:.8rem;}
+.score-cards{display:flex;flex-direction:column;gap:1rem;}
+.score-card{background:rgba(255,255,255,.05);border:1px solid rgba(134,239,172,.15);border-radius:12px;padding:1.4rem 2rem;text-align:center;min-width:180px;}
+.score-val{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;line-height:1;margin-bottom:.4rem;}
+.score-card:nth-child(1) .score-val{color:#dc2626;}
+.score-card:nth-child(2) .score-val{color:#22c55e;}
+.score-card:nth-child(3) .score-val{color:#d97706;}
+.score-lbl{font-size:.78rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;}
+/* SLIDE 2 */
+#slide-current{background:#0d1117;padding:80px 0;}
+.slide-header{max-width:1200px;margin:0 auto;padding:0 3rem 2rem;display:flex;align-items:flex-end;justify-content:space-between;}
+.slide-num{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:rgba(134,239,172,.2);line-height:1;margin-right:1rem;}
+.slide-title-block{display:flex;align-items:flex-end;gap:1rem;}
+.slide-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:#fff;}
+.slide-sub{font-size:.9rem;color:#6b7280;margin-left:.5rem;margin-bottom:.35rem;}
+html{scroll-behavior:smooth;}.slide-badge{font-size:.75rem;font-weight:700;padding:.35rem .9rem;border-radius:20px;background:#fee2e2;color:#dc2626;cursor:pointer;text-decoration:none;display:inline-block;transition:transform .15s,box-shadow .15s;}.slide-badge:hover{transform:scale(1.06);box-shadow:0 0 0 3px rgba(220,38,38,.25);}.roast-section:target,.roast-hit{animation:roastFlash 1.6s ease;}@keyframes roastFlash{0%{background:rgba(220,38,38,.14);}100%{background:transparent;}}
+.browser-wrap{max-width:1200px;margin:0 auto;padding:0 3rem;display:grid;grid-template-columns:280px 1fr;gap:2rem;align-items:start;}
+.issues-panel{position:sticky;top:80px;}
+.issues-panel-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#6b7280;margin-bottom:1rem;font-weight:600;}
+.issue-btn{width:100%;text-align:left;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.9rem 1rem;margin-bottom:.6rem;cursor:pointer;transition:all .22s;display:flex;align-items:flex-start;gap:.75rem;color:rgba(255,255,255,.7);font-family:'DM Sans',sans-serif;}
+.issue-btn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);color:#fff;}
+.issue-btn.active{border-color:#dc2626;background:rgba(220,38,38,.08);color:#fff;}
+.issue-sev{font-size:.62rem;font-weight:700;padding:.2rem .55rem;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.sev-crit{background:#fee2e2;color:#dc2626;}
+.sev-high{background:#fef3c7;color:#d97706;}
+.sev-med{background:#dbeafe;color:#1d4ed8;}
+.issue-btn-text{font-size:.84rem;line-height:1.4;}
+.issue-btn-text strong{display:block;font-size:.88rem;margin-bottom:.2rem;}
+.browser-frame{border-radius:14px;overflow:hidden;box-shadow:var(--shadow);background:#1e1e1e;}
+.browser-chrome{background:#2d2d2d;padding:.6rem 1rem;display:flex;align-items:center;gap:.75rem;}
+.traffic-lights{display:flex;gap:.4rem;}
+.tl{width:10px;height:10px;border-radius:50%;}
+.tl-r{background:#ff5f56;}.tl-y{background:#ffbd2e;}.tl-g{background:#27c93f;}
+.url-bar{flex:1;background:#3c3c3c;border-radius:6px;padding:.3rem .75rem;font-size:.75rem;color:#aaa;text-align:center;}
+.screenshot-container{position:relative;}
+.screenshot-img{width:100%;display:block;}
+.hotspot{position:absolute;border-radius:6px;border:2.5px solid transparent;cursor:pointer;transition:all .2s;}
+.hotspot:hover,.hotspot.active{border-color:#dc2626;background:rgba(220,38,38,.12);box-shadow:0 0 0 4px rgba(220,38,38,.15);}
+.hotspot-label{position:absolute;top:-32px;left:0;background:#dc2626;color:#fff;font-size:.65rem;font-weight:700;padding:.25rem .65rem;border-radius:4px;white-space:nowrap;opacity:0;transition:opacity .15s;pointer-events:none;z-index:10;}
+.hotspot:hover .hotspot-label,.hotspot.active .hotspot-label{opacity:1;}
+/* POPUPS */
+.issue-popup{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .25s;}
+.issue-popup.visible{opacity:1;pointer-events:auto;}
+.popup-card{background:#16191f;border:1px solid rgba(255,255,255,.1);border-radius:20px;width:min(900px,92vw);max-height:88vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.5);transform:translateY(20px) scale(.97);transition:transform .28s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.issue-popup.visible .popup-card{transform:translateY(0) scale(1);}
+.popup-top{display:grid;grid-template-columns:1fr 1fr;border-radius:20px 20px 0 0;overflow:hidden;}
+.popup-problem{padding:2rem;background:linear-gradient(135deg,#1a0a0a,#1e0d0d);border-right:1px solid rgba(255,255,255,.06);}
+.popup-solution{padding:2rem;background:linear-gradient(135deg,#071a10,#091e14);}
+.popup-section-label{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.label-problem{color:#dc2626;}
+.label-solution{color:#22c55e;}
+.popup-section-label::before{content:'';width:16px;height:2px;border-radius:1px;}
+.label-problem::before{background:#dc2626;}
+.label-solution::before{background:#22c55e;}
+.popup-issue-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:#fff;margin-bottom:.75rem;line-height:1.3;}
+.popup-problem-text,.popup-fix-text{font-size:.9rem;line-height:1.65;color:rgba(255,255,255,.72);}
+.popup-bottom{padding:1.5rem 2rem;border-top:1px solid rgba(255,255,255,.06);}
+.popup-img-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#6b7280;margin-bottom:.75rem;font-weight:600;}
+.popup-screenshot{width:100%;border-radius:10px;display:block;border:1px solid rgba(255,255,255,.08);}
+.popup-close{position:absolute;top:1.25rem;right:1.25rem;width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .15s;font-family:'DM Sans',sans-serif;}
+.popup-close:hover{background:rgba(255,255,255,.2);}
+/* WF */
+.wf-panel{background:#0d1117;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1rem;font-size:.8rem;}
+.wf-nav{background:#fff;border-radius:6px;padding:.6rem 1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;}
+.wf-nav-item{padding:.3rem .75rem;border-radius:6px;font-size:.72rem;font-weight:600;background:#f3f4f6;color:#374151;white-space:nowrap;}
+.wf-nav-cta{background:#15803d;color:#fff;margin-left:auto;padding:.3rem .9rem;border-radius:6px;font-size:.72rem;font-weight:700;}
+.wf-hero-block{background:#f0fdf4;border-radius:6px;padding:1rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:.5rem;}
+.wf-h1{font-size:.95rem;font-weight:800;color:#14532d;line-height:1.3;margin-bottom:.5rem;}
+.wf-p{font-size:.7rem;color:#374151;margin-bottom:.5rem;line-height:1.4;}
+.wf-btn{display:inline-block;background:#15803d;color:#fff;padding:.35rem .85rem;border-radius:6px;font-size:.7rem;font-weight:700;margin-right:.4rem;margin-bottom:.35rem;}
+.wf-btn-sec{background:#fff;color:#15803d;border:1.5px solid #15803d;}
+.wf-trust{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.35rem;}
+.wf-trust-item{background:#dcfce7;color:#15803d;padding:.2rem .5rem;border-radius:10px;font-size:.62rem;font-weight:600;}
+.wf-img-ph{background:#d1fae5;border-radius:8px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;color:#15803d;font-size:.75rem;font-weight:600;}
+.wf-usp-bar{background:#15803d;border-radius:6px;padding:.5rem 1rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.5rem;}
+.wf-usp-item{color:#fff;font-size:.65rem;font-weight:600;}
+.wf-cats{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;margin-bottom:.5rem;}
+.wf-cat{background:#fff;border:1px solid #d1fae5;border-radius:6px;padding:.5rem;}
+.wf-cat-name{font-size:.65rem;font-weight:700;color:#14532d;margin-bottom:.25rem;}
+.wf-cat-desc{font-size:.58rem;color:#6b7280;line-height:1.3;}
+.wf-cat-price{font-size:.62rem;font-weight:700;color:#15803d;margin-top:.25rem;}
+.wf-prods{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+.wf-prod{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:.75rem;}
+.wf-prod-badge{background:#fef3c7;color:#92400e;font-size:.55rem;font-weight:700;padding:.15rem .4rem;border-radius:10px;display:inline-block;margin-bottom:.4rem;}
+.wf-prod-img{background:#f0fdf4;border-radius:4px;height:50px;margin-bottom:.4rem;display:flex;align-items:center;justify-content:center;color:#15803d;font-size:.65rem;font-weight:600;}
+.wf-prod-name{font-size:.65rem;font-weight:700;color:#111;}
+.wf-prod-price{font-size:.7rem;font-weight:700;color:#15803d;margin-top:.2rem;}
+.wf-reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+.wf-review{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:.75rem;}
+.wf-stars{color:#d97706;font-size:.7rem;margin-bottom:.3rem;}
+.wf-review-text{font-size:.62rem;color:#374151;line-height:1.4;font-style:italic;margin-bottom:.3rem;}
+.wf-reviewer{font-size:.6rem;color:#6b7280;font-weight:600;}
+.road-step{display:flex;align-items:flex-start;gap:.85rem;padding:.85rem 1rem;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);margin-bottom:.4rem;}
+.road-step-icon{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:#15803d;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;margin-top:1px;}
+.road-step-text{font-size:.88rem;color:rgba(255,255,255,.8);line-height:1.5;}
+.road-step-text strong{color:#fff;display:block;font-size:.9rem;}
+/* SLIDE 3 */
+#slide-improved{background:linear-gradient(180deg,#071a10 0%,#0a2218 100%);}
+.improved-layout{max-width:1200px;margin:0 auto;padding:0 3rem;}
+.browser-full{border-radius:16px;overflow:hidden;box-shadow:var(--shadow);background:#1e1e1e;margin-top:2rem;}
+.section-intro{max-width:1200px;margin:0 auto;padding:0 3rem 2rem;}
+.tag-pill{display:inline-flex;gap:.4rem;align-items:center;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:.35rem .9rem;border-radius:20px;margin-bottom:1rem;}
+.tag-improved{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2);}
+.tag-roadmap{background:rgba(29,78,216,.1);color:#60a5fa;border:1px solid rgba(29,78,216,.2);}
+h2.sec-title{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:.5rem;}
+p.sec-sub{font-size:.95rem;color:#6b7280;}
+/* SLIDE 4 */
+#slide-roadmap{background:#0d1117;}
+.roadmap-grid{max-width:1100px;margin:0 auto;padding:0 3rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.road-card{appearance:none;-webkit-appearance:none;font-family:'DM Sans',sans-serif;color:inherit;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1.4rem 1.5rem;cursor:pointer;transition:all .22s;display:flex;align-items:flex-start;gap:1rem;}
+.road-card:hover{background:rgba(134,239,172,.06);border-color:rgba(134,239,172,.25);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.road-num{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;}
+.road-content{flex:1;}
+.road-title{font-weight:600;font-size:.95rem;color:#fff;margin-bottom:.3rem;}
+.road-detail{font-size:.8rem;color:#6b7280;line-height:1.5;}
+.road-meta{display:flex;gap:.5rem;align-items:center;margin-top:.75rem;flex-wrap:wrap;}
+.road-effort{font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:20px;}
+.effort-low{background:#dcfce7;color:#16a34a;}
+.effort-med{background:#fef3c7;color:#d97706;}
+.road-stars{font-size:.85rem;color:#d97706;}
+.road-week{margin-left:auto;font-size:.7rem;font-weight:600;color:#6b7280;background:rgba(255,255,255,.05);padding:.2rem .6rem;border-radius:6px;}
+.road-click-hint{font-size:.7rem;color:rgba(134,239,172,.5);margin-top:.5rem;transition:color .2s;}
+.road-card:hover .road-click-hint{color:rgba(134,239,172,.9);}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(134,239,172,.2);border-radius:3px;}
+.score-card-clickable{cursor:pointer;transition:border-color .2s,background .2s;}
+.score-card-clickable:hover{border-color:rgba(220,38,38,.5);background:rgba(220,38,38,.06);}
+.score-hint{font-size:.68rem;color:rgba(220,38,38,.6);margin-top:.5rem;transition:color .2s;}
+.score-card-clickable:hover .score-hint{color:#dc2626;}
+.score-popup{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .25s;}
+.score-popup.visible{opacity:1;pointer-events:auto;}
+.score-popup-card{background:#16191f;border:1px solid rgba(220,38,38,.25);border-radius:20px;width:min(820px,92vw);max-height:88vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.6);transform:translateY(20px) scale(.97);transition:transform .28s cubic-bezier(.34,1.56,.64,1);position:relative;padding:2.5rem;}
+.score-popup.visible .score-popup-card{transform:translateY(0) scale(1);}
+.score-criteria{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.5rem 0;}
+.score-criterion{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:1rem 1.1rem;display:flex;align-items:flex-start;gap:.85rem;}
+.sc-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:.3rem;flex-shrink:0;}
+.sc-bar-bg{width:6px;height:52px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;position:relative;}
+.sc-bar-fill{position:absolute;bottom:0;left:0;width:100%;border-radius:3px;}
+.sc-score-num{font-size:.65rem;font-weight:700;}
+.sc-title{font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.25rem;}
+.sc-desc{font-size:.75rem;color:#6b7280;line-height:1.5;}
+.roast-section{border-top:1px solid rgba(255,255,255,.08);padding-top:1.5rem;}
+.roast-label{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#dc2626;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.roast-label::before{content:'';width:16px;height:2px;background:#dc2626;border-radius:1px;}
+.roast-quote{font-size:.88rem;color:rgba(255,255,255,.72);line-height:1.75;font-style:italic;border-left:2px solid rgba(220,38,38,.4);padding-left:1rem;}
+.score-card-clickable{cursor:pointer;transition:border-color .2s,background .2s;}.score-card-clickable:hover{border-color:rgba(134,239,172,.35);background:rgba(134,239,172,.05);}.score-hint{font-size:.68rem;margin-top:.4rem;}.gl-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:.85rem 1rem;margin-bottom:.1rem;}.gl-term{font-size:.9rem;font-weight:700;color:#86efac;margin-bottom:.3rem;}.gl-def{font-size:.82rem;color:rgba(255,255,255,.72);line-height:1.6;}</style>
+</head>
+<body>
+<nav class="top-nav">
+  <div class="nav-logo">audit.kaitechinvest.com — CRO Audit</div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="goToSlide('slide-title')">Úvod</button>
+    <button class="nav-btn" onclick="goToSlide('slide-current')">01 Aktuální stav</button>
+    <button class="nav-btn" onclick="goToSlide('slide-improved')">02 Navrhovaná podoba</button>
+    <button class="nav-btn" onclick="goToSlide('slide-roadmap')">03 Roadmapa</button>
+  </div>
+  <button onclick="openGlossary()" style="padding:.4rem .85rem;border-radius:8px;border:1px solid rgba(134,239,172,.3);background:transparent;color:#86efac;cursor:pointer;font-size:.8rem;font-weight:500;margin-right:.5rem;">&#128214; Slovníček</button><div class="nav-score">Conversion score: 43/100</div>
+</nav>
+
+<!-- ═══════════════════════════ SLIDE 1: TITLE ═══════════════════════════ -->
+<section class="slide" id="slide-title">
+  <div class="title-orbs">
+    <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  </div>
+  <div class="title-content">
+    <div>
+      <div class="title-label">CRO Audit · 21. ČERVENCE 2026</div>
+      <h1 class="title-h1">audit<span>.kaitechinvest.com</span><br>má potenciál<br>+53.5% konverzí</h1>
+      <p class="title-sub">Analýza homepage odhalila 10 prioritních bodů, které zákazníky odrazují od nákupu. Ukážeme kde problém je a jak ho opravit.</p>
+      <div class="title-agenda">
+        <button class="agenda-pill" onclick="goToSlide('slide-current')"><span class="num">01</span> Aktuální stav webu</button>
+        <button class="agenda-pill" onclick="goToSlide('slide-improved')"><span class="num">02</span> Navrhovaná podoba</button>
+        <button class="agenda-pill" onclick="goToSlide('slide-roadmap')"><span class="num">03</span> Roadmapa oprav</button>
+      </div><div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:14px;padding:1.25rem 1.5rem;margin-top:1.5rem;max-width:520px;"><div style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#86efac;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem;">ODHADOVANÝ PŘÍNOS OPRAV<span title="Vzorec: 100 návštěvníků/den × 30 dní × 2 % konverze × 3 000 Kč objednávka × 53.5 % potenciál oprav" style="cursor:help;width:15px;height:15px;border-radius:50%;border:1px solid rgba(134,239,172,.5);display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;color:rgba(134,239,172,.8);">?</span></div><div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;"><div><div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#22c55e;">+96 300 Kč</div><div style="font-size:.72rem;color:rgba(255,255,255,.5);">měsíčně navíc (odhad)</div></div><div style="font-size:.78rem;color:rgba(255,255,255,.55);line-height:1.6;">Při 100 návštěvnících/den a konverzi 2 %. <span style="color:rgba(134,239,172,.7);">Skutečný dopad závisí na Vašem provozu.</span></div></div></div><div style="background:rgba(220,38,38,.05);border:1px solid rgba(220,38,38,.2);border-radius:14px;padding:1.25rem 1.5rem;margin-top:.75rem;max-width:520px;"><div style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#dc2626;margin-bottom:.75rem;">&#128293; TENTO TÝDEN ZAČNĚTE TĚMITO</div><div style="display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.55rem;"><div style="width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;">1</div><div style="font-size:.82rem;color:rgba(255,255,255,.85);line-height:1.45;">Upravte headline na jasný výstup reportu</div></div><div style="display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.55rem;"><div style="width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;">2</div><div style="font-size:.82rem;color:rgba(255,255,255,.85);line-height:1.45;">Zkraťte a zpřesněte text pod headline</div></div><div style="display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.55rem;"><div style="width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;">3</div><div style="font-size:.82rem;color:rgba(255,255,255,.85);line-height:1.45;">Dejte demo report blíž k primární akci</div></div></div>
+    </div>
+    <div class="score-cards">
+      <div class="score-card score-card-clickable" onclick="openScore()" title="Klikněte pro vysvětlení">
+        <div class="score-val">43</div>
+        <div class="score-lbl">Conversion score</div>
+        <div class="score-hint">? jak jsme to změřili</div>
+      </div>
+      <div class="score-card score-card-clickable" onclick="openPotential()" style="cursor:pointer;"><div class="score-val">+53.5%</div><div class="score-lbl">Potenciál opravami</div><div class="score-hint" style="color:rgba(134,239,172,.6);font-size:.68rem;margin-top:.4rem;">? jak jsme to spočítali</div></div>
+      <div class="score-card score-card-clickable" onclick="goToSlide('slide-current')" style="cursor:pointer;"><div class="score-val">10</div><div class="score-lbl">Prioritních bodů</div><div class="score-hint" style="color:rgba(217,119,6,.6);font-size:.68rem;margin-top:.4rem;">→ zobrazit detail</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ SLIDE 2: CURRENT ═══════════════════════════ -->
+<section class="slide" id="slide-current">
+  <div class="slide-header">
+    <div class="slide-title-block">
+      <span class="slide-num">01</span>
+      <div>
+        <div class="slide-title">Aktuální stav webu</div>
+        <div class="slide-sub">Klikněte na červenou oblast — zobrazí se problém + grafický návrh řešení</div>
+      </div>
+    </div>
+    <a class="slide-badge" href="#" onclick="var r=document.getElementById('roast');if(r){r.scrollIntoView({behavior:'smooth',block:'start'});r.classList.remove('roast-hit');void r.offsetWidth;r.classList.add('roast-hit');}return false;" title="Přejít na ROAST">ROAST &#128293;</a>
+  </div>
+  <div class="browser-wrap">
+    <div class="issues-panel">
+      <div class="issues-panel-title">Nalezené problémy</div><button class="issue-btn" id="ib-1" onclick="openIssue(1)"><span class="issue-sev sev-crit">KRITICKÉ</span><div class="issue-btn-text"><strong>Upravte headline na jasný výstup reportu</strong>Headline říká problém („nekonvertuje“), ale nepojmenuje konkrétní…</div></button><button class="issue-btn" id="ib-2" onclick="openIssue(2)"><span class="issue-sev sev-crit">KRITICKÉ</span><div class="issue-btn-text"><strong>Zkraťte a zpřesněte text pod headline</strong>Subheadline je dlouhý a míchá benefity; zbytečně zvyšuje kognitiv…</div></button><button class="issue-btn" id="ib-3" onclick="openIssue(3)"><span class="issue-sev sev-high">VYSOKÉ</span><div class="issue-btn-text"><strong>Dejte demo report blíž k primární akci</strong>Demo je vedlejší odkaz; přitom je to nejsilnější „aha“ moment pro…</div></button><button class="issue-btn" id="ib-4" onclick="openIssue(4)"><span class="issue-sev sev-high">VYSOKÉ</span><div class="issue-btn-text"><strong>Přidejte trust prvky k platbě a doručení</strong>Trust bar řeší spíš „produktové vlastnosti“, ale chybí důvěra k p…</div></button><button class="issue-btn" id="ib-5" onclick="openIssue(5)"><span class="issue-sev sev-high">VYSOKÉ</span><div class="issue-btn-text"><strong>Zjemněte claimy „+40 % / +38 %“ metodikou</strong>Silná čísla bez vysvětlení mohou snižovat důvěru (hlavně u B2B de…</div></button><button class="issue-btn" id="ib-6" onclick="openIssue(6)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Přepište „Nejoblíbenější“ na konkrétní volbu</strong>„Nejoblíbenější“ bez alternativ působí jako dekorace a snižuje vn…</div></button><button class="issue-btn" id="ib-7" onclick="openIssue(7)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Zkraťte srovnání s agenturou, ať nepůsobí přestřeleně</strong>Široký rozptyl ceny může vyvolat „marketingovou nadsázku“ a obran…</div></button><button class="issue-btn" id="ib-8" onclick="openIssue(8)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>U CTA bandu zopakujte přesně co přijde po platbě</strong>CTA band je hezký, ale opakuje obecné benefity; chybí „co dostanu…</div></button><button class="issue-btn" id="ib-9" onclick="openIssue(9)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>U testimonialů doplňte „co přesně implementovali“</strong>Recenze jsou kvalitní, ale málo konkrétní na výsledek (co upravil…</div></button><button class="issue-btn" id="ib-10" onclick="openIssue(10)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Přidejte do patičky jasný „kdo za tím je“</strong>Footer má odkazy, ale chybí identifikační důvěra (IČO/země/sídlo)…</div></button>
+    </div>
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="traffic-lights"><div class="tl tl-r"></div><div class="tl tl-y"></div><div class="tl tl-g"></div></div>
+        <div class="url-bar">https://audit.kaitechinvest.com/</div>
+      </div>
+      <div class="screenshot-container">
+        <img class="screenshot-img" id="hero-screenshot" src="" alt="audit.kaitechinvest.com homepage">
+        <div class="hotspot" data-issue="1" style="top:7%;left:0%;width:100%;height:28%;"><span class="hotspot-label">⚠ Upravte headline na jasný výstup reportu — klikněte</span></div>
+        <div class="hotspot" data-issue="4" style="top:35%;left:0%;width:100%;height:10%;"><span class="hotspot-label">⚠ Přidejte trust prvky k platbě a doručení — klikněte</span></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="browser-wrap" style="display:block;">
+    <div class="roast-section" id="roast" style="margin-top:2.5rem;">
+      <div class="roast-label">ROAST — přátelsky, ale bez rukaviček</div>
+      <div class="roast-quote"><p>Designově je to hodně dobře poskládaná landing page: moderní vizuál, jasná hierarchie, rozumná délka, konzistentní CTA („Spustit CRO Audit“) a dobré vysvětlení procesu. Na první pohled působíte jako produkt, ne jako „random konzultant“ — to je velké plus.</p><p>Největší brzda konverze není estetika, ale tření okolo samotné akce: primární CTA je tlačítko s cenou „🔍 Spustit CRO Audit — 1 990 Kč“, ale uživatel vlastně pořád neví, co přesně dostane hned po zaplacení (v jaké formě, ukázka obsahu reportu, co je „interaktivní HTML report“ v praxi). Máte demo report link, ale je „secondary“ a mentálně až jako vedlejší aktivita.</p><p>Druhá věc: na stránce je hodně slibů typu „+40 %“, „+38 %“, „50+ webů“, „agentura 50 000–300 000 Kč“ — ale bez metodiky to u části publika vyvolá skepticism (hlavně u B2B/SaaS lidí). Tady stačí přidat 1–2 věty „jak to počítáme“ a trochu snížit marketingový „edge“, aby to působilo důvěryhodněji.</p><p>A třetí detail: vaše vlastní mockup v hero obsahuje texty typu „Hero bez jasné hodnoty — žádné H1 ani CTA“ a „Slider snižuje konverze o 30–50 %“, což je ironicky přesně ten typ generických/útočných claims, který si část návštěvníků přeloží jako „AI bullsh*t“. Mockup je super nápad, jen by měl být víc „ukázka formátu“ a míň „clickbait judgement“.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ SLIDE 3: IMPROVED ═══════════════════════════ -->
+<section class="slide" id="slide-improved">
+  <div class="section-intro"><div class="tag-pill tag-improved">✓ Navrhovaná podoba</div><h2 class="sec-title">Jak by stránka měla vypadat</h2><p class="sec-sub">Wireframe navrhovaných úprav — přesná představa pro zákazníka i webmastera. Celkem <strong>4 sekcí</strong> k opravě.</p></div><div class="improved-layout"><div class="browser-full"><div class="browser-chrome"><div class="traffic-lights"><div class="tl tl-r"></div><div class="tl tl-y"></div><div class="tl tl-g"></div></div><div class="url-bar" style="color:#86efac;">https://audit.kaitechinvest.com/ ✓ po opravách</div></div><div style="background:#fff;font-family:'DM Sans',sans-serif;"><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">NAV</span><span style="font-size:.58rem;color:#9ca3af;">bez změny</span></div><div style="padding:.65rem 1rem .8rem;"><div style="height:36px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#9ca3af;">NAV — bez doporučení</div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">HERO</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fee2e2;color:#dc2626;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Upravte headline na jasný výstup reportu</span></div><div style="padding:.65rem 1rem .8rem;"><div style="display:grid;grid-template-columns:1.2fr .8fr;gap:1rem;align-items:center;min-height:110px;"><div><div style="display:inline-flex;align-items:center;gap:.3rem;background:#dcfce7;border:1px solid #86efac;border-radius:20px;padding:.18rem .55rem;font-size:.56rem;font-weight:700;color:#15803d;margin-bottom:.4rem;">⭐ CTA:</div><div style="font-size:.95rem;font-weight:800;color:#14532d;line-height:1.18;margin-bottom:.35rem;">„CRO audit vaší landing page do 5 minut: 10 oprav + wireframy + roadmapa“</div><div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.4rem;"><span style="background:#15803d;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;font-size:.68rem;box-shadow:0 2px 8px rgba(21,128,61,.22);">„Spustit CRO Audit — 1 990 Kč“</span></div></div><div style="background:linear-gradient(135deg,#0d1117,#1a2744);border-radius:8px;min-height:90px;padding:.6rem;border:1px solid rgba(0,229,255,.2);display:flex;flex-direction:column;justify-content:space-between;"><div style="font-size:.52rem;font-weight:700;color:rgba(0,229,255,.7);text-transform:uppercase;letter-spacing:.08em;">✔ Report hotový</div><div style="display:flex;gap:.3rem;"><div style="background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);border-radius:4px;padding:.2rem .4rem;font-size:.52rem;font-weight:700;color:#dc2626;">⚡ KRITICKÉ</div><div style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);border-radius:4px;padding:.2rem .4rem;font-size:.52rem;font-weight:700;color:#d97706;">VYSOKÉ</div><div style="font-size:.52rem;color:rgba(255,255,255,.4);align-self:center;">+8 dalších</div></div><div style="font-size:.55rem;color:rgba(255,255,255,.5);">vaseweb.cz — CRO Audit Report</div></div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">USP</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fef3c7;color:#d97706;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Přidejte trust prvky k platbě a doručení</span></div><div style="padding:.65rem 1rem .8rem;"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;background:#14532d;border-radius:7px;padding:.55rem .75rem;"><div style="display:flex;align-items:center;gap:.35rem;"><span style="font-size:.85rem;">🔒</span><span style="color:#fff;font-size:.62rem;font-weight:600;line-height:1.3;">„Platba přes Stripe (kartou, bezpečně)“</span></div><div style="display:flex;align-items:center;gap:.35rem;"><span style="font-size:.85rem;">✉️</span><span style="color:#fff;font-size:.62rem;font-weight:600;line-height:1.3;">„Report do 3–7 minut na email“</span></div><div style="display:flex;align-items:center;gap:.35rem;"><span style="font-size:.85rem;">✉️</span><span style="color:#fff;font-size:.62rem;font-weight:600;line-height:1.3;">„Podpora: info@kaitechinvest.com“</span></div><div style="display:flex;align-items:center;gap:.35rem;"><span style="font-size:.85rem;">⚡</span><span style="color:#fff;font-size:.62rem;font-weight:600;line-height:1.3;">„Když to AI nezvládne: ruční report do 24 h“</span></div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">SOCIAL</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">U testimonialů doplňte „co přesně implementovali“</span></div><div style="padding:.65rem 1rem .8rem;"><div style="font-size:.72rem;font-weight:700;color:#14532d;text-align:center;margin-bottom:.45rem;">Co říkají zákazníci</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;"><div style="background:#fff;border:1px solid #e5e7eb;border-radius:7px;padding:.48rem .55rem;"><div style="color:#f59e0b;font-size:.7rem;margin-bottom:.18rem;">★★★★★</div><div style="font-size:.6rem;color:#374151;font-style:italic;line-height:1.4;margin-bottom:.25rem;">„Skvělá kvalita a servis“</div><div style="font-size:.55rem;color:#9ca3af;">Jana K. · Ověřený zákazník</div></div><div style="background:#fff;border:1px solid #e5e7eb;border-radius:7px;padding:.48rem .55rem;"><div style="color:#f59e0b;font-size:.7rem;margin-bottom:.18rem;">★★★★★</div><div style="font-size:.6rem;color:#374151;font-style:italic;line-height:1.4;margin-bottom:.25rem;">„Rychlé doručení“</div><div style="font-size:.55rem;color:#9ca3af;">Tomáš M. · Ověřený zákazník</div></div><div style="background:#fff;border:1px solid #e5e7eb;border-radius:7px;padding:.48rem .55rem;"><div style="color:#f59e0b;font-size:.7rem;margin-bottom:.18rem;">★★★★★</div><div style="font-size:.6rem;color:#374151;font-style:italic;line-height:1.4;margin-bottom:.25rem;">„Odborné poradenství“</div><div style="font-size:.55rem;color:#9ca3af;">Lucie P. · Ověřený zákazník</div></div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">FOOTER</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Přidejte do patičky jasný „kdo za tím je“</span></div><div style="padding:.65rem 1rem .8rem;"><div style="background:#f9fafb;border-radius:7px;padding:.6rem .8rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;"><div><div style="font-size:.55rem;font-weight:700;color:#15803d;margin-bottom:.25rem;">🔒 TRUST</div><div style="font-size:.55rem;color:#6b7280;line-height:1.65;">✓ Bezpečný nákup<br>✓ Vrácení zboží<br>✓ Platba kartou</div></div><div><div style="font-size:.55rem;font-weight:700;color:#15803d;margin-bottom:.25rem;">📧 KONTAKT</div><div style="font-size:.55rem;color:#6b7280;line-height:1.65;">✓ Kontakt · e-mail<br>✓ Odkazy · podmínky<br>✓ Podpora</div></div><div><div style="font-size:.55rem;font-weight:700;color:#15803d;margin-bottom:.25rem;">CTA</div><div style="background:#15803d;color:#fff;padding:.25rem .45rem;border-radius:4px;font-size:.55rem;font-weight:700;margin-top:.3rem;">Potřebujete pomoci? →</div></div></div></div></div></div></div></div>
+</section>
+
+<!-- ═════════ SLIDE 4: ROADMAP ═════════ -->
+<section class="slide" id="slide-roadmap">
+  <div class="section-intro">
+    <div class="tag-pill tag-roadmap">03 Roadmapa</div>
+    <h2 class="sec-title">Co opravit a v jakém pořadí</h2>
+    <p class="sec-sub">Klikněte na libovolnou kartu — otevře se náhled změny a přesné instrukce pro webmastera.</p>
+  </div>
+  <div class="roadmap-grid"><button class="road-card" onclick="openRoad(1)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">1</div><div class="road-content"><div class="road-title">Upravte headline na jasný výstup reportu</div><div class="road-detail">Headline: „CRO audit vaší landing page do 5 minut: 10 oprav + wireframy + roadma…</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fee2e2;color:#dc2626;border:1px solid rgba(220,38,38,.3);">⚡ KRITICKÉ</span><span class="road-effort effort-med">🔧 Střední effort</span><span class="road-week">Týden 1</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(2)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">2</div><div class="road-content"><div class="road-title">Zkraťte a zpřesněte text pod headline</div><div class="road-detail">Headline: (ponechat z bodu 1)  
+CTA: (ponechat)  
+Doplňte 1 větu: „Po platbě dos…</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fee2e2;color:#dc2626;border:1px solid rgba(220,38,38,.3);">⚡ KRITICKÉ</span><span class="road-effort effort-med">🔧 Střední effort</span><span class="road-week">Týden 1</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(3)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">3</div><div class="road-content"><div class="road-title">Dejte demo report blíž k primární akci</div><div class="road-detail">Přidejte nad tlačítko malý link: „Nejdřív ukázka: Zobrazit demo report →“</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fef3c7;color:#d97706;border:1px solid rgba(217,119,6,.3);">⚡ VYSOKÉ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 1</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(4)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">4</div><div class="road-content"><div class="road-title">Přidejte trust prvky k platbě a doručení</div><div class="road-detail">Přidejte 3–4 body:  
+- „Platba přes Stripe (kartou, bezpečně)“  
+- „Report do 3–…</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fef3c7;color:#d97706;border:1px solid rgba(217,119,6,.3);">⚡ VYSOKÉ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 1</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(5)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">5</div><div class="road-content"><div class="road-title">Zjemněte claimy „+40 % / +38 %“ metodikou</div><div class="road-detail">Doplňte mikrokopii: „Potenciál = odhad dle běžných CRO benchmarků, liší se dle o…</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fef3c7;color:#d97706;border:1px solid rgba(217,119,6,.3);">⚡ VYSOKÉ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(6)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">6</div><div class="road-content"><div class="road-title">Přepište „Nejoblíbenější“ na konkrétní volbu</div><div class="road-detail">Změňte štítek na „Jednorázový audit (bez předplatného)“</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(7)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">7</div><div class="road-content"><div class="road-title">Zkraťte srovnání s agenturou, ať nepůsobí přestřeleně</div><div class="road-detail">Upravte na: „Agenturní audit často stojí desítky tisíc a trvá týdny.“</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(8)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">8</div><div class="road-content"><div class="road-title">U CTA bandu zopakujte přesně co přijde po platbě</div><div class="road-detail">Headline: „Spusťte audit a do 5 minut máte report“  
+CTA: „Spustit CRO Audit — 1…</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(9)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">9</div><div class="road-content"><div class="road-title">U testimonialů doplňte „co přesně implementovali“</div><div class="road-detail">Přidejte 1 větu do 1–2 recenzí: „Upravili jsme hero a CTA podle reportu.“</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(10)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">10</div><div class="road-content"><div class="road-title">Přidejte do patičky jasný „kdo za tím je“</div><div class="road-detail">Přidejte řádek: „Provozovatel: KAI Tech (CZ)“ + IČO (pokud existuje).</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button></div>
+</section>
+<div class="score-popup" id="glossary-popup" onclick="if(event.target===this)closeGlossary()"><div class="score-popup-card" style="border-color:rgba(134,239,172,.25);max-width:700px;"><button class="popup-close" onclick="closeGlossary()" style="top:1.25rem;right:1.25rem;">×</button><div style="margin-bottom:1.5rem;"><div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#86efac;margin-bottom:.5rem;">MARKETINGOVÝ SLOVNÍČEK</div><div style="font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:.3rem;">Pojmy v tomto reportu</div><div style="font-size:.85rem;color:#6b7280;">Vysvětlení pojmů používaných v analýze.</div></div><div style="display:flex;flex-direction:column;gap:.5rem;"><div class="gl-item"><div class="gl-term">Hero sekce</div><div class="gl-def">První velká část stránky viditelná bez scrollování. Má zlomek sekundy na to, aby zákazníka zaujala.</div></div><div class="gl-item"><div class="gl-term">Carousel / Slider</div><div class="gl-def">Automaticky se měnící obrázky. Zákazník pasivně kouká místo aby klikal. Snižuje konverze oproti statickému hero bloku.</div></div><div class="gl-item"><div class="gl-term">Headline / H1</div><div class="gl-def">Hlavní nadpis stránky. Měl by jasně říct: co prodáváte, pro koho a proč zrovna u vás.</div></div><div class="gl-item"><div class="gl-term">CTA — Call to Action</div><div class="gl-def">Výzva k akci — tlačítko vedoucí k dalšímu kroku. Silné: Vybrat produkt. Slabé: Detail, Více.</div></div><div class="gl-item"><div class="gl-term">USP — Unique Selling Proposition</div><div class="gl-def">Unikátní prodejní argument — proč koupit právě u vás a ne u konkurence.</div></div><div class="gl-item"><div class="gl-term">Trust signály</div><div class="gl-def">Recenze, hodnocení, certifikáty, loga plateb. Klíčové u prémióvého nebo neznámého zboží.</div></div><div class="gl-item"><div class="gl-term">Konverzní poměr</div><div class="gl-def">Procento návštěvníků, kteří provedou akci. Zvýšení z 2 % na 3 % = o 50 % více prodejů bez více návštěvníků.</div></div><div class="gl-item"><div class="gl-term">Bounce rate</div><div class="gl-def">Procento návštěvníků, kteří odejdou bez interakce. Nad 70 % = stránka nesplňuje očekávání.</div></div><div class="gl-item"><div class="gl-term">Sociální důkaz</div><div class="gl-def">Důkaz, že jiní lidé produkt koupili. Recenze, citace, počet zákazníků přesvědčí lépe než fotografie.</div></div><div class="gl-item"><div class="gl-term">Lead / Poptávka</div><div class="gl-def">Potenciální zákazník, který projevil zájem. Mid-page CTA zachytí i nerozhodnuté.</div></div><div class="gl-item"><div class="gl-term">PDP — Product Detail Page</div><div class="gl-def">Stránka s detailem produktu. CTA zde má zásadní vliv na konverzi.</div></div></div></div></div>
+<!-- POTENTIAL POPUP -->
+<div class="score-popup" id="potential-popup" onclick="if(event.target===this)closePotential()"><div class="score-popup-card"><button class="popup-close" onclick="closePotential()" style="top:1.25rem;right:1.25rem;">×</button><div style="margin-bottom:1.5rem;"><div style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#22c55e;margin-bottom:.5rem;">ODHAD NÁRŬSTU KONVERZÍ</div><div style="font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:#22c55e;line-height:1;margin-bottom:.4rem;" id="pot-pct"></div><div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:.3rem;">Kde ten nárůst vzniká</div></div><div id="potential-items" style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem;"></div><div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:12px;padding:1rem;"><div id="pot-summary" style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:.2rem;"></div></div></div></div>
+
+<!-- ISSUE POPUP -->
+<div class="issue-popup" id="issue-popup" onclick="closeIssueOnBg(event)">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closeIssue()">✕</button>
+    <div class="popup-top">
+      <div class="popup-problem"><div class="popup-section-label label-problem">Problém</div><div class="popup-issue-title" id="popup-title"></div><div class="popup-problem-text" id="popup-problem"></div></div>
+      <div class="popup-solution"><div class="popup-section-label label-solution">Řešení</div><div style="padding-top:2.1rem;"></div><div class="popup-fix-text" id="popup-fix"></div></div>
+    </div>
+    <div class="popup-bottom" id="popup-bottom"></div>
+  </div>
+</div>
+
+<!-- ROAD POPUP -->
+<div class="issue-popup" id="road-popup" onclick="closeRoadOnBg(event)">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closeRoad()">✕</button>
+    <div class="popup-top">
+      <div class="popup-problem"><div class="popup-section-label label-problem">Před — aktuální stav</div><div class="popup-issue-title" id="rp-title"></div><div class="popup-problem-text" id="rp-before"></div></div>
+      <div class="popup-solution"><div class="popup-section-label label-solution">Po opravě</div><div style="padding-top:2.1rem;"></div><div class="popup-fix-text" id="rp-after"></div></div>
+    </div>
+    <div class="popup-bottom" id="rp-body"></div>
+  </div>
+</div>
+
+<!-- SCORE POPUP -->
+<div class="score-popup" id="score-popup" onclick="closeScoreOnBg(event)">
+  <div class="score-popup-card">
+    <button class="popup-close" onclick="closeScore()" style="top:1.25rem;right:1.25rem;">✕</button>
+    <div style="display:flex;align-items:flex-end;gap:1.5rem;margin-bottom:.5rem;">
+      <div>
+        <div style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#dc2626;margin-bottom:.5rem;">CRO SCORE · audit.kaitechinvest.com</div>
+        <div style="display:flex;align-items:baseline;gap:.25rem;">
+          <span style="font-family:'Playfair Display',serif;font-size:4.5rem;font-weight:900;color:#dc2626;line-height:1;">43</span>
+          <span style="font-family:'Playfair Display',serif;font-size:2rem;color:rgba(220,38,38,.35);">/100</span>
+        </div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#fff;margin-top:.25rem;">Jak jsme k číslu došli</div>
+        <div style="font-size:.88rem;color:#6b7280;margin-top:.25rem;">Hodnotíme 10 oblastí, každá má váhu 0–20 bodů. Součet = celkové skóre.</div>
+      </div>
+      <div style="margin-left:auto;text-align:right;flex-shrink:0;">
+        <div style="font-size:.75rem;color:#6b7280;margin-bottom:.35rem;">Průměr e-shopů v kategorii</div>
+        <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:#6b7280;">58</div>
+        <div style="font-size:.7rem;color:rgba(134,239,172,.6);margin-top:.25rem;">↑ +15 bodů k dosažení průměru</div>
+      </div>
+    </div>
+
+    <div class="score-criteria"><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:15%;background:#dc2626;"></div></div><div class="sc-score-num" style="color:#dc2626;">3/20</div></div><div><div class="sc-title">Upravte headline na jasný výstup reportu</div><div class="sc-desc">Headline říká problém („nekonvertuje“), ale nepojmenuje konkrétní výstup po zaplacení.</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:15%;background:#dc2626;"></div></div><div class="sc-score-num" style="color:#dc2626;">4/20</div></div><div><div class="sc-title">Zkraťte a zpřesněte text pod headline</div><div class="sc-desc">Subheadline je dlouhý a míchá benefity; zbytečně zvyšuje kognitivní zátěž před vyplněním URL.</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:35%;background:#d97706;"></div></div><div class="sc-score-num" style="color:#d97706;">8/20</div></div><div><div class="sc-title">Dejte demo report blíž k primární akci</div><div class="sc-desc">Demo je vedlejší odkaz; přitom je to nejsilnější „aha“ moment pro nedůvěřivé návštěvníky.</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:35%;background:#d97706;"></div></div><div class="sc-score-num" style="color:#d97706;">9/20</div></div><div><div class="sc-title">Přidejte trust prvky k platbě a doručení</div><div class="sc-desc">Trust bar řeší spíš „produktové vlastnosti“, ale chybí důvěra k platbě, doručení a podpoře.</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:35%;background:#d97706;"></div></div><div class="sc-score-num" style="color:#d97706;">10/20</div></div><div><div class="sc-title">Zjemněte claimy „+40 % / +38 %“ metodikou</div><div class="sc-desc">Silná čísla bez vysvětlení mohou snižovat důvěru (hlavně u B2B decision makerů).</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:60%;background:#1d4ed8;"></div></div><div class="sc-score-num" style="color:#1d4ed8;">14/20</div></div><div><div class="sc-title">Přepište „Nejoblíbenější“ na konkrétní volbu</div><div class="sc-desc">„Nejoblíbenější“ bez alternativ působí jako dekorace a snižuje vnímanou transparentnost.</div></div></div></div>
+
+  </div>
+</div>
+<script>
+var domainName="audit.kaitechinvest.com";
+document.getElementById("hero-screenshot").src="https://api.apiflash.com/v1/urltoimage/cache/1ov7okk4ow.jpeg?access_key=00582c03fd8c4724bbdbfe6082b8d14d";
+if(document.getElementById("img-logo"))document.getElementById("img-logo").src="";
+if(document.getElementById("img-juicer"))document.getElementById("img-juicer").style.display="none";
+if(document.getElementById("img-prod1"))document.getElementById("img-prod1").style.display="none";
+if(document.getElementById("img-prod2"))document.getElementById("img-prod2").style.display="none";
+if(document.getElementById("img-prod3"))document.getElementById("img-prod3").style.display="none";
+var SC_POS={"NAV":"center 0.0%","HERO":"center 8.0%","SLIDER":"center 8.0%","CATS":"center 34.1%","USP":"center 39.8%","PRODUCTS":"center 51.2%","PRICING":"center 85.3%","CTA":"center 98.9%","SOCIAL":"center 71.6%","FOOTER":"center 100.0%","FULL":"center top"};
+var SECTION_POS={"NAV":{"top":0,"h":7},"HERO":{"top":7,"h":28},"SLIDER":{"top":7,"h":22},"CATS":{"top":30,"h":14},"USP":{"top":35,"h":10},"PRODUCTS":{"top":45,"h":18},"PRICING":{"top":75,"h":12},"CTA":{"top":87,"h":6},"SOCIAL":{"top":63,"h":12},"FOOTER":{"top":93,"h":7}};
+var SEC_MOCKS={"NAV":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">NAV</span><span style=\"font-size:.58rem;color:#9ca3af;\">bez změny</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"height:36px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#9ca3af;\">NAV — bez doporučení</div></div></div>","HERO":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">HERO</span><span style=\"font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fee2e2;color:#dc2626;font-weight:700;\">✓ opraveno</span><span style=\"font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;\">Upravte headline na jasný výstup reportu</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"display:grid;grid-template-columns:1.2fr .8fr;gap:1rem;align-items:center;min-height:110px;\"><div><div style=\"display:inline-flex;align-items:center;gap:.3rem;background:#dcfce7;border:1px solid #86efac;border-radius:20px;padding:.18rem .55rem;font-size:.56rem;font-weight:700;color:#15803d;margin-bottom:.4rem;\">⭐ CTA:</div><div style=\"font-size:.95rem;font-weight:800;color:#14532d;line-height:1.18;margin-bottom:.35rem;\">„CRO audit vaší landing page do 5 minut: 10 oprav + wireframy + roadmapa“</div><div style=\"display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.4rem;\"><span style=\"background:#15803d;color:#fff;padding:.35rem .8rem;border-radius:6px;font-weight:700;font-size:.68rem;box-shadow:0 2px 8px rgba(21,128,61,.22);\">„Spustit CRO Audit — 1 990 Kč“</span></div></div><div style=\"background:linear-gradient(135deg,#0d1117,#1a2744);border-radius:8px;min-height:90px;padding:.6rem;border:1px solid rgba(0,229,255,.2);display:flex;flex-direction:column;justify-content:space-between;\"><div style=\"font-size:.52rem;font-weight:700;color:rgba(0,229,255,.7);text-transform:uppercase;letter-spacing:.08em;\">✔ Report hotový</div><div style=\"display:flex;gap:.3rem;\"><div style=\"background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);border-radius:4px;padding:.2rem .4rem;font-size:.52rem;font-weight:700;color:#dc2626;\">⚡ KRITICKÉ</div><div style=\"background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);border-radius:4px;padding:.2rem .4rem;font-size:.52rem;font-weight:700;color:#d97706;\">VYSOKÉ</div><div style=\"font-size:.52rem;color:rgba(255,255,255,.4);align-self:center;\">+8 dalších</div></div><div style=\"font-size:.55rem;color:rgba(255,255,255,.5);\">vaseweb.cz — CRO Audit Report</div></div></div></div></div>","USP":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">USP</span><span style=\"font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fef3c7;color:#d97706;font-weight:700;\">✓ opraveno</span><span style=\"font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;\">Přidejte trust prvky k platbě a doručení</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;background:#14532d;border-radius:7px;padding:.55rem .75rem;\"><div style=\"display:flex;align-items:center;gap:.35rem;\"><span style=\"font-size:.85rem;\">🔒</span><span style=\"color:#fff;font-size:.62rem;font-weight:600;line-height:1.3;\">„Platba přes Stripe (kartou, bezpečně)“</span></div><div style=\"display:flex;align-items:center;gap:.35rem;\"><span style=\"font-size:.85rem;\">✉️</span><span style=\"color:#fff;font-size:.62rem;font-weight:600;line-height:1.3;\">„Report do 3–7 minut na email“</span></div><div style=\"display:flex;align-items:center;gap:.35rem;\"><span style=\"font-size:.85rem;\">✉️</span><span style=\"color:#fff;font-size:.62rem;font-weight:600;line-height:1.3;\">„Podpora: info@kaitechinvest.com“</span></div><div style=\"display:flex;align-items:center;gap:.35rem;\"><span style=\"font-size:.85rem;\">⚡</span><span style=\"color:#fff;font-size:.62rem;font-weight:600;line-height:1.3;\">„Když to AI nezvládne: ruční report do 24 h“</span></div></div></div></div>","SOCIAL":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">SOCIAL</span><span style=\"font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;\">✓ opraveno</span><span style=\"font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;\">U testimonialů doplňte „co přesně implementovali“</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"font-size:.72rem;font-weight:700;color:#14532d;text-align:center;margin-bottom:.45rem;\">Co říkají zákazníci</div><div style=\"display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;\"><div style=\"background:#fff;border:1px solid #e5e7eb;border-radius:7px;padding:.48rem .55rem;\"><div style=\"color:#f59e0b;font-size:.7rem;margin-bottom:.18rem;\">★★★★★</div><div style=\"font-size:.6rem;color:#374151;font-style:italic;line-height:1.4;margin-bottom:.25rem;\">„Skvělá kvalita a servis“</div><div style=\"font-size:.55rem;color:#9ca3af;\">Jana K. · Ověřený zákazník</div></div><div style=\"background:#fff;border:1px solid #e5e7eb;border-radius:7px;padding:.48rem .55rem;\"><div style=\"color:#f59e0b;font-size:.7rem;margin-bottom:.18rem;\">★★★★★</div><div style=\"font-size:.6rem;color:#374151;font-style:italic;line-height:1.4;margin-bottom:.25rem;\">„Rychlé doručení“</div><div style=\"font-size:.55rem;color:#9ca3af;\">Tomáš M. · Ověřený zákazník</div></div><div style=\"background:#fff;border:1px solid #e5e7eb;border-radius:7px;padding:.48rem .55rem;\"><div style=\"color:#f59e0b;font-size:.7rem;margin-bottom:.18rem;\">★★★★★</div><div style=\"font-size:.6rem;color:#374151;font-style:italic;line-height:1.4;margin-bottom:.25rem;\">„Odborné poradenství“</div><div style=\"font-size:.55rem;color:#9ca3af;\">Lucie P. · Ověřený zákazník</div></div></div></div></div>","FOOTER":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">FOOTER</span><span style=\"font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;\">✓ opraveno</span><span style=\"font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;\">Přidejte do patičky jasný „kdo za tím je“</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"background:#f9fafb;border-radius:7px;padding:.6rem .8rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;\"><div><div style=\"font-size:.55rem;font-weight:700;color:#15803d;margin-bottom:.25rem;\">🔒 TRUST</div><div style=\"font-size:.55rem;color:#6b7280;line-height:1.65;\">✓ Bezpečný nákup<br>✓ Vrácení zboží<br>✓ Platba kartou</div></div><div><div style=\"font-size:.55rem;font-weight:700;color:#15803d;margin-bottom:.25rem;\">📧 KONTAKT</div><div style=\"font-size:.55rem;color:#6b7280;line-height:1.65;\">✓ Kontakt · e-mail<br>✓ Odkazy · podmínky<br>✓ Podpora</div></div><div><div style=\"font-size:.55rem;font-weight:700;color:#15803d;margin-bottom:.25rem;\">CTA</div><div style=\"background:#15803d;color:#fff;padding:.25rem .45rem;border-radius:4px;font-size:.55rem;font-weight:700;margin-top:.3rem;\">Potřebujete pomoci? →</div></div></div></div></div>"};
+var LLM_MOCKS={"1":"<section style=\"max-width:640px;margin:0 auto;padding:18px 18px 16px;background:#0b1220;border:1px solid rgba(59,130,246,.25);border-radius:16px;color:#e5e7eb;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;\">\n  <div style=\"display:inline-flex;gap:10px;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);color:#93c5fd;font-size:12px;letter-spacing:.08em;text-transform:uppercase;\">\n    <span style=\"font-weight:700;\">AI-POWERED</span><span style=\"opacity:.9;\">Výsledky za 5 minut</span>\n  </div>\n  <h1 style=\"margin:14px 0 10px;font-size:36px;line-height:1.05;font-weight:800;letter-spacing:-.02em;\">\n    CRO audit vaší landing page do 5 minut: <span style=\"color:#60a5fa;\">10 oprav + wireframy + roadmapa</span>\n  </h1>\n  <p style=\"margin:0 0 14px;max-width:56ch;color:rgba(229,231,235,.82);font-size:15px;line-height:1.6;\">\n    AI audit vaší landing page — 10 prioritních oprav s wireframy, screenshots sekcí a roadmapou pro vývojáře.\n  </p>\n  <div style=\"display:grid;grid-template-columns:1fr;gap:10px;\">\n    <div style=\"padding:12px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);color:rgba(229,231,235,.7);font-size:14px;\">\n      https://vas-web.cz\n    </div>\n    <a href=\"#\" style=\"display:block;text-align:center;padding:14px 14px;border-radius:12px;background:linear-gradient(180deg,#2f7cf7,#1e66f5);color:#fff;text-decoration:none;font-weight:800;box-shadow:0 10px 28px rgba(30,102,245,.35);\">\n      🔍 Spustit CRO Audit — 1 990 Kč\n    </a>\n  </div>\n</section>","2":"<section style=\"max-width:640px;margin:0 auto;padding:18px 18px 16px;background:#0b1220;border:1px solid rgba(59,130,246,.25);border-radius:16px;color:#e5e7eb;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;\">\n  <h2 style=\"margin:0 0 10px;font-size:34px;line-height:1.08;font-weight:800;letter-spacing:-.02em;\">\n    CRO audit vaší landing page do 5 minut: <span style=\"color:#60a5fa;\">10 oprav + wireframy + roadmapa</span>\n  </h2>\n  <p style=\"margin:0 0 8px;color:rgba(229,231,235,.82);font-size:15px;line-height:1.6;max-width:60ch;\">\n    Konkrétní copy a layout úpravy připravené k implementaci.\n  </p>\n  <p style=\"margin:0 0 14px;color:rgba(229,231,235,.72);font-size:14px;line-height:1.6;\">\n    Po platbě dostanete odkaz na report (HTML) do 3–7 minut.\n  </p>\n  <div style=\"display:flex;gap:10px;flex-wrap:wrap;align-items:center;\">\n    <a href=\"#\" style=\"display:inline-block;text-align:center;padding:14px 16px;border-radius:12px;background:linear-gradient(180deg,#2f7cf7,#1e66f5);color:#fff;text-decoration:none;font-weight:800;min-width:260px;box-shadow:0 10px 28px rgba(30,102,245,.35);\">\n      🔍 Spustit CRO Audit — 1 990 Kč\n    </a>\n    <span style=\"color:rgba(229,231,235,.6);font-size:13px;\">Bez instalace • stačí URL</span>\n  </div>\n</section>","3":"<section style=\"max-width:640px;margin:0 auto;padding:18px 18px 16px;background:#0b1220;border:1px solid rgba(59,130,246,.25);border-radius:16px;color:#e5e7eb;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;\">\n  <h2 style=\"margin:0 0 10px;font-size:34px;line-height:1.08;font-weight:800;letter-spacing:-.02em;\">\n    CRO audit vaší landing page do 5 minut: <span style=\"color:#60a5fa;\">10 oprav + wireframy + roadmapa</span>\n  </h2>\n  <p style=\"margin:0 0 14px;color:rgba(229,231,235,.78);font-size:14px;line-height:1.6;\">\n    Nejdřív ukázka: <a href=\"#\" style=\"color:#93c5fd;text-decoration:none;font-weight:700;\">📄 Zobrazit demo report →</a>\n  </p>\n  <div style=\"display:grid;grid-template-columns:1fr;gap:10px;\">\n    <div style=\"padding:12px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);color:rgba(229,231,235,.7);font-size:14px;\">https://vas-web.cz</div>\n    <a href=\"#\" style=\"display:block;text-align:center;padding:14px 14px;border-radius:12px;background:linear-gradient(180deg,#2f7cf7,#1e66f5);color:#fff;text-decoration:none;font-weight:800;box-shadow:0 10px 28px rgba(30,102,245,.35);\">\n      🔍 Spustit CRO Audit — 1 990 Kč\n    </a>\n  </div>\n</section>","4":"<section style=\"max-width:640px;margin:0 auto;padding:16px 16px;background:#0b1220;border:1px solid rgba(255,255,255,.10);border-radius:16px;color:#e5e7eb;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;\">\n  <div style=\"display:flex;gap:10px;flex-wrap:wrap;\">\n    <div style=\"flex:1;min-width:220px;padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);\">\n      <div style=\"font-weight:800;color:#93c5fd;\">Platba</div>\n      <div style=\"margin-top:6px;color:rgba(229,231,235,.78);font-size:14px;line-height:1.6;\">Platba přes Stripe (kartou, bezpečně)</div>\n    </div>\n    <div style=\"flex:1;min-width:220px;padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);\">\n      <div style=\"font-weight:800;color:#93c5fd;\">Doručení</div>\n      <div style=\"margin-top:6px;color:rgba(229,231,235,.78);font-size:14px;line-height:1.6;\">Report do 3–7 minut na email</div>\n    </div>\n    <div style=\"flex:1;min-width:220px;padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);\">\n      <div style=\"font-weight:800;color:#93c5fd;\">Podpora</div>\n      <div style=\"margin-top:6px;color:rgba(229,231,235,.78);font-size:14px;line-height:1.6;\">Podpora: info@kaitechinvest.com</div>\n    </div>\n    <div style=\"flex:1;min-width:220px;padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);\">\n      <div style=\"font-weight:800;color:#93c5fd;\">Garance doručení</div>\n      <div style=\"margin-top:6px;color:rgba(229,231,235,.78);font-size:14px;line-height:1.6;\">Když to AI nezvládne: ruční report do 24 h</div>\n    </div>\n  </div>\n</section>","5":"<section style=\"max-width:640px;margin:0 auto;padding:16px;background:#0b1220;border:1px solid rgba(255,255,255,.10);border-radius:16px;color:#e5e7eb;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;\">\n  <div style=\"display:flex;gap:10px;flex-wrap:wrap;\">\n    <div style=\"flex:1;min-width:200px;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);\">\n      <div style=\"font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(229,231,235,.55);\">Průměrný potenciál konverzí</div>\n      <div style=\"margin-top:6px;font-size:28px;font-weight:900;color:#60a5fa;\">+40 %</div>\n    </div>\n    <div style=\"flex:1;min-width:200px;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);\">\n      <div style=\"font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(229,231,235,.55);\">Zlepšení u prvních webů</div>\n      <div style=\"margin-top:6px;font-size:28px;font-weight:900;color:#60a5fa;\">+38 %</div>\n    </div>\n  </div>\n  <div style=\"margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(59,130,246,.10);border:1px solid rgba(59,130,246,.22);color:rgba(229,231,235,.78);font-size:13px;line-height:1.55;\">\n    Potenciál = odhad dle běžných CRO benchmarků, liší se dle oboru.\n  </div>\n</section>","6":"<section style=\"max-width:640px;margin:0 auto;padding:16px;background:#0b1220;border:1px solid rgba(255,255,255,.10);border-radius:16px;color:#e5e7eb;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;\">\n  <div style=\"padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(59,130,246,.28);\">\n    <div style=\"display:flex;justify-content:space-between;gap:12px;align-items:flex-start;\">\n      <div>\n        <div style=\"display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);color:#93c5fd;font-size:12px;font-weight:800;\">Jednorázový audit (bez předplatného)</div>\n        <div style=\"margin-top:10px;font-size:18px;font-weight:900;\">CRO Audit</div>\n        <div style=\"margin-top:4px;color:rgba(229,231,235,.7);font-size:13px;\">10 oprav + wireframy + roadmapa</div>\n      </div>\n      <div style=\"text-align:right;\">\n        <div style=\"font-size:28px;font-weight:900;color:#ffffff;\">1 990 Kč</div>\n        <div style=\"color:rgba(229,231,235,.6);font-size:12px;\">jednorázově</div>\n      </div>\n    </div>\n    <a href=\"#\" style=\"display:block;margin-top:14px;text-align:center;padding:14px 14px;border-radius:12px;background:linear-gradient(180deg,#2f7cf7,#1e66f5);color:#fff;text-decoration:none;font-weight:800;box-shadow:0 10px 28px rgba(30,102,245,.35);\">Spustit CRO Audit — 1 990 Kč →</a>\n  </div>\n</section>","7":"<section style=\"max-width:640px;margin:0 auto;padding:16px;background:#0b1220;border:1px solid rgba(255,255,255,.10);border-radius:16px;color:#e5e7eb;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;\">\n  <div style=\"display:flex;gap:12px;flex-wrap:wrap;align-items:stretch;\">\n    <div style=\"flex:1;min-width:240px;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);\">\n      <div style=\"font-weight:900;font-size:14px;color:#93c5fd;\">CRO Audit (AI)</div>\n      <div style=\"margin-top:6px;font-size:26px;font-weight:900;\">1 990 Kč</div>\n      <div style=\"margin-top:8px;color:rgba(229,231,235,.72);font-size:13px;line-height:1.6;\">Report do 3–7 minut, připravené k implementaci.</div>\n    </div>\n    <div style=\"flex:1;min-width:240px;padding:14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.10);\">\n      <div style=\"font-weight:900;font-size:14px;color:rgba(229,231,235,.75);\">Agenturní audit</div>\n      <div style=\"margin-top:6px;color:#e5e7eb;font-size:15px;font-weight:800;line-height:1.4;\">Často stojí desítky tisíc a trvá týdny.</div>\n      <div style=\"margin-top:8px;color:rgba(229,231,235,.60);font-size:12.5px;line-height:1.6;\">Rozsah a cena se liší podle počtu šablon, výzkumu a testování.</div>\n    </div>\n  </div>\n</section>","8":"<section style=\"max-width:640px;margin:0 auto;padding:18px;background:linear-gradient(180deg,rgba(47,124,247,.18),rgba(11,18,32,.0));border:1px solid rgba(59,130,246,.28);border-radius:18px;color:#e5e7eb;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;\">\n  <h2 style=\"margin:0 0 8px;font-size:26px;line-height:1.15;font-weight:900;letter-spacing:-.02em;\">Spusťte audit a do 5 minut máte report</h2>\n  <p style=\"margin:0 0 14px;color:rgba(229,231,235,.78);font-size:14px;line-height:1.6;\">Po platbě dostanete odkaz na report (HTML) do 3–7 minut.</p>\n  <div style=\"display:flex;gap:10px;flex-wrap:wrap;align-items:center;\">\n    <a href=\"#\" style=\"display:inline-block;text-align:center;padding:14px 16px;border-radius:12px;background:linear-gradient(180deg,#2f7cf7,#1e66f5);color:#fff;text-decoration:none;font-weight:800;min-width:280px;box-shadow:0 10px 28px rgba(30,102,245,.35);\">Spustit CRO Audit — 1 990 Kč →</a>\n    <div style=\"color:rgba(229,231,235,.62);font-size:13px;line-height:1.4;\">Platba přes Stripe • podpora: info@kaitechinvest.com</div>\n  </div>\n</section>","9":"<section style=\"max-width:640px;margin:0 auto;padding:16px;background:#0b1220;border:1px solid rgba(255,255,255,.10);border-radius:16px;color:#e5e7eb;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;\">\n  <div style=\"margin-bottom:12px;display:flex;align-items:center;gap:10px;\">\n    <div style=\"padding:6px 10px;border-radius:999px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);color:#93c5fd;font-size:12px;font-weight:800;\">Co říkají první uživatelé</div>\n  </div>\n  <div style=\"display:grid;grid-template-columns:1fr;gap:12px;\">\n    <div style=\"padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);\">\n      <div style=\"font-weight:800;\">„Překvapivě konkrétní a rovnou k implementaci.“</div>\n      <div style=\"margin-top:8px;color:rgba(229,231,235,.74);font-size:13.5px;line-height:1.65;\">Upravili jsme hero a CTA podle reportu a srovnali hierarchii textů. Největší přínos byly wireframy pro vývoj.</div>\n      <div style=\"margin-top:10px;color:rgba(229,231,235,.55);font-size:12.5px;\">— Uživatel CRO Auditu</div>\n    </div>\n    <div style=\"padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);\">\n      <div style=\"font-weight:800;\">„Report mi ušetřil hodiny dohadů v týmu.“</div>\n      <div style=\"margin-top:8px;color:rgba(229,231,235,.74);font-size:13.5px;line-height:1.65;\">Z reportu jsme vzali prioritu sekcí a přepsali hlavní claim. Roadmapa nám pomohla rozplánovat změny na 2 sprinty.</div>\n      <div style=\"margin-top:10px;color:rgba(229,231,235,.55);font-size:12.5px;\">— Uživatel CRO Auditu</div>\n    </div>\n  </div>\n</section>","10":"<footer style=\"max-width:640px;margin:0 auto;padding:18px 16px;background:#0b1220;border:1px solid rgba(255,255,255,.10);border-radius:16px;color:#e5e7eb;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;\">\n  <div style=\"display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;\">\n    <div style=\"min-width:240px;\">\n      <div style=\"font-weight:900;letter-spacing:.02em;\">KAI Tech · Key AI Technologies</div>\n      <div style=\"margin-top:8px;color:rgba(229,231,235,.65);font-size:13px;line-height:1.6;\">\n        Provozovatel: KAI Tech (CZ) • IČO: doplnit\n      </div>\n      <div style=\"margin-top:6px;color:rgba(229,231,235,.65);font-size:13px;line-height:1.6;\">Kontakt: info@kaitechinvest.com</div>\n    </div>\n    <div style=\"min-width:200px;display:grid;gap:8px;\">\n      <a href=\"#\" style=\"color:#93c5fd;text-decoration:none;font-weight:700;\">Jak to funguje</a>\n      <a href=\"#\" style=\"color:#93c5fd;text-decoration:none;font-weight:700;\">Co dostanete</a>\n      <a href=\"#\" style=\"color:#93c5fd;text-decoration:none;font-weight:700;\">Cena</a>\n      <a href=\"#\" style=\"color:#93c5fd;text-decoration:none;font-weight:700;\">FAQ</a>\n    </div>\n  </div>\n  <div style=\"margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.10);color:rgba(229,231,235,.50);font-size:12.5px;\">© KAI Tech</div>\n</footer>"};
+function buildWireframe(r){
+var sol=(r.solution||r.fix||'');
+var title=(r.title||'');
+var sk=r.screenshotKey||'';
+var _lp=/audit|report|saas|software|anal|konverz|landing|slu\u017eb|formul|kalkul|cro|\burl\b|tooltip|demo|klik/.test((sol+' '+title).toLowerCase());
+
+function mockWrap(m){return '<div class="wf-panel"><div style="font-size:.72rem;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">\u2713 N\u00e1vrh \u2014 jak bude sekce vypadat</div><div style="background:#fff;border-radius:10px;overflow:hidden;padding:.5rem;">'+m+'</div></div>';}
+function tryMock(){ if(typeof SEC_MOCKS!=='undefined'&&SEC_MOCKS[sk]){return mockWrap(SEC_MOCKS[sk]);} return null; }
+if(typeof LLM_MOCKS!=='undefined'&&r.num&&LLM_MOCKS[r.num]){return mockWrap(LLM_MOCKS[r.num]);}
+
+function extractLines(text, prefixes) {
+  var lines = text.split(/[\n\r]+/);
+  var results = [];
+  lines.forEach(function(line) {
+    line = line.trim().replace(/^[-\u2022\u2013]\s*/, '');
+    for (var i=0; i<prefixes.length; i++) {
+      var p = prefixes[i].toLowerCase();
+      if (line.toLowerCase().startsWith(p)) {
+        results.push(line.substring(prefixes[i].length).replace(/^[:\s]+/, '').trim());
+        break;
+      }
+    }
+  });
+  return results;
+}
+
+function qLines(t) {
+  var re=/[\u201e\u201a]([^\u201c\u201d]{3,60})[\u201c\u201d]/g,m,o=[];
+  while((m=re.exec(t))!==null){o.push(m[1].trim());}
+  return o;
+}
+
+function bulletLines(text) {
+  var lines = text.split(/[\n\r]+/);
+  var results = [];
+  lines.forEach(function(line) {
+    line = line.trim();
+    if (line.startsWith('-') || line.startsWith('\u2022') || line.startsWith('\u2013')) {
+      results.push(line.replace(/^[-\u2022\u2013]\s*/, '').trim());
+    }
+  });
+  return results;
+}
+
+function pickIcon(t){
+  t=(t||'').toLowerCase();
+  if(/stripe|platb|pci|kart|zabezpe/.test(t))return '\ud83d\udd12';
+  if(/garanc|z\u00e1ruk|vr\u00e1cen|vr\u00e1t\u00edme/.test(t))return '\u2705';
+  if(/podpor|e-?mail|kontakt|info@|telefon/.test(t))return '\u2709\ufe0f';
+  if(/doprav|dod\u00e1n|zdarma nad/.test(t))return '\ud83d\ude9a';
+  if(/rychl|minut|ihned|do 24|okam\u017eit/.test(t))return '\u26a1';
+  if(/data|gdpr|soukrom|ukl\u00e1d|p\u0159\u00edstup/.test(t))return '\ud83d\udee1\ufe0f';
+  if(/zku\u0161en|let v|oboru|expert/.test(t))return '\ud83c\udfc6';
+  if(/z\u00e1kazn|klient|web\u016f|hodnocen|recenz/.test(t))return '\u2b50';
+  return '\u2713';
+}
+
+function solutionBox(title, sol) {
+  var bullets = bulletLines(sol);
+  var solShort = sol.length > 350 ? sol.substring(0, 350) + '\u2026' : sol;
+  var html = '<div class="wf-panel">';
+  html += '<div style="font-size:.72rem;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">\u2713 Navrhovan\u00e9 \u0159e\u0161en\u00ed</div>';
+  if (bullets.length >= 2) {
+    html += '<ul style="padding-left:1rem;margin:0;">';
+    bullets.slice(0,5).forEach(function(b) {
+      html += '<li style="font-size:.82rem;color:rgba(255,255,255,.85);line-height:1.6;margin-bottom:.3rem;">' + b + '</li>';
+    });
+    html += '</ul>';
+  } else {
+    html += '<div style="font-size:.85rem;color:rgba(255,255,255,.85);line-height:1.6;">' + solShort + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+if(sk==='HERO'||sk==='SLIDER'){
+  var h1s = extractLines(sol, ['H1:', 'Headline:', 'Nadpis:', 'H1 ']);
+  var ctas = extractLines(sol, ['Prim\u00e1rn\u00ed CTA:', 'CTA:', 'Tla\u010d\u00edtko:']);
+  var subs = extractLines(sol, ['Podnadpis:', 'Popis:', 'Podtitul:', 'Subheadline:']);
+  var trusts = bulletLines(sol);
+  var qs = qLines(sol).filter(function(q){return q.length>=8;});
+  var h1 = h1s[0] || qs[0] || '';
+  var cta = ctas[0] || (h1===qs[0] ? qs[1] : qs[0]) || '';
+  if(!h1 && !cta){ return tryMock() || solutionBox(title, sol); }
+  var html = '<div class="wf-panel"><div class="wf-hero-block"' + (_lp ? ' style="display:block;"' : '') + '><div>';
+  html += '<div class="wf-h1">' + (h1 || title) + '</div>';
+  if(subs[0]) html += '<div class="wf-p">' + subs[0] + '</div>';
+  html += '<div>';
+  if(cta) html += '<span class="wf-btn">' + cta + '</span>';
+  if(ctas[1]) html += '<span class="wf-btn wf-btn-sec">' + ctas[1] + '</span>';
+  html += '</div>';
+  if(trusts.length>0) {
+    html += '<div class="wf-trust">';
+    trusts.slice(0,3).forEach(function(t){ html += '<span class="wf-trust-item">\u2713 '+t+'</span>'; });
+    html += '</div>';
+  }
+  html += '</div>' + (_lp ? '' : '<div class="wf-img-ph">Vizu\u00e1l / foto</div>') + '</div></div>';
+  return html;
+}
+
+if(sk==='NAV'){
+  var items = extractLines(sol, ['polo\u017eky:', 'menu:', 'navigace:']);
+  var html = '<div class="wf-panel"><div class="wf-nav">';
+  html += '<div style="background:#15803d;color:#fff;padding:.3rem .75rem;border-radius:5px;font-size:.72rem;font-weight:700;">Logo</div>';
+  if(items.length>0) {
+    items[0].split(/[,|]/).slice(0,5).forEach(function(item) {
+      html += '<span class="wf-nav-item">'+item.trim()+'</span>';
+    });
+    html += '<div class="wf-nav-cta">CTA \u2192</div></div>';
+    html += '</div>';
+    return html;
+  }
+  return tryMock() || solutionBox(title, sol);
+}
+
+if(sk==='USP'){
+  var uspItems = bulletLines(sol);
+  if(uspItems.length<2){ uspItems = qLines(sol); }
+  if(uspItems.length<2){ return tryMock() || ''; }
+  var html = '<div class="wf-panel"><div class="wf-usp-bar">';
+  uspItems.slice(0,4).forEach(function(item) {
+    html += '<div class="wf-usp-item">'+pickIcon(item)+' '+item+'</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+if(sk==='CATS'){
+  var catItems = bulletLines(sol);
+  if(catItems.length<2){ catItems = qLines(sol); }
+  if(catItems.length<2){ return tryMock() || solutionBox(title, sol); }
+  var html = '<div class="wf-panel"><div style="font-size:.8rem;font-weight:700;color:#fff;text-align:center;margin-bottom:.6rem;">' + (_lp ? 'Co z\u00edsk\u00e1te' : 'Co hled\u00e1te?') + '</div><div class="wf-cats">';
+  catItems.slice(0,4).forEach(function(item) {
+    var parts = item.split(':');
+    html += '<div class="wf-cat"><div class="wf-cat-name">'+parts[0].trim()+'</div>';
+    if(parts[1]) html += '<div class="wf-cat-desc">'+parts[1].trim()+'</div>';
+    html += '</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+if(sk==='PRODUCTS'){
+  var prodItems = bulletLines(sol);
+  if(prodItems.length<2){ prodItems = qLines(sol); }
+  if(prodItems.length<2){ return tryMock() || solutionBox(title, sol); }
+  var html = '<div class="wf-panel"><div style="font-size:.8rem;font-weight:700;color:#fff;text-align:center;margin-bottom:.6rem;">' + (_lp ? 'Nab\u00eddka / obsah' : 'Produkty') + '</div><div class="wf-prods">';
+  prodItems.slice(0,3).forEach(function(item, i) {
+    var parts = item.split(':');
+    html += '<div class="wf-prod"><div class="wf-prod-badge">'+pickIcon(item)+'</div><div class="wf-prod-name" style="margin-top:.35rem;">'+parts[0].trim()+'</div>';
+    if(parts[1]) html += '<div class="wf-cat-desc">'+parts[1].trim().substring(0,60)+'</div>';
+    html += '</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+if(sk==='SOCIAL'){
+  var quotes = qLines(sol);
+  var socialItems = bulletLines(sol);
+  if(quotes.length>=1){
+    var html = '<div class="wf-panel"><div style="font-size:.8rem;font-weight:700;color:#fff;text-align:center;margin-bottom:.6rem;">Soci\u00e1ln\u00ed d\u016fkaz \u2014 navrhovan\u00e9 prvky</div><div class="wf-reviews">';
+    quotes.slice(0,3).forEach(function(q){
+      html += '<div class="wf-review"><div class="wf-stars">\u2605\u2605\u2605\u2605\u2605</div><div class="wf-review-text">\u201e'+q+'\u201c</div></div>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+  if(socialItems.length>=2){
+    var html = '<div class="wf-panel">';
+    socialItems.slice(0,4).forEach(function(b){
+      html += '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:.55rem .75rem;margin-bottom:.4rem;font-size:.78rem;color:rgba(255,255,255,.85);">\u2b50 '+b+'</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+  return tryMock() || solutionBox(title, sol);
+}
+
+if(sk==='FOOTER'){
+  var fItems = bulletLines(sol);
+  if(fItems.length<2){ fItems = qLines(sol); }
+  if(fItems.length<2){ return tryMock() || solutionBox(title, sol); }
+  var html = '<div class="wf-panel"><div style="background:#0d1117;border-radius:6px;padding:.75rem 1rem;">';
+  fItems.slice(0,5).forEach(function(f){
+    html += '<div style="font-size:.68rem;color:rgba(255,255,255,.75);line-height:1.9;">'+pickIcon(f)+' '+f+'</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+if(sk==='CTA'){
+  var h1s = extractLines(sol, ['Headline:', 'H1:', 'Nadpis:']);
+  var ctas = extractLines(sol, ['Prim\u00e1rn\u00ed CTA:', 'CTA:', 'Tla\u010d\u00edtko:']);
+  var micro = extractLines(sol, ['Mikrocopy:', 'Microcopy:', 'Text:', 'Popis:']);
+  var qs = qLines(sol).filter(function(q){return q.length>=8;});
+  var h1 = h1s[0] || qs[0] || '';
+  var cta = ctas[0] || (h1===qs[0] ? qs[1] : qs[0]) || '';
+  if(!h1 && !cta){ return tryMock() || solutionBox(title, sol); }
+  var html = '<div class="wf-panel"><div class="wf-hero-block"' + (_lp ? ' style="display:block;"' : '') + '><div>';
+  if(h1) html += '<div class="wf-h1" style="font-size:.82rem;">' + h1 + '</div>';
+  if(micro[0]) html += '<div class="wf-p">' + micro[0] + '</div>';
+  if(cta) html += '<span class="wf-btn">' + cta + '</span>';
+  var ctaItems = bulletLines(sol);
+  if(ctaItems.length>0){
+    html += '<div class="wf-trust">';
+    ctaItems.slice(0,3).forEach(function(t){ html += '<span class="wf-trust-item">\u2713 '+t+'</span>'; });
+    html += '</div>';
+  }
+  html += '</div>' + (_lp ? '' : '<div class="wf-img-ph">Formul\u00e1\u0159</div>') + '</div></div>';
+  return html;
+}
+
+return tryMock() || solutionBox(title, sol);
+}
+var issues={"1":{"num":1,"title":"Upravte headline na jasný výstup reportu","problem":"Headline říká problém („nekonvertuje“), ale nepojmenuje konkrétní výstup po zaplacení.","fix":"Headline: „CRO audit vaší landing page do 5 minut: 10 oprav + wireframy + roadmapa“  \nCTA: „Spustit CRO Audit — 1 990 Kč“","solution":"Headline: „CRO audit vaší landing page do 5 minut: 10 oprav + wireframy + roadmapa“  \nCTA: „Spustit CRO Audit — 1 990 Kč“","impact":"+4 %","sev":"KRITICKÉ","screenshotKey":"HERO","kotva":"Zjistěte za 5 minut"},"2":{"num":2,"title":"Zkraťte a zpřesněte text pod headline","problem":"Subheadline je dlouhý a míchá benefity; zbytečně zvyšuje kognitivní zátěž před vyplněním URL.","fix":"Headline: (ponechat z bodu 1)  \nCTA: (ponechat)  \nDoplňte 1 větu: „Po platbě dostanete odkaz na report (HTML) do 3–7 minut.“","solution":"Headline: (ponechat z bodu 1)  \nCTA: (ponechat)  \nDoplňte 1 větu: „Po platbě dostanete odkaz na report (HTML) do 3–7 minut.“","impact":"+2 %","sev":"KRITICKÉ","screenshotKey":"HERO","kotva":"AI audit vaší landing page"},"3":{"num":3,"title":"Dejte demo report blíž k primární akci","problem":"Demo je vedlejší odkaz; přitom je to nejsilnější „aha“ moment pro nedůvěřivé návštěvníky.","fix":"Přidejte nad tlačítko malý link: „Nejdřív ukázka: Zobrazit demo report →“","solution":"Přidejte nad tlačítko malý link: „Nejdřív ukázka: Zobrazit demo report →“","impact":"+3 %","sev":"VYSOKÉ","screenshotKey":"HERO","kotva":"📄 Zobrazit demo report →"},"4":{"num":4,"title":"Přidejte trust prvky k platbě a doručení","problem":"Trust bar řeší spíš „produktové vlastnosti“, ale chybí důvěra k platbě, doručení a podpoře.","fix":"Přidejte 3–4 body:  \n• „Platba přes Stripe (kartou, bezpečně)“  \n• „Report do 3–7 minut na email“  \n• „Podpora: info@kaitechinvest.com“  \n• „Když to AI nezvládne: ruční report do 24 h“","solution":"Přidejte 3–4 body:  \n• „Platba přes Stripe (kartou, bezpečně)“  \n• „Report do 3–7 minut na email“  \n• „Podpora: info@kaitechinvest.com“  \n• „Když to AI nezvládne: ruční report do 24 h“","impact":"+4 %","sev":"VYSOKÉ","screenshotKey":"USP","kotva":"Bez instalace"},"5":{"num":5,"title":"Zjemněte claimy „+40 % / +38 %“ metodikou","problem":"Silná čísla bez vysvětlení mohou snižovat důvěru (hlavně u B2B decision makerů).","fix":"Doplňte mikrokopii: „Potenciál = odhad dle běžných CRO benchmarků, liší se dle oboru.“","solution":"Doplňte mikrokopii: „Potenciál = odhad dle běžných CRO benchmarků, liší se dle oboru.“","impact":"+2 %","sev":"VYSOKÉ","screenshotKey":"USP","kotva":"průměrný potenciál konverzí"},"6":{"num":6,"title":"Přepište „Nejoblíbenější“ na konkrétní volbu","problem":"„Nejoblíbenější“ bez alternativ působí jako dekorace a snižuje vnímanou transparentnost.","fix":"Změňte štítek na „Jednorázový audit (bez předplatného)“","solution":"Změňte štítek na „Jednorázový audit (bez předplatného)“","impact":"+1 %","sev":"STŘEDNÍ","screenshotKey":"HERO","kotva":"Nejoblíbenější"},"7":{"num":7,"title":"Zkraťte srovnání s agenturou, ať nepůsobí přestřeleně","problem":"Široký rozptyl ceny může vyvolat „marketingovou nadsázku“ a obrannou reakci.","fix":"Upravte na: „Agenturní audit často stojí desítky tisíc a trvá týdny.“","solution":"Upravte na: „Agenturní audit často stojí desítky tisíc a trvá týdny.“","impact":"+2 %","sev":"STŘEDNÍ","screenshotKey":"HERO","kotva":"50 000–300 000 Kč"},"8":{"num":8,"title":"U CTA bandu zopakujte přesně co přijde po platbě","problem":"CTA band je hezký, ale opakuje obecné benefity; chybí „co dostanu a kdy“.","fix":"Headline: „Spusťte audit a do 5 minut máte report“  \nCTA: „Spustit CRO Audit — 1 990 Kč →“","solution":"Headline: „Spusťte audit a do 5 minut máte report“  \nCTA: „Spustit CRO Audit — 1 990 Kč →“","impact":"+3 %","sev":"STŘEDNÍ","screenshotKey":"HERO","kotva":"Připraveni zjistit kde přicházíte"},"9":{"num":9,"title":"U testimonialů doplňte „co přesně implementovali“","problem":"Recenze jsou kvalitní, ale málo konkrétní na výsledek (co upravili, jaký posun).","fix":"Přidejte 1 větu do 1–2 recenzí: „Upravili jsme hero a CTA podle reportu.“","solution":"Přidejte 1 větu do 1–2 recenzí: „Upravili jsme hero a CTA podle reportu.“","impact":"+2 %","sev":"STŘEDNÍ","screenshotKey":"SOCIAL","kotva":"Co říkají první uživatelé"},"10":{"num":10,"title":"Přidejte do patičky jasný „kdo za tím je“","problem":"Footer má odkazy, ale chybí identifikační důvěra (IČO/země/sídlo) pro platící zákazníky.","fix":"Přidejte řádek: „Provozovatel: KAI Tech (CZ)“ + IČO (pokud existuje).","solution":"Přidejte řádek: „Provozovatel: KAI Tech (CZ)“ + IČO (pokud existuje).","impact":"+1 %","sev":"STŘEDNÍ","screenshotKey":"FOOTER","kotva":"KAI Tech · Key AI Technologies"}};
+var roadItems={"1":{"num":1,"title":"Upravte headline na jasný výstup reportu","problem":"Headline říká problém („nekonvertuje“), ale nepojmenuje konkrétní výstup po zaplacení.","fix":"Headline: „CRO audit vaší landing page do 5 minut: 10 oprav + wireframy + roadmapa“  \nCTA: „Spustit CRO Audit — 1 990 Kč“","solution":"Headline: „CRO audit vaší landing page do 5 minut: 10 oprav + wireframy + roadmapa“  \nCTA: „Spustit CRO Audit — 1 990 Kč“","before":"Headline říká problém („nekonvertuje“), ale nepojmenuje konkrétní výstup po zaplacení.","after":"Headline: „CRO audit vaší landing page do 5 minut: 10 oprav + wireframy + roadmapa“  \nCTA: „Spustit CRO Audit — 1 990 Kč“","screenshotKey":"HERO","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „Zjistěte za 5 minut“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Headline: „CRO audit vaší landing page do 5 minut: 10 oprav + wireframy + roadmapa“.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">2</div><div class=\"road-step-text\"><strong>Krok 2</strong> CTA: „Spustit CRO Audit — 1 990 Kč“.</div></div></div>"},"2":{"num":2,"title":"Zkraťte a zpřesněte text pod headline","problem":"Subheadline je dlouhý a míchá benefity; zbytečně zvyšuje kognitivní zátěž před vyplněním URL.","fix":"Headline: (ponechat z bodu 1)  \nCTA: (ponechat)  \nDoplňte 1 větu: „Po platbě dostanete odkaz na report (HTML) do 3–7 minut.“","solution":"Headline: (ponechat z bodu 1)  \nCTA: (ponechat)  \nDoplňte 1 větu: „Po platbě dostanete odkaz na report (HTML) do 3–7 minut.“","before":"Subheadline je dlouhý a míchá benefity; zbytečně zvyšuje kognitivní zátěž před vyplněním URL.","after":"Headline: (ponechat z bodu 1)  \nCTA: (ponechat)  \nDoplňte 1 větu: „Po platbě dostanete odkaz na report (HTML) do 3–7 minut.“","screenshotKey":"HERO","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „AI audit vaší landing page“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Headline: (ponechat z bodu 1).</div></div><div class=\"road-step\"><div class=\"road-step-icon\">2</div><div class=\"road-step-text\"><strong>Krok 2</strong> CTA: (ponechat).</div></div><div class=\"road-step\"><div class=\"road-step-icon\">3</div><div class=\"road-step-text\"><strong>Krok 3</strong> Doplňte 1 větu: „Po platbě dostanete odkaz na report (HTML) do 3–7 minut.“.</div></div></div>"},"3":{"num":3,"title":"Dejte demo report blíž k primární akci","problem":"Demo je vedlejší odkaz; přitom je to nejsilnější „aha“ moment pro nedůvěřivé návštěvníky.","fix":"Přidejte nad tlačítko malý link: „Nejdřív ukázka: Zobrazit demo report →“","solution":"Přidejte nad tlačítko malý link: „Nejdřív ukázka: Zobrazit demo report →“","before":"Demo je vedlejší odkaz; přitom je to nejsilnější „aha“ moment pro nedůvěřivé návštěvníky.","after":"Přidejte nad tlačítko malý link: „Nejdřív ukázka: Zobrazit demo report →“","screenshotKey":"HERO","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „📄 Zobrazit demo report →“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Přidejte nad tlačítko malý link: „Nejdřív ukázka: Zobrazit demo report →“.</div></div></div>"},"4":{"num":4,"title":"Přidejte trust prvky k platbě a doručení","problem":"Trust bar řeší spíš „produktové vlastnosti“, ale chybí důvěra k platbě, doručení a podpoře.","fix":"Přidejte 3–4 body:  \n- „Platba přes Stripe (kartou, bezpečně)“  \n- „Report do 3–7 minut na email“  \n- „Podpora: info@kaitechinvest.com“  \n- „Když to AI nezvládne: ruční report do 24 h“","solution":"Přidejte 3–4 body:  \n- „Platba přes Stripe (kartou, bezpečně)“  \n- „Report do 3–7 minut na email“  \n- „Podpora: info@kaitechinvest.com“  \n- „Když to AI nezvládne: ruční report do 24 h“","before":"Trust bar řeší spíš „produktové vlastnosti“, ale chybí důvěra k platbě, doručení a podpoře.","after":"Přidejte 3–4 body:  \n- „Platba přes Stripe (kartou, bezpečně)“  \n- „Report do 3–7 minut na email“  \n- „Podpora: info@kaitechinvest.com“  \n- „Když to AI nezvládne: ruční report do 24 h“","screenshotKey":"USP","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „Bez instalace“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> „Platba přes Stripe (kartou, bezpečně)“.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">2</div><div class=\"road-step-text\"><strong>Krok 2</strong> „Report do 3–7 minut na email“.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">3</div><div class=\"road-step-text\"><strong>Krok 3</strong> „Podpora: info@kaitechinvest.com“.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">4</div><div class=\"road-step-text\"><strong>Krok 4</strong> „Když to AI nezvládne: ruční report do 24 h“.</div></div></div>"},"5":{"num":5,"title":"Zjemněte claimy „+40 % / +38 %“ metodikou","problem":"Silná čísla bez vysvětlení mohou snižovat důvěru (hlavně u B2B decision makerů).","fix":"Doplňte mikrokopii: „Potenciál = odhad dle běžných CRO benchmarků, liší se dle oboru.“","solution":"Doplňte mikrokopii: „Potenciál = odhad dle běžných CRO benchmarků, liší se dle oboru.“","before":"Silná čísla bez vysvětlení mohou snižovat důvěru (hlavně u B2B decision makerů).","after":"Doplňte mikrokopii: „Potenciál = odhad dle běžných CRO benchmarků, liší se dle oboru.“","screenshotKey":"USP","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „průměrný potenciál konverzí“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Doplňte mikrokopii: „Potenciál = odhad dle běžných CRO benchmarků, liší se dle oboru.“.</div></div></div>"},"6":{"num":6,"title":"Přepište „Nejoblíbenější“ na konkrétní volbu","problem":"„Nejoblíbenější“ bez alternativ působí jako dekorace a snižuje vnímanou transparentnost.","fix":"Změňte štítek na „Jednorázový audit (bez předplatného)“","solution":"Změňte štítek na „Jednorázový audit (bez předplatného)“","before":"„Nejoblíbenější“ bez alternativ působí jako dekorace a snižuje vnímanou transparentnost.","after":"Změňte štítek na „Jednorázový audit (bez předplatného)“","screenshotKey":"HERO","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „Nejoblíbenější“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Změňte štítek na „Jednorázový audit (bez předplatného)“.</div></div></div>"},"7":{"num":7,"title":"Zkraťte srovnání s agenturou, ať nepůsobí přestřeleně","problem":"Široký rozptyl ceny může vyvolat „marketingovou nadsázku“ a obrannou reakci.","fix":"Upravte na: „Agenturní audit často stojí desítky tisíc a trvá týdny.“","solution":"Upravte na: „Agenturní audit často stojí desítky tisíc a trvá týdny.“","before":"Široký rozptyl ceny může vyvolat „marketingovou nadsázku“ a obrannou reakci.","after":"Upravte na: „Agenturní audit často stojí desítky tisíc a trvá týdny.“","screenshotKey":"HERO","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „50 000–300 000 Kč“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Upravte na: „Agenturní audit často stojí desítky tisíc a trvá týdny.“.</div></div></div>"},"8":{"num":8,"title":"U CTA bandu zopakujte přesně co přijde po platbě","problem":"CTA band je hezký, ale opakuje obecné benefity; chybí „co dostanu a kdy“.","fix":"Headline: „Spusťte audit a do 5 minut máte report“  \nCTA: „Spustit CRO Audit — 1 990 Kč →“","solution":"Headline: „Spusťte audit a do 5 minut máte report“  \nCTA: „Spustit CRO Audit — 1 990 Kč →“","before":"CTA band je hezký, ale opakuje obecné benefity; chybí „co dostanu a kdy“.","after":"Headline: „Spusťte audit a do 5 minut máte report“  \nCTA: „Spustit CRO Audit — 1 990 Kč →“","screenshotKey":"HERO","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „Připraveni zjistit kde přicházíte“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Headline: „Spusťte audit a do 5 minut máte report“.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">2</div><div class=\"road-step-text\"><strong>Krok 2</strong> CTA: „Spustit CRO Audit — 1 990 Kč →“.</div></div></div>"},"9":{"num":9,"title":"U testimonialů doplňte „co přesně implementovali“","problem":"Recenze jsou kvalitní, ale málo konkrétní na výsledek (co upravili, jaký posun).","fix":"Přidejte 1 větu do 1–2 recenzí: „Upravili jsme hero a CTA podle reportu.“","solution":"Přidejte 1 větu do 1–2 recenzí: „Upravili jsme hero a CTA podle reportu.“","before":"Recenze jsou kvalitní, ale málo konkrétní na výsledek (co upravili, jaký posun).","after":"Přidejte 1 větu do 1–2 recenzí: „Upravili jsme hero a CTA podle reportu.“","screenshotKey":"SOCIAL","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „Co říkají první uživatelé“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Přidejte 1 větu do 1–2 recenzí: „Upravili jsme hero a CTA podle reportu.“.</div></div></div>"},"10":{"num":10,"title":"Přidejte do patičky jasný „kdo za tím je“","problem":"Footer má odkazy, ale chybí identifikační důvěra (IČO/země/sídlo) pro platící zákazníky.","fix":"Přidejte řádek: „Provozovatel: KAI Tech (CZ)“ + IČO (pokud existuje).","solution":"Přidejte řádek: „Provozovatel: KAI Tech (CZ)“ + IČO (pokud existuje).","before":"Footer má odkazy, ale chybí identifikační důvěra (IČO/země/sídlo) pro platící zákazníky.","after":"Přidejte řádek: „Provozovatel: KAI Tech (CZ)“ + IČO (pokud existuje).","screenshotKey":"FOOTER","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „KAI Tech · Key AI Technologies“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Přidejte řádek: „Provozovatel: KAI Tech (CZ)“ + IČO (pokud existuje).</div></div></div>"}};
+var screenshots={};
+function getScreenshots(){var full="https://api.apiflash.com/v1/urltoimage/cache/1ov7okk4ow.jpeg?access_key=00582c03fd8c4724bbdbfe6082b8d14d";var ss={"HERO":"https://api.apiflash.com/v1/urltoimage/cache/1v5g3mm43w.jpeg?access_key=00582c03fd8c4724bbdbfe6082b8d14d","CATS":"https://api.apiflash.com/v1/urltoimage/cache/j80yg44851.jpeg?access_key=00582c03fd8c4724bbdbfe6082b8d14d","USP":"https://api.apiflash.com/v1/urltoimage/cache/jgk78006m1.jpeg?access_key=00582c03fd8c4724bbdbfe6082b8d14d","PRODUCTS":"https://api.apiflash.com/v1/urltoimage/cache/1ov7okke6w.jpeg?access_key=00582c03fd8c4724bbdbfe6082b8d14d","PRICING":"https://api.apiflash.com/v1/urltoimage/cache/1p52g66zrw.jpeg?access_key=00582c03fd8c4724bbdbfe6082b8d14d","SOCIAL":"https://api.apiflash.com/v1/urltoimage/cache/wrx069975w.jpeg?access_key=00582c03fd8c4724bbdbfe6082b8d14d","FOOTER":"https://api.apiflash.com/v1/urltoimage/cache/j492744gmw.jpeg?access_key=00582c03fd8c4724bbdbfe6082b8d14d","SLIDER":"https://api.apiflash.com/v1/urltoimage/cache/1v5g3mm43w.jpeg?access_key=00582c03fd8c4724bbdbfe6082b8d14d"};return {FULL:full,NAV:ss.NAV||full,HERO:ss.HERO||full,SLIDER:ss.SLIDER||ss.HERO||full,CATS:ss.CATS||full,USP:ss.USP||full,PRODUCTS:ss.PRODUCTS||full,PRICING:ss.PRICING||full,CTA:ss.CTA||ss.HERO||full,SOCIAL:ss.SOCIAL||full,FOOTER:ss.FOOTER||full};}function openIssue(n){
+var issue=issues[n];if(!issue)return;
+document.getElementById('popup-title').textContent=issue.title;
+document.getElementById('popup-problem').innerHTML=(issue.problem||'').replace(/\n/g,'<br>');
+if(issue.kotva){document.getElementById('popup-problem').innerHTML+='<br><span style="color:#9ca3af;font-size:.8rem;">📍 Kde: „'+issue.kotva+'“</span>';}
+document.getElementById('popup-fix').innerHTML=(issue.fix||'').replace(/\n/g,'<br>');
+var sc=getScreenshots();var html='';
+if(issue.screenshotKey&&sc[issue.screenshotKey]){
+var _imgUrl=sc[issue.screenshotKey]!==sc.FULL?sc[issue.screenshotKey]:sc.FULL;
+var _top=(SECTION_POS[issue.screenshotKey]||{top:0}).top;
+var _ty=sc[issue.screenshotKey]!==sc.FULL?0:_top;
+html+='<div class=\"popup-img-label\">&#128248; Sekce: '+issue.screenshotKey+' &mdash; top: '+_top+'%</div>';
+html+='<div style=\"overflow:hidden;border-radius:10px;border:2px solid #dc2626;height:480px;position:relative;\">'+'<img src=\"'+_imgUrl+'\" style=\"width:100%;height:auto;display:block;transform:translateY(-'+_ty+'%);transform-origin:top left;\">'+'<div style=\"position:absolute;bottom:0;left:0;right:0;background:rgba(220,38,38,.88);padding:.35rem .75rem;font-size:.7rem;font-weight:700;color:#fff;\">&#9888; '+issue.title+'</div>'+'</div>';
+}
+html+='<div class="popup-img-label" style="margin-top:1.25rem;">Grafický návrh řešení</div>';
+html+=buildWireframe(issue);
+if(issue.impact){
+  html+='<div class="popup-img-label" style="margin-top:1rem;">Očekávaný dopad</div>';
+  html+='<div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:.85rem;font-size:.85rem;color:rgba(255,255,255,.8);">'+(issue.impact||'')+'</div>';
+}
+document.getElementById('popup-bottom').innerHTML=html;
+document.querySelectorAll('.issue-btn').forEach(function(b){b.classList.remove('active');});
+var btn=document.getElementById('ib-'+n);if(btn)btn.classList.add('active');
+document.getElementById('issue-popup').classList.add('visible');
+document.body.style.overflow='hidden';
+}
+function closeIssue(){
+document.getElementById('issue-popup').classList.remove('visible');
+document.querySelectorAll('.issue-btn').forEach(function(b){b.classList.remove('active');});
+document.body.style.overflow='';
+}
+function closeIssueOnBg(e){if(e.target===document.getElementById('issue-popup'))closeIssue();}
+function openRoad(n){
+var item=roadItems[n];if(!item)return;
+document.getElementById('rp-title').textContent=item.title;
+document.getElementById('rp-before').innerHTML=(item.before||'').replace(/\n/g,'<br>');
+document.getElementById('rp-after').innerHTML=(item.after||'').replace(/\n/g,'<br>');
+var sc=getScreenshots();var html='';
+if(item.screenshotKey&&sc[item.screenshotKey]){
+var _imgUrl2=sc[item.screenshotKey]!==sc.FULL?sc[item.screenshotKey]:sc.FULL;
+var _top2=(SECTION_POS[item.screenshotKey]||{top:0}).top;
+var _ty2=sc[item.screenshotKey]!==sc.FULL?0:_top2;
+html+='<div class=\"popup-img-label\">&#128248; Aktuální stav k opravě</div>';
+html+='<div style=\"overflow:hidden;border-radius:10px;border:2px solid #dc2626;height:480px;position:relative;\">'+'<img src=\"'+_imgUrl2+'\" style=\"width:100%;height:auto;display:block;transform:translateY(-'+_ty2+'%);transform-origin:top left;\">'+'<div style=\"position:absolute;bottom:0;left:0;right:0;background:rgba(220,38,38,.88);padding:.35rem .75rem;font-size:.7rem;font-weight:700;color:#fff;\">&#9888; '+item.title+'</div>'+'</div>';
+}
+html+='<div class="popup-img-label" style="margin-top:1.25rem;">Grafický návrh změny</div>';
+html+=buildWireframe(item);
+html+='<div class="popup-img-label" style="margin-top:1rem;">Instrukce pro webmastera</div>';
+html+=item.wireframe;
+document.getElementById('rp-body').innerHTML=html;
+document.getElementById('road-popup').classList.add('visible');
+document.body.style.overflow='hidden';
+}
+function closeRoad(){document.getElementById('road-popup').classList.remove('visible');document.body.style.overflow='';}
+function closeRoadOnBg(e){if(e.target===document.getElementById('road-popup'))closeRoad();}
+function openPotential(){document.getElementById("pot-pct").textContent="+53.5%";document.getElementById("pot-summary").textContent="≈ +53.5% — reálně dosažitelné při implementaci";document.getElementById("potential-items").innerHTML="<div style=\"display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.1rem;\"><div style=\"width:36px;height:36px;border-radius:50%;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;flex-shrink:0;\">1</div><div style=\"flex:1;\"><div style=\"font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.15rem;\">Upravte headline na jasný výstup reportu</div><div style=\"font-size:.75rem;color:#6b7280;\">+4 %</div></div><div style=\"font-size:1.1rem;font-weight:800;color:#22c55e;white-space:nowrap;\">+21%</div></div><div style=\"display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.1rem;\"><div style=\"width:36px;height:36px;border-radius:50%;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;flex-shrink:0;\">2</div><div style=\"flex:1;\"><div style=\"font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.15rem;\">Zkraťte a zpřesněte text pod headline</div><div style=\"font-size:.75rem;color:#6b7280;\">+2 %</div></div><div style=\"font-size:1.1rem;font-weight:800;color:#22c55e;white-space:nowrap;\">+16%</div></div><div style=\"display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.1rem;\"><div style=\"width:36px;height:36px;border-radius:50%;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;flex-shrink:0;\">3</div><div style=\"flex:1;\"><div style=\"font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.15rem;\">Dejte demo report blíž k primární akci</div><div style=\"font-size:.75rem;color:#6b7280;\">+3 %</div></div><div style=\"font-size:1.1rem;font-weight:800;color:#22c55e;white-space:nowrap;\">+11%</div></div><div style=\"display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.1rem;\"><div style=\"width:36px;height:36px;border-radius:50%;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;flex-shrink:0;\">4</div><div style=\"flex:1;\"><div style=\"font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.15rem;\">Přidejte trust prvky k platbě a doručení</div><div style=\"font-size:.75rem;color:#6b7280;\">+4 %</div></div><div style=\"font-size:1.1rem;font-weight:800;color:#22c55e;white-space:nowrap;\">+5%</div></div>";document.getElementById("potential-popup").classList.add("visible");document.body.style.overflow="hidden";}function closePotential(){document.getElementById("potential-popup").classList.remove("visible");document.body.style.overflow="";}
+
+function goToSlide(id) {
+  var el = document.getElementById(id);
+  if (el) el.scrollIntoView({behavior:'smooth'});
+}
+
+// Nav active state
+var sections = ['slide-title','slide-current','slide-improved','slide-roadmap'];
+var navBtns = document.querySelectorAll('.nav-btn');
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      var i = sections.indexOf(e.target.id);
+      navBtns.forEach(function(b,j){b.classList.toggle('active',i===j);});
+    }
+  });
+},{threshold:0.1,rootMargin:'-10% 0px -80% 0px'});
+sections.forEach(function(id){var el=document.getElementById(id);if(el)obs.observe(el);});window.addEventListener('scroll',function(){var t=window.scrollY+100;var a=0;sections.forEach(function(id,i){var el=document.getElementById(id);if(el&&el.offsetTop<=t)a=i;});navBtns.forEach(function(b,j){b.classList.toggle('active',a===j);});},{passive:true});
+
+document.addEventListener('keydown', function(e) {
+  if(e.key==='Escape'){closeIssue();closeRoad();closeScore();}
+});
+
+function openScore() {
+  document.getElementById('score-popup').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+function closeScore() {
+  document.getElementById('score-popup').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+function closeScoreOnBg(e) {
+  if(e.target===document.getElementById('score-popup')) closeScore();
+}
+
+// Event delegation for hotspots
+document.addEventListener("click",function(e){var hs=e.target.closest(".hotspot");if(hs){var n=parseInt(hs.getAttribute("data-issue"));if(n)openIssue(n);}});
+function openGlossary(){var p=document.getElementById("glossary-popup");if(p){p.classList.add("visible");document.body.style.overflow="hidden";}}
+function closeGlossary(){var p=document.getElementById("glossary-popup");if(p){p.classList.remove("visible");document.body.style.overflow="";}}
+</script>
+</body>
+</html>
