@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CRO Audit — freshjuice.cz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--g0:#052e16;--g1:#14532d;--g2:#15803d;--g3:#16a34a;--g4:#22c55e;--g5:#86efac;--g6:#dcfce7;--g7:#f0fdf4;--red:#dc2626;--red-lt:#fee2e2;--amber:#d97706;--amber-lt:#fef3c7;--blue:#1d4ed8;--blue-lt:#dbeafe;--gray0:#111827;--gray1:#374151;--gray2:#6b7280;--gray3:#d1d5db;--gray4:#f9fafb;--white:#ffffff;--radius:12px;--shadow:0 20px 60px rgba(0,0,0,.12),0 4px 16px rgba(0,0,0,.08);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:#111827;color:#fff;overflow-x:hidden;}
+/* NAV */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:56px;background:rgba(5,46,22,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(134,239,172,.15);}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.1rem;color:#86efac;}
+.nav-links{display:flex;gap:.25rem;}
+.nav-btn{padding:.45rem 1.1rem;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;color:rgba(255,255,255,.65);background:transparent;transition:all .2s;}
+.nav-btn:hover,.nav-btn.active{color:#fff;background:rgba(134,239,172,.15);}
+.nav-score{font-size:.78rem;font-weight:600;color:#dc2626;background:#fee2e2;padding:.35rem .85rem;border-radius:20px;}
+/* SLIDES */
+.slide{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 0 60px;position:relative;}
+/* SLIDE 1 */
+#slide-title{background:linear-gradient(135deg,#052e16 0%,#0a4a25 50%,#052e16 100%);overflow:hidden;}
+.title-orbs{position:absolute;inset:0;pointer-events:none;}
+.orb{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(34,197,94,.25) 0%,transparent 70%);}
+.orb1{width:600px;height:600px;top:-200px;right:-150px;}
+.orb2{width:400px;height:400px;bottom:-100px;left:-100px;}
+.orb3{width:300px;height:300px;top:50%;right:25%;transform:translateY(-50%);background:radial-gradient(circle,rgba(134,239,172,.12) 0%,transparent 70%);}
+.title-content{max-width:1100px;margin:0 auto;padding:0 3rem;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;position:relative;z-index:1;}
+.title-label{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#86efac;background:rgba(134,239,172,.12);border:1px solid rgba(134,239,172,.25);padding:.4rem 1rem;border-radius:20px;margin-bottom:1.5rem;}
+.title-label::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.title-h1{font-family:'Playfair Display',serif;font-size:clamp(3rem,5vw,5rem);font-weight:900;line-height:1.05;color:#fff;margin-bottom:1rem;}
+.title-h1 span{color:#22c55e;}
+.title-sub{font-size:1.15rem;color:rgba(255,255,255,.6);font-weight:300;line-height:1.6;margin-bottom:2.5rem;max-width:520px;}
+.title-agenda{display:flex;gap:.75rem;flex-wrap:wrap;}
+.agenda-pill{display:flex;align-items:center;gap:.6rem;padding:.6rem 1.2rem;border-radius:10px;border:1px solid rgba(134,239,172,.2);background:rgba(134,239,172,.06);font-size:.85rem;color:rgba(255,255,255,.8);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.agenda-pill:hover{background:rgba(134,239,172,.15);border-color:rgba(134,239,172,.4);color:#fff;}
+.agenda-pill .num{color:#22c55e;font-weight:700;font-size:.8rem;}
+.score-cards{display:flex;flex-direction:column;gap:1rem;}
+.score-card{background:rgba(255,255,255,.05);border:1px solid rgba(134,239,172,.15);border-radius:12px;padding:1.4rem 2rem;text-align:center;min-width:180px;}
+.score-val{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;line-height:1;margin-bottom:.4rem;}
+.score-card:nth-child(1) .score-val{color:#dc2626;}
+.score-card:nth-child(2) .score-val{color:#22c55e;}
+.score-card:nth-child(3) .score-val{color:#d97706;}
+.score-lbl{font-size:.78rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;}
+/* SLIDE 2 */
+#slide-current{background:#0d1117;padding:80px 0;}
+.slide-header{max-width:1200px;margin:0 auto;padding:0 3rem 2rem;display:flex;align-items:flex-end;justify-content:space-between;}
+.slide-num{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:rgba(134,239,172,.2);line-height:1;margin-right:1rem;}
+.slide-title-block{display:flex;align-items:flex-end;gap:1rem;}
+.slide-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:#fff;}
+.slide-sub{font-size:.9rem;color:#6b7280;margin-left:.5rem;margin-bottom:.35rem;}
+html{scroll-behavior:smooth;}.slide-badge{font-size:.75rem;font-weight:700;padding:.35rem .9rem;border-radius:20px;background:#fee2e2;color:#dc2626;cursor:pointer;text-decoration:none;display:inline-block;transition:transform .15s,box-shadow .15s;}.slide-badge:hover{transform:scale(1.06);box-shadow:0 0 0 3px rgba(220,38,38,.25);}.roast-section:target,.roast-hit{animation:roastFlash 1.6s ease;}@keyframes roastFlash{0%{background:rgba(220,38,38,.14);}100%{background:transparent;}}
+.browser-wrap{max-width:1200px;margin:0 auto;padding:0 3rem;display:grid;grid-template-columns:280px 1fr;gap:2rem;align-items:start;}
+.issues-panel{position:sticky;top:80px;}
+.issues-panel-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#6b7280;margin-bottom:1rem;font-weight:600;}
+.issue-btn{width:100%;text-align:left;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.9rem 1rem;margin-bottom:.6rem;cursor:pointer;transition:all .22s;display:flex;align-items:flex-start;gap:.75rem;color:rgba(255,255,255,.7);font-family:'DM Sans',sans-serif;}
+.issue-btn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);color:#fff;}
+.issue-btn.active{border-color:#dc2626;background:rgba(220,38,38,.08);color:#fff;}
+.issue-sev{font-size:.62rem;font-weight:700;padding:.2rem .55rem;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.sev-crit{background:#fee2e2;color:#dc2626;}
+.sev-high{background:#fef3c7;color:#d97706;}
+.sev-med{background:#dbeafe;color:#1d4ed8;}
+.issue-btn-text{font-size:.84rem;line-height:1.4;}
+.issue-btn-text strong{display:block;font-size:.88rem;margin-bottom:.2rem;}
+.browser-frame{border-radius:14px;overflow:hidden;box-shadow:var(--shadow);background:#1e1e1e;}
+.browser-chrome{background:#2d2d2d;padding:.6rem 1rem;display:flex;align-items:center;gap:.75rem;}
+.traffic-lights{display:flex;gap:.4rem;}
+.tl{width:10px;height:10px;border-radius:50%;}
+.tl-r{background:#ff5f56;}.tl-y{background:#ffbd2e;}.tl-g{background:#27c93f;}
+.url-bar{flex:1;background:#3c3c3c;border-radius:6px;padding:.3rem .75rem;font-size:.75rem;color:#aaa;text-align:center;}
+.screenshot-container{position:relative;}
+.screenshot-img{width:100%;display:block;}
+.hotspot{position:absolute;border-radius:6px;border:2.5px solid transparent;cursor:pointer;transition:all .2s;}
+.hotspot:hover,.hotspot.active{border-color:#dc2626;background:rgba(220,38,38,.12);box-shadow:0 0 0 4px rgba(220,38,38,.15);}
+.hotspot-label{position:absolute;top:-32px;left:0;background:#dc2626;color:#fff;font-size:.65rem;font-weight:700;padding:.25rem .65rem;border-radius:4px;white-space:nowrap;opacity:0;transition:opacity .15s;pointer-events:none;z-index:10;}
+.hotspot:hover .hotspot-label,.hotspot.active .hotspot-label{opacity:1;}
+/* POPUPS */
+.issue-popup{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .25s;}
+.issue-popup.visible{opacity:1;pointer-events:auto;}
+.popup-card{background:#16191f;border:1px solid rgba(255,255,255,.1);border-radius:20px;width:min(900px,92vw);max-height:88vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.5);transform:translateY(20px) scale(.97);transition:transform .28s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.issue-popup.visible .popup-card{transform:translateY(0) scale(1);}
+.popup-top{display:grid;grid-template-columns:1fr 1fr;border-radius:20px 20px 0 0;overflow:hidden;}
+.popup-problem{padding:2rem;background:linear-gradient(135deg,#1a0a0a,#1e0d0d);border-right:1px solid rgba(255,255,255,.06);}
+.popup-solution{padding:2rem;background:linear-gradient(135deg,#071a10,#091e14);}
+.popup-section-label{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.label-problem{color:#dc2626;}
+.label-solution{color:#22c55e;}
+.popup-section-label::before{content:'';width:16px;height:2px;border-radius:1px;}
+.label-problem::before{background:#dc2626;}
+.label-solution::before{background:#22c55e;}
+.popup-issue-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:#fff;margin-bottom:.75rem;line-height:1.3;}
+.popup-problem-text,.popup-fix-text{font-size:.9rem;line-height:1.65;color:rgba(255,255,255,.72);}
+.popup-bottom{padding:1.5rem 2rem;border-top:1px solid rgba(255,255,255,.06);}
+.popup-img-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#6b7280;margin-bottom:.75rem;font-weight:600;}
+.popup-screenshot{width:100%;border-radius:10px;display:block;border:1px solid rgba(255,255,255,.08);}
+.popup-close{position:absolute;top:1.25rem;right:1.25rem;width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .15s;font-family:'DM Sans',sans-serif;}
+.popup-close:hover{background:rgba(255,255,255,.2);}
+/* WF */
+.wf-panel{background:#0d1117;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1rem;font-size:.8rem;}
+.wf-nav{background:#fff;border-radius:6px;padding:.6rem 1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;}
+.wf-nav-item{padding:.3rem .75rem;border-radius:6px;font-size:.72rem;font-weight:600;background:#f3f4f6;color:#374151;white-space:nowrap;}
+.wf-nav-cta{background:#15803d;color:#fff;margin-left:auto;padding:.3rem .9rem;border-radius:6px;font-size:.72rem;font-weight:700;}
+.wf-hero-block{background:#f0fdf4;border-radius:6px;padding:1rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:.5rem;}
+.wf-h1{font-size:.95rem;font-weight:800;color:#14532d;line-height:1.3;margin-bottom:.5rem;}
+.wf-p{font-size:.7rem;color:#374151;margin-bottom:.5rem;line-height:1.4;}
+.wf-btn{display:inline-block;background:#15803d;color:#fff;padding:.35rem .85rem;border-radius:6px;font-size:.7rem;font-weight:700;margin-right:.4rem;margin-bottom:.35rem;}
+.wf-btn-sec{background:#fff;color:#15803d;border:1.5px solid #15803d;}
+.wf-trust{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.35rem;}
+.wf-trust-item{background:#dcfce7;color:#15803d;padding:.2rem .5rem;border-radius:10px;font-size:.62rem;font-weight:600;}
+.wf-img-ph{background:#d1fae5;border-radius:8px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;color:#15803d;font-size:.75rem;font-weight:600;}
+.wf-usp-bar{background:#15803d;border-radius:6px;padding:.5rem 1rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.5rem;}
+.wf-usp-item{color:#fff;font-size:.65rem;font-weight:600;}
+.wf-cats{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;margin-bottom:.5rem;}
+.wf-cat{background:#fff;border:1px solid #d1fae5;border-radius:6px;padding:.5rem;}
+.wf-cat-name{font-size:.65rem;font-weight:700;color:#14532d;margin-bottom:.25rem;}
+.wf-cat-desc{font-size:.58rem;color:#6b7280;line-height:1.3;}
+.wf-cat-price{font-size:.62rem;font-weight:700;color:#15803d;margin-top:.25rem;}
+.wf-prods{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+.wf-prod{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:.75rem;}
+.wf-prod-badge{background:#fef3c7;color:#92400e;font-size:.55rem;font-weight:700;padding:.15rem .4rem;border-radius:10px;display:inline-block;margin-bottom:.4rem;}
+.wf-prod-img{background:#f0fdf4;border-radius:4px;height:50px;margin-bottom:.4rem;display:flex;align-items:center;justify-content:center;color:#15803d;font-size:.65rem;font-weight:600;}
+.wf-prod-name{font-size:.65rem;font-weight:700;color:#111;}
+.wf-prod-price{font-size:.7rem;font-weight:700;color:#15803d;margin-top:.2rem;}
+.wf-reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+.wf-review{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:.75rem;}
+.wf-stars{color:#d97706;font-size:.7rem;margin-bottom:.3rem;}
+.wf-review-text{font-size:.62rem;color:#374151;line-height:1.4;font-style:italic;margin-bottom:.3rem;}
+.wf-reviewer{font-size:.6rem;color:#6b7280;font-weight:600;}
+.road-step{display:flex;align-items:flex-start;gap:.85rem;padding:.85rem 1rem;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);margin-bottom:.4rem;}
+.road-step-icon{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:#15803d;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;margin-top:1px;}
+.road-step-text{font-size:.88rem;color:rgba(255,255,255,.8);line-height:1.5;}
+.road-step-text strong{color:#fff;display:block;font-size:.9rem;}
+/* SLIDE 3 */
+#slide-improved{background:linear-gradient(180deg,#071a10 0%,#0a2218 100%);}
+.improved-layout{max-width:1200px;margin:0 auto;padding:0 3rem;}
+.browser-full{border-radius:16px;overflow:hidden;box-shadow:var(--shadow);background:#1e1e1e;margin-top:2rem;}
+.section-intro{max-width:1200px;margin:0 auto;padding:0 3rem 2rem;}
+.tag-pill{display:inline-flex;gap:.4rem;align-items:center;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:.35rem .9rem;border-radius:20px;margin-bottom:1rem;}
+.tag-improved{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2);}
+.tag-roadmap{background:rgba(29,78,216,.1);color:#60a5fa;border:1px solid rgba(29,78,216,.2);}
+h2.sec-title{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:.5rem;}
+p.sec-sub{font-size:.95rem;color:#6b7280;}
+/* SLIDE 4 */
+#slide-roadmap{background:#0d1117;}
+.roadmap-grid{max-width:1100px;margin:0 auto;padding:0 3rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.road-card{appearance:none;-webkit-appearance:none;font-family:'DM Sans',sans-serif;color:inherit;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1.4rem 1.5rem;cursor:pointer;transition:all .22s;display:flex;align-items:flex-start;gap:1rem;}
+.road-card:hover{background:rgba(134,239,172,.06);border-color:rgba(134,239,172,.25);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.road-num{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;}
+.road-content{flex:1;}
+.road-title{font-weight:600;font-size:.95rem;color:#fff;margin-bottom:.3rem;}
+.road-detail{font-size:.8rem;color:#6b7280;line-height:1.5;}
+.road-meta{display:flex;gap:.5rem;align-items:center;margin-top:.75rem;flex-wrap:wrap;}
+.road-effort{font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:20px;}
+.effort-low{background:#dcfce7;color:#16a34a;}
+.effort-med{background:#fef3c7;color:#d97706;}
+.road-stars{font-size:.85rem;color:#d97706;}
+.road-week{margin-left:auto;font-size:.7rem;font-weight:600;color:#6b7280;background:rgba(255,255,255,.05);padding:.2rem .6rem;border-radius:6px;}
+.road-click-hint{font-size:.7rem;color:rgba(134,239,172,.5);margin-top:.5rem;transition:color .2s;}
+.road-card:hover .road-click-hint{color:rgba(134,239,172,.9);}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(134,239,172,.2);border-radius:3px;}
+.score-card-clickable{cursor:pointer;transition:border-color .2s,background .2s;}
+.score-card-clickable:hover{border-color:rgba(220,38,38,.5);background:rgba(220,38,38,.06);}
+.score-hint{font-size:.68rem;color:rgba(220,38,38,.6);margin-top:.5rem;transition:color .2s;}
+.score-card-clickable:hover .score-hint{color:#dc2626;}
+.score-popup{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .25s;}
+.score-popup.visible{opacity:1;pointer-events:auto;}
+.score-popup-card{background:#16191f;border:1px solid rgba(220,38,38,.25);border-radius:20px;width:min(820px,92vw);max-height:88vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.6);transform:translateY(20px) scale(.97);transition:transform .28s cubic-bezier(.34,1.56,.64,1);position:relative;padding:2.5rem;}
+.score-popup.visible .score-popup-card{transform:translateY(0) scale(1);}
+.score-criteria{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.5rem 0;}
+.score-criterion{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:1rem 1.1rem;display:flex;align-items:flex-start;gap:.85rem;}
+.sc-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:.3rem;flex-shrink:0;}
+.sc-bar-bg{width:6px;height:52px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;position:relative;}
+.sc-bar-fill{position:absolute;bottom:0;left:0;width:100%;border-radius:3px;}
+.sc-score-num{font-size:.65rem;font-weight:700;}
+.sc-title{font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.25rem;}
+.sc-desc{font-size:.75rem;color:#6b7280;line-height:1.5;}
+.roast-section{border-top:1px solid rgba(255,255,255,.08);padding-top:1.5rem;}
+.roast-label{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#dc2626;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+.roast-label::before{content:'';width:16px;height:2px;background:#dc2626;border-radius:1px;}
+.roast-quote{font-size:.88rem;color:rgba(255,255,255,.72);line-height:1.75;font-style:italic;border-left:2px solid rgba(220,38,38,.4);padding-left:1rem;}
+.score-card-clickable{cursor:pointer;transition:border-color .2s,background .2s;}.score-card-clickable:hover{border-color:rgba(134,239,172,.35);background:rgba(134,239,172,.05);}.score-hint{font-size:.68rem;margin-top:.4rem;}.gl-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:.85rem 1rem;margin-bottom:.1rem;}.gl-term{font-size:.9rem;font-weight:700;color:#86efac;margin-bottom:.3rem;}.gl-def{font-size:.82rem;color:rgba(255,255,255,.72);line-height:1.6;}.tag-pill{display:inline-flex;}</style>
+</head>
+<body>
+<nav class="top-nav">
+  <div class="nav-logo">freshjuice.cz — CRO Audit + Právní kontrola</div>
+  <div class="nav-links">
+    <button class="nav-btn nav-intro active" onclick="goToSlide('slide-title')">Úvod</button>
+    <button class="nav-btn nav-cro-slide" onclick="goToSlide('slide-current')">01 Aktuální stav</button>
+    <button class="nav-btn nav-cro-slide" onclick="goToSlide('slide-improved')">02 Navrhovaná podoba</button>
+    <button class="nav-btn nav-cro-slide" onclick="goToSlide('slide-roadmap')">03 Roadmapa</button>
+    <button class="nav-btn nav-compliance" onclick="goToSlide('slide-compliance')">04 Právní kontrola</button>
+  </div>
+  <button onclick="openGlossary()" style="padding:.4rem .85rem;border-radius:8px;border:1px solid rgba(134,239,172,.3);background:transparent;color:#86efac;cursor:pointer;font-size:.8rem;font-weight:500;margin-right:.5rem;">&#128214; Slovníček</button><div class="nav-score">Conversion score: 35/100</div>
+</nav>
+
+<!-- ═══════════════════════════ SLIDE 1: TITLE ═══════════════════════════ -->
+<section class="slide" id="slide-title">
+<div style="position:relative;z-index:5;max-width:900px;margin:1.5rem auto -0.5rem;padding:.9rem 1.4rem;border-radius:14px;background:rgba(134,239,172,.08);border:1px solid rgba(134,239,172,.25);display:flex;flex-wrap:wrap;gap:1.2rem;align-items:center;justify-content:center;"><span style="font-size:.8rem;color:#9ca3af;">Opakovaný audit · minule 2026-08-30</span><span style="font-size:1rem;font-weight:800;color:#86efac;">⬆ Skóre 35 → 35</span></div>
+  <div class="title-orbs">
+    <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  </div>
+  <div class="title-content">
+    <div>
+      <div class="title-label">CRO Audit + Právní kontrola · 31. SRPNA 2026</div>
+      <h1 class="title-h1">freshjuice<span>.cz</span><br>má potenciál<br>+20% konverzí</h1>
+      <p class="title-sub">Analýza homepage odhalila 10 prioritních bodů, které zákazníky odrazují od nákupu. Ukážeme kde problém je a jak ho opravit.</p>
+      <div class="title-agenda">
+        <button class="agenda-pill" onclick="goToSlide('slide-current')"><span class="num">01</span> Aktuální stav webu</button>
+        <button class="agenda-pill" onclick="goToSlide('slide-improved')"><span class="num">02</span> Navrhovaná podoba</button>
+        <button class="agenda-pill" onclick="goToSlide('slide-roadmap')"><span class="num">03</span> Roadmapa oprav</button>
+      </div><div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:14px;padding:1.25rem 1.5rem;margin-top:1.5rem;max-width:520px;"><div style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#86efac;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem;">ODHADOVANÝ PŘÍNOS OPRAV<span title="Vzorec: 100 návštěvníků/den × 30 dní × 2 % konverze × 3 000 Kč objednávka × 20 % potenciál oprav" style="cursor:help;width:15px;height:15px;border-radius:50%;border:1px solid rgba(134,239,172,.5);display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;color:rgba(134,239,172,.8);">?</span></div><div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;"><div><div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#22c55e;">+36 000 Kč</div><div style="font-size:.72rem;color:rgba(255,255,255,.5);">měsíčně navíc (odhad)</div></div><div style="font-size:.78rem;color:rgba(255,255,255,.55);line-height:1.6;">Při 100 návštěvnících/den a konverzi 2 %. <span style="color:rgba(134,239,172,.7);">Skutečný dopad závisí na Vašem provozu.</span></div></div></div><div style="background:rgba(220,38,38,.05);border:1px solid rgba(220,38,38,.2);border-radius:14px;padding:1.25rem 1.5rem;margin-top:.75rem;max-width:520px;"><div style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#dc2626;margin-bottom:.75rem;">&#128293; TENTO TÝDEN ZAČNĚTE TĚMITO</div><div style="display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.55rem;"><div style="width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;">1</div><div style="font-size:.82rem;color:rgba(255,255,255,.85);line-height:1.45;">Z hera udělat jasný nákupní vstup</div></div><div style="display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.55rem;"><div style="width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;">2</div><div style="font-size:.82rem;color:rgba(255,255,255,.85);line-height:1.45;">Ztlumit odliv na FreshUp.cz v rozcestníku</div></div><div style="display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.55rem;"><div style="width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;">3</div><div style="font-size:.82rem;color:rgba(255,255,255,.85);line-height:1.45;">Sjednotit URL pro „Šněkové“ v rozcestníku</div></div></div>
+    </div>
+    <div class="score-cards">
+      <div class="score-card score-card-clickable" onclick="openScore()" title="Klikněte pro vysvětlení">
+        <div class="score-val">35</div>
+        <div class="score-lbl">Conversion score</div>
+        <div class="score-hint">? jak jsme to změřili</div>
+      </div>
+      <div class="score-card score-card-clickable" onclick="openPotential()" style="cursor:pointer;"><div class="score-val">+20%</div><div class="score-lbl">Potenciál opravami</div><div class="score-hint" style="color:rgba(134,239,172,.6);font-size:.68rem;margin-top:.4rem;">? jak jsme to spočítali</div></div>
+      <div class="score-card score-card-clickable" onclick="goToSlide('slide-current')" style="cursor:pointer;"><div class="score-val">10</div><div class="score-lbl">Prioritních bodů</div><div class="score-hint" style="color:rgba(217,119,6,.6);font-size:.68rem;margin-top:.4rem;">→ zobrazit detail</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ SLIDE 2: CURRENT ═══════════════════════════ -->
+<section class="slide" id="slide-current">
+  <div class="slide-header">
+    <div class="slide-title-block">
+      <span class="slide-num">01</span>
+      <div>
+        <div class="slide-title">Aktuální stav webu</div>
+        <div class="slide-sub">Klikněte na červenou oblast — zobrazí se problém + grafický návrh řešení</div>
+      </div>
+    </div>
+    <a class="slide-badge" href="#" onclick="var r=document.getElementById('roast');if(r){r.scrollIntoView({behavior:'smooth',block:'start'});r.classList.remove('roast-hit');void r.offsetWidth;r.classList.add('roast-hit');}return false;" title="Přejít na ROAST">ROAST &#128293;</a>
+  </div>
+  <div class="browser-wrap">
+    <div class="issues-panel">
+      <div class="issues-panel-title">Nalezené problémy</div><button class="issue-btn" id="ib-1" onclick="openIssue(1)"><span class="issue-sev sev-crit">KRITICKÉ</span><div class="issue-btn-text"><strong>Z hera udělat jasný nákupní vstup</strong>Hero je jen slider obrázků bez headline/benefitu a bez viditelnéh…</div></button><button class="issue-btn" id="ib-2" onclick="openIssue(2)"><span class="issue-sev sev-crit">KRITICKÉ</span><div class="issue-btn-text"><strong>Ztlumit odliv na FreshUp.cz v rozcestníku</strong>Crossroads posílá významnou část návštěvníků pryč na jiný web (Fr…</div></button><button class="issue-btn" id="ib-3" onclick="openIssue(3)"><span class="issue-sev sev-high">VYSOKÉ</span><div class="issue-btn-text"><strong>Sjednotit URL pro „Šněkové“ v rozcestníku</strong>V rozcestníku je „Šněkové“ na odlišné URL (/kat/snekove-odstavnov…</div></button><button class="issue-btn" id="ib-4" onclick="openIssue(4)"><span class="issue-sev sev-high">VYSOKÉ</span><div class="issue-btn-text"><strong>Zrušit duplicitu „Pronájem“ v mobilním menu</strong>V mobilním menu je „Pronájem“ dvakrát, působí to jako chyba a sni…</div></button><button class="issue-btn" id="ib-5" onclick="openIssue(5)"><span class="issue-sev sev-high">VYSOKÉ</span><div class="issue-btn-text"><strong>Udělat telefon nahoře klikací</strong>V hlavičce je číslo „+420 774 631 631“ jako text (ne tel: odkaz),…</div></button><button class="issue-btn" id="ib-6" onclick="openIssue(6)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Posílit USP lištu o tvrdší důkazy</strong>USP jsou obecná („kvalitní produkty“), chybí konkrétní důkazy pro…</div></button><button class="issue-btn" id="ib-7" onclick="openIssue(7)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Změnit CTA „Detail“ na akčnější na kartách</strong>Tlačítko „Detail“ je slabé a neříká užitek; u HP listingu to brzd…</div></button><button class="issue-btn" id="ib-8" onclick="openIssue(8)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Přidat rychlé přepnutí domácnost vs. gastronomie</strong>Na HP v sekci „Produkty“ chybí rychlé navedení podle použití; uži…</div></button><button class="issue-btn" id="ib-9" onclick="openIssue(9)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Doplnit sociální důkaz (recenze/hodnocení)</strong>Místo recenzí je na HP jen sekce „Články“; chybí hodnocení obchod…</div></button><button class="issue-btn" id="ib-10" onclick="openIssue(10)"><span class="issue-sev sev-med">STŘEDNÍ</span><div class="issue-btn-text"><strong>Přidat CTA blok pod produkty pro nerozhodné</strong>Po produktech stránka přejde rovnou do „Články“; chybí krok pro l…</div></button>
+    </div>
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="traffic-lights"><div class="tl tl-r"></div><div class="tl tl-y"></div><div class="tl tl-g"></div></div>
+        <div class="url-bar">https://freshjuice.cz</div>
+      </div>
+      <div class="screenshot-container">
+        <img class="screenshot-img" id="hero-screenshot" src="" alt="freshjuice.cz homepage">
+        <div class="hotspot" data-issue="1" style="top:6%;left:0%;width:100%;height:16%;"><span class="hotspot-label">⚠ Z hera udělat jasný nákupní vstup — klikněte</span></div>
+        <div class="hotspot" data-issue="2" style="top:22%;left:0%;width:100%;height:18%;"><span class="hotspot-label">⚠ Ztlumit odliv na FreshUp.cz v rozcestník — klikněte</span></div>
+        <div class="hotspot" data-issue="4" style="top:0%;left:0%;width:100%;height:6%;"><span class="hotspot-label">⚠ Zrušit duplicitu „Pronájem“ v mobilním m — klikněte</span></div>
+        <div class="hotspot" data-issue="6" style="top:40%;left:0%;width:100%;height:9%;"><span class="hotspot-label">⚠ Posílit USP lištu o tvrdší důkazy — klikněte</span></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="browser-wrap" style="display:block;">
+    <div class="roast-section" id="roast" style="margin-top:2.5rem;">
+      <div class="roast-label">ROAST — přátelsky, ale bez rukaviček</div>
+      <div class="roast-quote"><p>Freshjuice.cz na první pohled působí jako seriózní e‑shop s prémiovým sortimentem (čistý design, jasné kategorie, produkty hned na HP). Problém je, že první obrazovka je pro prodej vlastně „němá“: hero je jen obrázkový slider bez headline, bez benefitu a bez jasného CTA. U drahého zboží (14–17k) je to promarněná šance vysvětlit, proč koupit zrovna tady.</p><p>Další klasika: odliv na FreshUp.cz je v rozcestníku i v menu stále hodně výrazný. Chápu brandový přesah, ale z pohledu CRO si tím na homepage sami otevíráte postranní východ pro lidi, kteří už přišli nakupovat odšťavňovač.</p><p>Na produktových kartách je největší brzda CTA „Detail“. To je neutrální, skoro až administrativní. U e‑shopu chcete „Vybrat“, „Zobrazit varianty“ nebo rovnou „Do košíku“ (pokud to jde). Tady navíc nevidím žádné rychlé rozlišení „domácnost vs. gastronomie“ přímo u produktů, takže část lidí skončí v nekonečném scrollu nebo odejde do kategorií bez vedení.</p><p>Pozitivum: USP lišta už existuje a je celkem relevantní („20letá zkušenost“, „Česká firma“). Jen pořád chybí tvrdší důkazy (garance, servis, autorizace značek, rychlost odeslání) a na HP úplně chybí recenze/hodnocení — což je u high‑ticket elektroniky/doplňků do kuchyně zásadní. Celkový potenciál beru jako střední, cca 20 % (stránka není rozbitá, jen má několik velkých „nezapnutých“ CRO pák).</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ SLIDE 3: IMPROVED ═══════════════════════════ -->
+<section class="slide" id="slide-improved">
+  <div class="section-intro"><div class="tag-pill tag-improved">✓ Navrhovaná podoba</div><h2 class="sec-title">Jak by stránka měla vypadat</h2><p class="sec-sub">Wireframe navrhovaných úprav — přesná představa pro zákazníka i webmastera. Celkem <strong>7 sekcí</strong> k opravě.</p></div><div class="improved-layout"><div class="browser-full"><div class="browser-chrome"><div class="traffic-lights"><div class="tl tl-r"></div><div class="tl tl-y"></div><div class="tl tl-g"></div></div><div class="url-bar" style="color:#86efac;">https://freshjuice.cz ✓ po opravách</div></div><div style="background:#fff;font-family:'DM Sans',sans-serif;"><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">NAV</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fef3c7;color:#d97706;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Zrušit duplicitu „Pronájem“ v mobilním menu</span></div><div style="padding:.65rem 1rem .8rem;"><div style="padding:.6rem .9rem;background:#fff;"><div style="max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+    <div style="font-weight:800;color:#2d2d2d;">Menu</div>
+    <span style="background:#f3f3f3;border:1px solid #e5e5e5;border-radius:10px;padding:8px 10px;font-weight:700;font-size:12px;color:#2d2d2d;">Zavřít</span>
+  </div>
+  <div style="margin-top:12px;border-top:1px solid #eeeeee;">
+    <div style="padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;">Odšťavňovače</div>
+    <div style="padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;">Citrusovače</div>
+    <div style="padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;">Mixéry a blendery</div>
+    <div style="padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;">Pronájem</div>
+    <div style="padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;">Čerstvé šťávy</div>
+    <div style="padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;">O nás</div>
+    <div style="padding:12px 0;font-weight:700;color:#2d2d2d;">Kontakty</div>
+  </div>
+  <div style="margin-top:10px;color:#6a6a6a;font-size:12px;line-height:1.35;">Duplicitní položka „Pronájem“ byla odstraněna.</div>
+</div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">HERO</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fee2e2;color:#dc2626;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Z hera udělat jasný nákupní vstup</span></div><div style="padding:.65rem 1rem .8rem;"><div style="padding:.6rem .9rem;background:#fff;"><div style="max-width:640px;margin:0 auto;background:#ffffff;padding:16px 16px 14px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;">
+  <div style="background:linear-gradient(90deg,#f6b044 0%,#f2c15a 45%,#f7d38a 100%);border-radius:12px;padding:18px 18px 16px;position:relative;overflow:hidden;">
+    <div style="position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:999px;background:rgba(255,255,255,0.18);"></div>
+    <div style="position:absolute;right:12px;bottom:-30px;width:220px;height:220px;border-radius:999px;background:rgba(255,255,255,0.12);"></div>
+    <div style="max-width:420px;position:relative;">
+      <div style="color:#b55b12;font-weight:800;font-size:30px;line-height:1.12;margin:0 0 10px;">Prémiové odšťavňovače pro domácí i profi použití</div>
+      <div style="color:#6b3b10;font-size:14px;line-height:1.5;margin:0 0 14px;opacity:0.95;">Výběr ověřených značek, poradenství a servis v&nbsp;ČR. Pomůžeme vám zvolit model podle použití a rozpočtu.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <span style="display:inline-block;background:#3f7f2b;color:#ffffff;font-weight:700;font-size:14px;padding:11px 14px;border-radius:10px;box-shadow:0 2px 0 rgba(0,0,0,0.10);">Vybrat odšťavňovač</span>
+        <span style="display:inline-block;color:#2f6d22;font-weight:700;font-size:13px;padding:10px 12px;border-radius:10px;border:1px solid rgba(63,127,43,0.35);background:rgba(255,255,255,0.35);">Pro domácnost</span>
+        <span style="display:inline-block;color:#2f6d22;font-weight:700;font-size:13px;padding:10px 12px;border-radius:10px;border:1px solid rgba(63,127,43,0.35);background:rgba(255,255,255,0.35);">Pro gastronomii</span>
+      </div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;">
+      <span style="display:inline-block;background:rgba(255,255,255,0.35);color:#6b3b10;font-size:12px;font-weight:700;padding:8px 10px;border-radius:999px;">Doprava zdarma nad 5000 Kč</span>
+      <span style="display:inline-block;background:rgba(255,255,255,0.35);color:#6b3b10;font-size:12px;font-weight:700;padding:8px 10px;border-radius:999px;">20letá zkušenost</span>
+      <span style="display:inline-block;background:rgba(255,255,255,0.35);color:#6b3b10;font-size:12px;font-weight:700;padding:8px 10px;border-radius:999px;">Česká firma</span>
+    </div>
+  </div>
+</div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">CATS</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fee2e2;color:#dc2626;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Ztlumit odliv na FreshUp.cz v rozcestníku</span></div><div style="padding:.65rem 1rem .8rem;"><div style="padding:.6rem .9rem;background:#fff;"><div style="max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;">
+  <div style="font-weight:800;color:#2d2d2d;font-size:16px;margin:0 0 10px;">Kategorie</div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
+    <div style="background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:78px;">
+      <div style="font-weight:800;font-size:15px;margin-bottom:6px;">Odšťavňovače</div>
+      <div style="font-size:12px;opacity:0.95;line-height:1.35;">Odšťedivé • Šněkové</div>
+    </div>
+    <div style="background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:78px;">
+      <div style="font-weight:800;font-size:15px;margin-bottom:6px;">Citrusovače</div>
+      <div style="font-size:12px;opacity:0.95;line-height:1.35;">Pro gastronomii • Pro domácnost</div>
+    </div>
+    <div style="background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:78px;">
+      <div style="font-weight:800;font-size:15px;margin-bottom:6px;">Mixéry a blendery</div>
+      <div style="font-size:12px;opacity:0.95;line-height:1.35;">Pro domácnost • Pro gastronomii</div>
+    </div>
+    <div style="background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:78px;">
+      <div style="font-weight:800;font-size:15px;margin-bottom:6px;">Pronájem</div>
+      <div style="font-size:12px;opacity:0.95;line-height:1.35;">Krátkodobě i dlouhodobě</div>
+    </div>
+  </div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid #eeeeee;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <div>
+      <div style="font-weight:800;color:#2d2d2d;font-size:14px;margin-bottom:4px;">Čerstvé šťávy (jiný web)</div>
+      <div style="color:#6a6a6a;font-size:12px;line-height:1.35;">FreshUp.cz • Fresh juice • Ovoce a zelenina</div>
+    </div>
+    <span style="display:inline-block;background:#f3f3f3;color:#2d2d2d;font-weight:700;font-size:12px;padding:10px 12px;border-radius:10px;border:1px solid #e5e5e5;white-space:nowrap;">Přejít na FreshUp.cz</span>
+  </div>
+</div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">USP</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Posílit USP lištu o tvrdší důkazy</span></div><div style="padding:.65rem 1rem .8rem;"><div style="padding:.6rem .9rem;background:#fff;"><div style="max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;">
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;">
+    <div style="display:flex;gap:10px;align-items:flex-start;">
+      <div style="width:34px;height:34px;border-radius:999px;border:2px solid #3f7f2b;display:flex;align-items:center;justify-content:center;color:#3f7f2b;font-weight:900;">✓</div>
+      <div>
+        <div style="font-weight:800;color:#2d2d2d;font-size:13px;">Doprava zdarma nad 5000 Kč</div>
+        <div style="color:#6a6a6a;font-size:12px;line-height:1.35;">Bez skrytých poplatků u většiny objednávek.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;">
+      <div style="width:34px;height:34px;border-radius:999px;border:2px solid #3f7f2b;display:flex;align-items:center;justify-content:center;color:#3f7f2b;font-weight:900;">✓</div>
+      <div>
+        <div style="font-weight:800;color:#2d2d2d;font-size:13px;">Autorizované poradenství k Hurom</div>
+        <div style="color:#6a6a6a;font-size:12px;line-height:1.35;">Pomůžeme vybrat správný model i příslušenství.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;">
+      <div style="width:34px;height:34px;border-radius:999px;border:2px solid #3f7f2b;display:flex;align-items:center;justify-content:center;color:#3f7f2b;font-weight:900;">✓</div>
+      <div>
+        <div style="font-weight:800;color:#2d2d2d;font-size:13px;">Rychlé odeslání skladových kusů (Skladem)</div>
+        <div style="color:#6a6a6a;font-size:12px;line-height:1.35;">U produktů označených „Skladem“ expedujeme co nejdříve.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;">
+      <div style="width:34px;height:34px;border-radius:999px;border:2px solid #3f7f2b;display:flex;align-items:center;justify-content:center;color:#3f7f2b;font-weight:900;">✓</div>
+      <div>
+        <div style="font-weight:800;color:#2d2d2d;font-size:13px;">Záruční a pozáruční servis v ČR</div>
+        <div style="color:#6a6a6a;font-size:12px;line-height:1.35;">Řešíte servis rychle a lokálně.</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding-top:12px;border-top:1px solid #eeeeee;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+    <div style="color:#2d2d2d;font-weight:800;font-size:13px;">Pomůžeme vybrat: <span style="color:#2f6d22;">+420 774 631 631</span></div>
+    <span style="display:inline-block;background:#3f7f2b;color:#ffffff;font-weight:800;font-size:12px;padding:10px 12px;border-radius:10px;white-space:nowrap;">Zavolat</span>
+  </div>
+</div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">PRODUCTS</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Změnit CTA „Detail“ na akčnější na kartách</span></div><div style="padding:.65rem 1rem .8rem;"><div style="padding:.6rem .9rem;background:#fff;"><div style="max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;">
+  <div style="font-weight:900;color:#2d2d2d;font-size:18px;text-align:center;margin:2px 0 12px;">Produkty</div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;">
+    <div style="border:1px solid #ededed;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+      <div style="height:120px;border-radius:10px;background:#f4f4f4;display:flex;align-items:center;justify-content:center;color:#9a9a9a;font-weight:800;">Produkt</div>
+      <div style="margin-top:10px;font-weight:800;color:#2d2d2d;font-size:13px;">Hurom H 400 bílý</div>
+      <div style="margin-top:6px;color:#6a6a6a;font-size:11px;line-height:1.35;">Hurom H400 přináší moderní design, který se stane ozdobou každé kuchyně…</div>
+      <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <div>
+          <div style="font-weight:900;color:#2d2d2d;font-size:13px;">16 900 Kč</div>
+          <div style="color:#2f6d22;font-weight:800;font-size:11px;margin-top:3px;">Skladem</div>
+        </div>
+        <span style="display:inline-block;background:#e07a2f;color:#ffffff;font-weight:900;font-size:12px;padding:10px 12px;border-radius:10px;">Zobrazit odšťavňovač</span>
+      </div>
+    </div>
+    <div style="border:1px solid #ededed;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+      <div style="height:120px;border-radius:10px;background:#f4f4f4;display:flex;align-items:center;justify-content:center;color:#9a9a9a;font-weight:800;">Produkt</div>
+      <div style="margin-top:10px;font-weight:800;color:#2d2d2d;font-size:13px;">Odšťavňovač Hurom H 320N bílý</div>
+      <div style="margin-top:6px;color:#6a6a6a;font-size:11px;line-height:1.35;">Hurom H320N je špičkový šnekový odšťavňovač navržený pro maximální…</div>
+      <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <div>
+          <div style="font-weight:900;color:#2d2d2d;font-size:13px;">14 900 Kč</div>
+          <div style="color:#2f6d22;font-weight:800;font-size:11px;margin-top:3px;">Skladem</div>
+        </div>
+        <span style="display:inline-block;background:#e07a2f;color:#ffffff;font-weight:900;font-size:12px;padding:10px 12px;border-radius:10px;">Vybrat variantu</span>
+      </div>
+    </div>
+  </div>
+</div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">CTA</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Přidat CTA blok pod produkty pro nerozhodné</span></div><div style="padding:.65rem 1rem .8rem;"><div style="padding:.6rem .9rem;background:#fff;"><div style="max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;">
+  <div style="border-radius:12px;border:1px solid rgba(63,127,43,0.20);background:linear-gradient(180deg,rgba(63,127,43,0.08) 0%,rgba(63,127,43,0.03) 100%);padding:16px;">
+    <div style="font-weight:900;color:#2d2d2d;font-size:18px;line-height:1.2;margin-bottom:6px;">Nevíte, který odšťavňovač vybrat?</div>
+    <div style="color:#6a6a6a;font-size:13px;line-height:1.45;margin-bottom:12px;">Napište nám nebo zavolejte — doporučíme konkrétní model podle použití (domácnost / gastronomie) a rozpočtu.</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <span style="display:inline-block;background:#3f7f2b;color:#ffffff;font-weight:900;font-size:13px;padding:11px 14px;border-radius:10px;">Chci doporučit model</span>
+      <span style="display:inline-block;background:#ffffff;color:#2f6d22;font-weight:900;font-size:13px;padding:11px 14px;border-radius:10px;border:1px solid rgba(63,127,43,0.35);">+420 774 631 631</span>
+      <span style="display:inline-block;color:#6a6a6a;font-size:12px;">Odkaz: /kontakty/</span>
+    </div>
+  </div>
+</div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">SOCIAL</span><span style="font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;">✓ opraveno</span><span style="font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;">Doplnit sociální důkaz (recenze/hodnocení)</span></div><div style="padding:.65rem 1rem .8rem;"><div style="padding:.6rem .9rem;background:#fff;"><div style="max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div style="font-weight:900;color:#2d2d2d;font-size:18px;">Hodnocení zákazníků</div>
+    <div style="color:#6a6a6a;font-size:12px;font-weight:800;">★★★★★ 4,9 / 5</div>
+  </div>
+  <div style="margin-top:10px;display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:10px;">
+    <div style="border:1px solid #eeeeee;border-radius:12px;padding:12px;background:#fafafa;">
+      <div style="color:#e07a2f;font-weight:900;font-size:12px;margin-bottom:6px;">★★★★★</div>
+      <div style="color:#2d2d2d;font-size:13px;line-height:1.45;font-weight:700;">„Rychlé a věcné poradenství po telefonu. Doporučený Hurom sedí přesně pro naši domácnost.“</div>
+      <div style="color:#6a6a6a;font-size:12px;margin-top:6px;">Zákazník z e‑shopu</div>
+    </div>
+    <div style="border:1px solid #eeeeee;border-radius:12px;padding:12px;background:#fafafa;">
+      <div style="color:#e07a2f;font-weight:900;font-size:12px;margin-bottom:6px;">★★★★★</div>
+      <div style="color:#2d2d2d;font-size:13px;line-height:1.45;font-weight:700;">„Expedice byla rychlá a zboží dorazilo perfektně zabalené. Oceňuji český servis.“</div>
+      <div style="color:#6a6a6a;font-size:12px;margin-top:6px;">Zákazník z e‑shopu</div>
+    </div>
+    <div style="border:1px solid #eeeeee;border-radius:12px;padding:12px;background:#fafafa;">
+      <div style="color:#e07a2f;font-weight:900;font-size:12px;margin-bottom:6px;">★★★★★</div>
+      <div style="color:#2d2d2d;font-size:13px;line-height:1.45;font-weight:700;">„Pomohli nám vybrat model pro menší provoz. Šťávy jsou super a obsluha je jednoduchá.“</div>
+      <div style="color:#6a6a6a;font-size:12px;margin-top:6px;">Gastro zákazník</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding-top:12px;border-top:1px solid #eeeeee;">
+    <div style="font-weight:900;color:#2d2d2d;font-size:16px;">Články</div>
+    <div style="margin-top:8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;">
+      <div style="border:1px solid #ededed;border-radius:12px;overflow:hidden;">
+        <div style="height:60px;background:#f4f4f4;"></div>
+        <div style="padding:10px;">
+          <div style="font-weight:800;color:#2d2d2d;font-size:12px;line-height:1.3;">Jak vybrat odšťavňovač</div>
+          <div style="color:#6a6a6a;font-size:11px;margin-top:6px;">5. 3. 2025</div>
+        </div>
+      </div>
+      <div style="border:1px solid #ededed;border-radius:12px;overflow:hidden;">
+        <div style="height:60px;background:#f4f4f4;"></div>
+        <div style="padding:10px;">
+          <div style="font-weight:800;color:#2d2d2d;font-size:12px;line-height:1.3;">Proč pít fresh?</div>
+          <div style="color:#6a6a6a;font-size:11px;margin-top:6px;">5. 3. 2025</div>
+        </div>
+      </div>
+      <div style="border:1px solid #ededed;border-radius:12px;overflow:hidden;">
+        <div style="height:60px;background:#f4f4f4;"></div>
+        <div style="padding:10px;">
+          <div style="font-weight:800;color:#2d2d2d;font-size:12px;line-height:1.3;">Test odšťavňovačů</div>
+          <div style="color:#6a6a6a;font-size:11px;margin-top:6px;">5. 3. 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div></div></div><div style="border-bottom:1px solid #e5e7eb;"><div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;"><span style="font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;">FOOTER</span><span style="font-size:.58rem;color:#9ca3af;">bez změny</span></div><div style="padding:.65rem 1rem .8rem;"><div style="height:36px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#9ca3af;">FOOTER — bez doporučení</div></div></div></div></div></div>
+</section>
+
+<!-- ═════════ SLIDE 4: ROADMAP ═════════ -->
+<section class="slide" id="slide-roadmap">
+  <div class="section-intro">
+    <div class="tag-pill tag-roadmap">03 Roadmapa</div>
+    <h2 class="sec-title">Co opravit a v jakém pořadí</h2>
+    <p class="sec-sub">Klikněte na libovolnou kartu — otevře se náhled změny a přesné instrukce pro webmastera.</p>
+  </div>
+  <div class="roadmap-grid"><button class="road-card" onclick="openRoad(1)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">1</div><div class="road-content"><div class="road-title">Z hera udělat jasný nákupní vstup</div><div class="road-detail">Headline: „Prémiové odšťavňovače pro domácí i profi použití“; CTA: „Vybrat odšťa…</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fee2e2;color:#dc2626;border:1px solid rgba(220,38,38,.3);">⚡ KRITICKÉ</span><span class="road-effort effort-med">🔧 Střední effort</span><span class="road-week">Týden 1</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(2)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">2</div><div class="road-content"><div class="road-title">Ztlumit odliv na FreshUp.cz v rozcestníku</div><div class="road-detail">Přesuňte „FreshUp.cz“ níž + text „Čerstvé šťávy (jiný web)“; ne mezi hlavní volb…</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fee2e2;color:#dc2626;border:1px solid rgba(220,38,38,.3);">⚡ KRITICKÉ</span><span class="road-effort effort-med">🔧 Střední effort</span><span class="road-week">Týden 1</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(3)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">3</div><div class="road-content"><div class="road-title">Sjednotit URL pro „Šněkové“ v rozcestníku</div><div class="road-detail">Odkaz „Šněkové“ přepnout na /kat/odstavnovace/snekove-odstavnovace/</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fef3c7;color:#d97706;border:1px solid rgba(217,119,6,.3);">⚡ VYSOKÉ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 1</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(4)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">4</div><div class="road-content"><div class="road-title">Zrušit duplicitu „Pronájem“ v mobilním menu</div><div class="road-detail">Odeberte jednu položku „Pronájem“ z menu-menu_mobil</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fef3c7;color:#d97706;border:1px solid rgba(217,119,6,.3);">⚡ VYSOKÉ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 1</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(5)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">5</div><div class="road-content"><div class="road-title">Udělat telefon nahoře klikací</div><div class="road-detail">Obalte číslo odkazem: `<a href="tel:+420774631631">+420 774 631 631</a>`</div><div class="road-meta"><span class="road-effort effort-med" style="background:#fef3c7;color:#d97706;border:1px solid rgba(217,119,6,.3);">⚡ VYSOKÉ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(6)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">6</div><div class="road-content"><div class="road-title">Posílit USP lištu o tvrdší důkazy</div><div class="road-detail">Přidejte 3–4 body:  
+- „Autorizované poradenství k Hurom“  
+- „Rychlé odeslání s…</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(7)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">7</div><div class="road-content"><div class="road-title">Změnit CTA „Detail“ na akčnější na kartách</div><div class="road-detail">Změňte copy na „Zobrazit odšťavňovač“ nebo „Vybrat variantu“ (místo „Detail“)</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(8)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">8</div><div class="road-content"><div class="road-title">Přidat rychlé přepnutí domácnost vs. gastronomie</div><div class="road-detail">Nad mřížku přidejte 2 odkazy: „Pro domácnost“ a „Pro gastronomii“ (na relevantní…</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(9)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">9</div><div class="road-content"><div class="road-title">Doplnit sociální důkaz (recenze/hodnocení)</div><div class="road-detail">Přidejte blok „Hodnocení zákazníků“ + 3 citace; vedle „Články“ nebo nad nimi</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button><button class="road-card" onclick="openRoad(10)" style="width:100%;text-align:left;cursor:pointer;"><div class="road-num">10</div><div class="road-content"><div class="road-title">Přidat CTA blok pod produkty pro nerozhodné</div><div class="road-detail">Headline: „Nevíte, který odšťavňovač vybrat?“; CTA: „Chci doporučit model“ (odka…</div><div class="road-meta"><span class="road-effort effort-low" style="background:#dbeafe;color:#1d4ed8;border:1px solid rgba(29,78,216,.3);">⚡ STŘEDNÍ</span><span class="road-effort effort-low">🔧 Nízký effort</span><span class="road-week">Týden 2</span></div><div class="road-click-hint">↗ Klikněte pro náhled změny</div></div></button></div>
+</section>
+<section class="slide" id="slide-compliance"><div class="section-intro"><div class="tag-pill" style="background:rgba(217,119,6,.1);color:#d97706;border:1px solid rgba(217,119,6,.25);">04 Právní kontrola</div><h2 class="sec-title">Soulad stránky s předpisy</h2><p class="sec-sub">Prošli jsme 12 bodů, které v ČR nejčastěji vedou k sankci. Každý nález má odkaz na předpis a návrh nápravy.</p></div><div style="max-width:1100px;margin:0 auto;padding:0 3rem;"><div style="display:flex;gap:2rem;align-items:center;flex-wrap:wrap;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.6rem 2rem;margin-bottom:2rem;"><div style="text-align:center;min-width:120px;"><div style="font-family:'Playfair Display',serif;font-size:3.2rem;font-weight:900;line-height:1;color:#dc2626;">33</div><div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;margin-top:.2rem;">Index souladu</div></div><div style="flex:1;min-width:260px;"><div style="font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;color:#fff;">Zjištěno vážné pochybení</div><div style="font-size:.85rem;color:rgba(255,255,255,.55);margin-top:.3rem;">5 nálezů z 12 kontrolovaných oblastí</div><div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.1rem;"><span style="padding:.35rem .9rem;border-radius:20px;background:rgba(220,38,38,.12);color:#dc2626;font-size:.75rem;font-weight:700;">1&times; závažné</span><span style="padding:.35rem .9rem;border-radius:20px;background:rgba(217,119,6,.12);color:#d97706;font-size:.75rem;font-weight:700;">3&times; vysoké</span><span style="padding:.35rem .9rem;border-radius:20px;background:rgba(37,99,235,.12);color:#60a5fa;font-size:.75rem;font-weight:700;">1&times; střední</span></div></div></div><div style="background:rgba(255,255,255,.03);border:1px solid rgba(217,119,6,.35);border-left:3px solid #d97706;border-radius:14px;padding:1.35rem 1.5rem;margin-bottom:.85rem;"><div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem;"><span style="font-size:.6rem;font-weight:800;letter-spacing:.1em;padding:.22rem .6rem;border-radius:20px;background:rgba(217,119,6,.10);color:#d97706;">VYSOKÉ</span><span style="font-size:.68rem;color:#6b7280;letter-spacing:.06em;text-transform:uppercase;">Identifikace</span><span style="margin-left:auto;font-size:.68rem;color:#4b5563;font-variant-numeric:tabular-nums;">01/05</span></div><div style="font-family:'Playfair Display',serif;font-size:1.12rem;font-weight:700;color:#fff;margin-bottom:.5rem;line-height:1.3;">Chybí IČO prodávajícího</div><div style="font-size:.86rem;line-height:1.65;color:rgba(255,255,255,.68);margin-bottom:.85rem;">Na stránce jsme nenašli IČO ani sídlo provozovatele. Spotřebitel musí před uzavřením smlouvy znát totožnost a adresu prodávajícího.</div><div style="background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.18);border-radius:10px;padding:.8rem 1rem;margin-bottom:.75rem;"><div style="font-size:.6rem;font-weight:800;letter-spacing:.12em;color:#22c55e;margin-bottom:.35rem;">NÁPRAVA</div><div style="font-size:.85rem;line-height:1.6;color:rgba(255,255,255,.82);">Doplňte do patičky obchodní firmu / jméno, IČO, sídlo a kontaktní e-mail. U OSVČ i údaj o zápisu v živnostenském rejstříku.</div></div><div style="display:flex;gap:1.25rem;flex-wrap:wrap;font-size:.72rem;"><div><span style="color:#4b5563;">Předpis&nbsp;</span><span style="font-family:ui-monospace,Menlo,monospace;color:#9ca3af;">§ 1811 odst. 2 obč. zák., § 14 zák. č. 634/1992 Sb.</span></div><div><span style="color:#4b5563;">Riziko&nbsp;</span><span style="color:#d97706;font-weight:600;">Pokuta ČOI až 5 000 000 Kč</span></div></div></div><div style="background:rgba(255,255,255,.03);border:1px solid rgba(217,119,6,.35);border-left:3px solid #d97706;border-radius:14px;padding:1.35rem 1.5rem;margin-bottom:.85rem;"><div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem;"><span style="font-size:.6rem;font-weight:800;letter-spacing:.1em;padding:.22rem .6rem;border-radius:20px;background:rgba(217,119,6,.10);color:#d97706;">VYSOKÉ</span><span style="font-size:.68rem;color:#6b7280;letter-spacing:.06em;text-transform:uppercase;">Dokumenty</span><span style="margin-left:auto;font-size:.68rem;color:#4b5563;font-variant-numeric:tabular-nums;">02/05</span></div><div style="font-family:'Playfair Display',serif;font-size:1.12rem;font-weight:700;color:#fff;margin-bottom:.5rem;line-height:1.3;">Chybí zásady ochrany osobních údajů</div><div style="font-size:.86rem;line-height:1.65;color:rgba(255,255,255,.68);margin-bottom:.85rem;">Na stránce sbíráte údaje, ale nenašli jsme dokument popisující, jak s nimi nakládáte.</div><div style="background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.18);border-radius:10px;padding:.8rem 1rem;margin-bottom:.75rem;"><div style="font-size:.6rem;font-weight:800;letter-spacing:.12em;color:#22c55e;margin-bottom:.35rem;">NÁPRAVA</div><div style="font-size:.85rem;line-height:1.6;color:rgba(255,255,255,.82);">Zveřejněte zásady zpracování osobních údajů: kdo je správce, právní titul, doba uchování, práva subjektu údajů.</div></div><div style="display:flex;gap:1.25rem;flex-wrap:wrap;font-size:.72rem;"><div><span style="color:#4b5563;">Předpis&nbsp;</span><span style="font-family:ui-monospace,Menlo,monospace;color:#9ca3af;">čl. 13 GDPR</span></div><div><span style="color:#4b5563;">Riziko&nbsp;</span><span style="color:#d97706;font-weight:600;">Pokuta ÚOOÚ až 20 mil. EUR / 4 % obratu</span></div></div></div><div style="background:rgba(255,255,255,.03);border:1px solid rgba(220,38,38,.35);border-left:3px solid #dc2626;border-radius:14px;padding:1.35rem 1.5rem;margin-bottom:.85rem;"><div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem;"><span style="font-size:.6rem;font-weight:800;letter-spacing:.1em;padding:.22rem .6rem;border-radius:20px;background:rgba(220,38,38,.10);color:#dc2626;">ZÁVAŽNÉ</span><span style="font-size:.68rem;color:#6b7280;letter-spacing:.06em;text-transform:uppercase;">Cookies</span><span style="margin-left:auto;font-size:.68rem;color:#4b5563;font-variant-numeric:tabular-nums;">03/05</span></div><div style="font-family:'Playfair Display',serif;font-size:1.12rem;font-weight:700;color:#fff;margin-bottom:.5rem;line-height:1.3;">Cookie lišta bez tlačítka Odmítnout</div><div style="font-size:.86rem;line-height:1.65;color:rgba(255,255,255,.68);margin-bottom:.85rem;">Lišta zřejmě nenabízí rovnocenné odmítnutí. Souhlas musí být dobrovolný — odmítnout musí být stejně snadné jako přijmout.</div><div style="background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.18);border-radius:10px;padding:.8rem 1rem;margin-bottom:.75rem;"><div style="font-size:.6rem;font-weight:800;letter-spacing:.12em;color:#22c55e;margin-bottom:.35rem;">NÁPRAVA</div><div style="font-size:.85rem;line-height:1.6;color:rgba(255,255,255,.82);">Přidejte tlačítko „Odmítnout vše“ na stejnou úroveň a se stejnou vizuální váhou jako „Přijmout vše“.</div></div><div style="display:flex;gap:1.25rem;flex-wrap:wrap;font-size:.72rem;"><div><span style="color:#4b5563;">Předpis&nbsp;</span><span style="font-family:ui-monospace,Menlo,monospace;color:#9ca3af;">čl. 4 odst. 11 a čl. 7 GDPR</span></div><div><span style="color:#4b5563;">Riziko&nbsp;</span><span style="color:#dc2626;font-weight:600;">Souhlas je neplatný → celé měření nelegální</span></div></div></div><div style="background:rgba(255,255,255,.03);border:1px solid rgba(217,119,6,.35);border-left:3px solid #d97706;border-radius:14px;padding:1.35rem 1.5rem;margin-bottom:.85rem;"><div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem;"><span style="font-size:.6rem;font-weight:800;letter-spacing:.1em;padding:.22rem .6rem;border-radius:20px;background:rgba(217,119,6,.10);color:#d97706;">VYSOKÉ</span><span style="font-size:.68rem;color:#6b7280;letter-spacing:.06em;text-transform:uppercase;">Formuláře</span><span style="margin-left:auto;font-size:.68rem;color:#4b5563;font-variant-numeric:tabular-nums;">04/05</span></div><div style="font-family:'Playfair Display',serif;font-size:1.12rem;font-weight:700;color:#fff;margin-bottom:.5rem;line-height:1.3;">Formulář bez zaškrtávacího souhlasu</div><div style="font-size:.86rem;line-height:1.65;color:rgba(255,255,255,.68);margin-bottom:.85rem;">Sbíráte kontaktní údaje, ale nenašli jsme nezaškrtnuté políčko se souhlasem. Předzaškrtnuté políčko není platný souhlas.</div><div style="background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.18);border-radius:10px;padding:.8rem 1rem;margin-bottom:.75rem;"><div style="font-size:.6rem;font-weight:800;letter-spacing:.12em;color:#22c55e;margin-bottom:.35rem;">NÁPRAVA</div><div style="font-size:.85rem;line-height:1.6;color:rgba(255,255,255,.82);">Přidejte nezaškrtnutý checkbox s odkazem na zásady zpracování. Pro marketingové sdělení potřebujete samostatný souhlas.</div></div><div style="display:flex;gap:1.25rem;flex-wrap:wrap;font-size:.72rem;"><div><span style="color:#4b5563;">Předpis&nbsp;</span><span style="font-family:ui-monospace,Menlo,monospace;color:#9ca3af;">čl. 7 GDPR, § 7 zák. č. 480/2004 Sb.</span></div><div><span style="color:#4b5563;">Riziko&nbsp;</span><span style="color:#d97706;font-weight:600;">Neplatný souhlas → celá databáze nepoužitelná</span></div></div></div><div style="background:rgba(255,255,255,.03);border:1px solid rgba(37,99,235,.32);border-left:3px solid #2563eb;border-radius:14px;padding:1.35rem 1.5rem;margin-bottom:.85rem;"><div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem;"><span style="font-size:.6rem;font-weight:800;letter-spacing:.1em;padding:.22rem .6rem;border-radius:20px;background:rgba(37,99,235,.10);color:#2563eb;">STŘEDNÍ</span><span style="font-size:.68rem;color:#6b7280;letter-spacing:.06em;text-transform:uppercase;">Ceny</span><span style="margin-left:auto;font-size:.68rem;color:#4b5563;font-variant-numeric:tabular-nums;">05/05</span></div><div style="font-family:'Playfair Display',serif;font-size:1.12rem;font-weight:700;color:#fff;margin-bottom:.5rem;line-height:1.3;">U ceny chybí údaj o DPH</div><div style="font-size:.86rem;line-height:1.65;color:rgba(255,255,255,.68);margin-bottom:.85rem;">Ceny nejsou označeny jako s DPH nebo bez DPH. Spotřebiteli se musí zobrazit konečná cena včetně daní.</div><div style="background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.18);border-radius:10px;padding:.8rem 1rem;margin-bottom:.75rem;"><div style="font-size:.6rem;font-weight:800;letter-spacing:.12em;color:#22c55e;margin-bottom:.35rem;">NÁPRAVA</div><div style="font-size:.85rem;line-height:1.6;color:rgba(255,255,255,.82);">U každé ceny uveďte „včetně DPH“. Pokud nejste plátce, uveďte „nejsme plátci DPH“.</div></div><div style="display:flex;gap:1.25rem;flex-wrap:wrap;font-size:.72rem;"><div><span style="color:#4b5563;">Předpis&nbsp;</span><span style="font-family:ui-monospace,Menlo,monospace;color:#9ca3af;">§ 12 zák. č. 634/1992 Sb.</span></div><div><span style="color:#4b5563;">Riziko&nbsp;</span><span style="color:#2563eb;font-weight:600;">Pokuta ČOI</span></div></div></div><div style="margin-top:1.75rem;padding:1.1rem 1.4rem;border-radius:12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);font-size:.78rem;line-height:1.65;color:#6b7280;"><strong style="color:#9ca3af;">Co tenhle výstup je a co není.</strong> Jde o automatickou technickou kontrolu veřejně dostupného obsahu stránky, ne o právní stanovisko. Výsledek závisí na tom, co lze vyčíst z HTML — prvky vykreslené až skriptem nemusí být zachyceny. Kontrola se dívá jen na odeslanou stránku, ne na celý web — údaje uvedené na jiných podstránkách (Kontakty, Obchodní podmínky) do výsledku nevstupují. Nález proto může vzniknout i tehdy, když informace na webu je, jen jinde než na kontrolované stránce. U závažných nálezů doporučujeme konzultaci s advokátem. Kontrola proběhla 31. 8. 2026.</div></div></section>
+<div class="score-popup" id="glossary-popup" onclick="if(event.target===this)closeGlossary()"><div class="score-popup-card" style="border-color:rgba(134,239,172,.25);max-width:700px;"><button class="popup-close" onclick="closeGlossary()" style="top:1.25rem;right:1.25rem;">×</button><div style="margin-bottom:1.5rem;"><div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#86efac;margin-bottom:.5rem;">MARKETINGOVÝ SLOVNÍČEK</div><div style="font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:.3rem;">Pojmy v tomto reportu</div><div style="font-size:.85rem;color:#6b7280;">Vysvětlení pojmů používaných v analýze.</div></div><div style="display:flex;flex-direction:column;gap:.5rem;"><div class="gl-item"><div class="gl-term">Hero sekce</div><div class="gl-def">První velká část stránky viditelná bez scrollování. Má zlomek sekundy na to, aby zákazníka zaujala.</div></div><div class="gl-item"><div class="gl-term">Carousel / Slider</div><div class="gl-def">Automaticky se měnící obrázky. Zákazník pasivně kouká místo aby klikal. Snižuje konverze oproti statickému hero bloku.</div></div><div class="gl-item"><div class="gl-term">Headline / H1</div><div class="gl-def">Hlavní nadpis stránky. Měl by jasně říct: co prodáváte, pro koho a proč zrovna u vás.</div></div><div class="gl-item"><div class="gl-term">CTA — Call to Action</div><div class="gl-def">Výzva k akci — tlačítko vedoucí k dalšímu kroku. Silné: Vybrat produkt. Slabé: Detail, Více.</div></div><div class="gl-item"><div class="gl-term">USP — Unique Selling Proposition</div><div class="gl-def">Unikátní prodejní argument — proč koupit právě u vás a ne u konkurence.</div></div><div class="gl-item"><div class="gl-term">Trust signály</div><div class="gl-def">Recenze, hodnocení, certifikáty, loga plateb. Klíčové u prémióvého nebo neznámého zboží.</div></div><div class="gl-item"><div class="gl-term">Konverzní poměr</div><div class="gl-def">Procento návštěvníků, kteří provedou akci. Zvýšení z 2 % na 3 % = o 50 % více prodejů bez více návštěvníků.</div></div><div class="gl-item"><div class="gl-term">Bounce rate</div><div class="gl-def">Procento návštěvníků, kteří odejdou bez interakce. Nad 70 % = stránka nesplňuje očekávání.</div></div><div class="gl-item"><div class="gl-term">Sociální důkaz</div><div class="gl-def">Důkaz, že jiní lidé produkt koupili. Recenze, citace, počet zákazníků přesvědčí lépe než fotografie.</div></div><div class="gl-item"><div class="gl-term">Lead / Poptávka</div><div class="gl-def">Potenciální zákazník, který projevil zájem. Mid-page CTA zachytí i nerozhodnuté.</div></div><div class="gl-item"><div class="gl-term">PDP — Product Detail Page</div><div class="gl-def">Stránka s detailem produktu. CTA zde má zásadní vliv na konverzi.</div></div></div></div></div>
+<!-- POTENTIAL POPUP -->
+<div class="score-popup" id="potential-popup" onclick="if(event.target===this)closePotential()"><div class="score-popup-card"><button class="popup-close" onclick="closePotential()" style="top:1.25rem;right:1.25rem;">×</button><div style="margin-bottom:1.5rem;"><div style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#22c55e;margin-bottom:.5rem;">ODHAD NÁRŬSTU KONVERZÍ</div><div style="font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:#22c55e;line-height:1;margin-bottom:.4rem;" id="pot-pct"></div><div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:.3rem;">Kde ten nárůst vzniká</div></div><div id="potential-items" style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem;"></div><div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:12px;padding:1rem;"><div id="pot-summary" style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:.2rem;"></div></div></div></div>
+
+<!-- ISSUE POPUP -->
+<div class="issue-popup" id="issue-popup" onclick="closeIssueOnBg(event)">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closeIssue()">✕</button>
+    <div class="popup-top">
+      <div class="popup-problem"><div class="popup-section-label label-problem">Problém</div><div class="popup-issue-title" id="popup-title"></div><div class="popup-problem-text" id="popup-problem"></div></div>
+      <div class="popup-solution"><div class="popup-section-label label-solution">Řešení</div><div style="padding-top:2.1rem;"></div><div class="popup-fix-text" id="popup-fix"></div></div>
+    </div>
+    <div class="popup-bottom" id="popup-bottom"></div>
+  </div>
+</div>
+
+<!-- ROAD POPUP -->
+<div class="issue-popup" id="road-popup" onclick="closeRoadOnBg(event)">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closeRoad()">✕</button>
+    <div class="popup-top">
+      <div class="popup-problem"><div class="popup-section-label label-problem">Před — aktuální stav</div><div class="popup-issue-title" id="rp-title"></div><div class="popup-problem-text" id="rp-before"></div></div>
+      <div class="popup-solution"><div class="popup-section-label label-solution">Po opravě</div><div style="padding-top:2.1rem;"></div><div class="popup-fix-text" id="rp-after"></div></div>
+    </div>
+    <div class="popup-bottom" id="rp-body"></div>
+  </div>
+</div>
+
+<!-- SCORE POPUP -->
+<div class="score-popup" id="score-popup" onclick="closeScoreOnBg(event)">
+  <div class="score-popup-card">
+    <button class="popup-close" onclick="closeScore()" style="top:1.25rem;right:1.25rem;">✕</button>
+    <div style="display:flex;align-items:flex-end;gap:1.5rem;margin-bottom:.5rem;">
+      <div>
+        <div style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#dc2626;margin-bottom:.5rem;">CRO SCORE · freshjuice.cz</div>
+        <div style="display:flex;align-items:baseline;gap:.25rem;">
+          <span style="font-family:'Playfair Display',serif;font-size:4.5rem;font-weight:900;color:#dc2626;line-height:1;">35</span>
+          <span style="font-family:'Playfair Display',serif;font-size:2rem;color:rgba(220,38,38,.35);">/100</span>
+        </div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#fff;margin-top:.25rem;">Jak jsme k číslu došli</div>
+        <div style="font-size:.88rem;color:#6b7280;margin-top:.25rem;">Hodnotíme 10 oblastí, každá má váhu 0–20 bodů. Součet = celkové skóre.</div>
+      </div>
+      <div style="margin-left:auto;text-align:right;flex-shrink:0;">
+        <div style="font-size:.75rem;color:#6b7280;margin-bottom:.35rem;">Průměr e-shopů v kategorii</div>
+        <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:#6b7280;">58</div>
+        <div style="font-size:.7rem;color:rgba(134,239,172,.6);margin-top:.25rem;">↑ +23 bodů k dosažení průměru</div>
+      </div>
+    </div>
+
+    <div class="score-criteria"><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:15%;background:#dc2626;"></div></div><div class="sc-score-num" style="color:#dc2626;">3/20</div></div><div><div class="sc-title">Z hera udělat jasný nákupní vstup</div><div class="sc-desc">Hero je jen slider obrázků bez headline/benefitu a bez viditelného CTA; nevede do nákupu.</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:15%;background:#dc2626;"></div></div><div class="sc-score-num" style="color:#dc2626;">4/20</div></div><div><div class="sc-title">Ztlumit odliv na FreshUp.cz v rozcestníku</div><div class="sc-desc">Crossroads posílá významnou část návštěvníků pryč na jiný web (FreshUp.cz) dřív, než nakoupí.</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:35%;background:#d97706;"></div></div><div class="sc-score-num" style="color:#d97706;">8/20</div></div><div><div class="sc-title">Sjednotit URL pro „Šněkové“ v rozcestníku</div><div class="sc-desc">V rozcestníku je „Šněkové“ na odlišné URL (/kat/snekove-odstavnovace/) než v menu (vnořená kategorie). Riziko …</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:35%;background:#d97706;"></div></div><div class="sc-score-num" style="color:#d97706;">9/20</div></div><div><div class="sc-title">Zrušit duplicitu „Pronájem“ v mobilním menu</div><div class="sc-desc">V mobilním menu je „Pronájem“ dvakrát, působí to jako chyba a snižuje důvěru v navigaci.</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:35%;background:#d97706;"></div></div><div class="sc-score-num" style="color:#d97706;">10/20</div></div><div><div class="sc-title">Udělat telefon nahoře klikací</div><div class="sc-desc">V hlavičce je číslo „+420 774 631 631“ jako text (ne tel: odkaz), na mobilu zbytečná třecí plocha.</div></div></div><div class="score-criterion"><div class="sc-bar-wrap"><div class="sc-bar-bg"><div class="sc-bar-fill" style="height:60%;background:#1d4ed8;"></div></div><div class="sc-score-num" style="color:#1d4ed8;">14/20</div></div><div><div class="sc-title">Posílit USP lištu o tvrdší důkazy</div><div class="sc-desc">USP jsou obecná („kvalitní produkty“), chybí konkrétní důkazy pro drahé spotřebiče (servis, záruky, dostupnost…</div></div></div></div>
+
+  </div>
+</div>
+<script>
+var domainName="freshjuice.cz";
+document.getElementById("hero-screenshot").src="https://api.apiflash.com/v1/urltoimage/cache/1ovgr0m26w.jpeg?access_key=9b87c5ac32524cd0926966db6927bb61";
+if(document.getElementById("img-logo"))document.getElementById("img-logo").src="";
+if(document.getElementById("img-juicer"))document.getElementById("img-juicer").style.display="none";
+if(document.getElementById("img-prod1"))document.getElementById("img-prod1").style.display="none";
+if(document.getElementById("img-prod2"))document.getElementById("img-prod2").style.display="none";
+if(document.getElementById("img-prod3"))document.getElementById("img-prod3").style.display="none";
+var SC_POS={"NAV":"center 0.0%","HERO":"center 6.8%","SLIDER":"center 8.0%","CATS":"center 25.0%","USP":"center 45.5%","PRODUCTS":"center 55.7%","PRICING":"center 70.5%","CTA":"center 45.5%","SOCIAL":"center 87.6%","FOOTER":"center 100.0%","FULL":"center top"};
+var SECTION_POS={"NAV":{"top":0,"h":6},"HERO":{"top":6,"h":16},"SLIDER":{"top":7,"h":22},"CATS":{"top":22,"h":18},"USP":{"top":40,"h":9},"PRODUCTS":{"top":49,"h":28},"PRICING":{"top":62,"h":14},"CTA":{"top":40,"h":7},"SOCIAL":{"top":77,"h":15},"FOOTER":{"top":92,"h":8}};
+var SEC_MOCKS={"NAV":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">NAV</span><span style=\"font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fef3c7;color:#d97706;font-weight:700;\">✓ opraveno</span><span style=\"font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;\">Zrušit duplicitu „Pronájem“ v mobilním menu</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"padding:.6rem .9rem;background:#fff;\"><div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\">\n    <div style=\"font-weight:800;color:#2d2d2d;\">Menu</div>\n    <span style=\"background:#f3f3f3;border:1px solid #e5e5e5;border-radius:10px;padding:8px 10px;font-weight:700;font-size:12px;color:#2d2d2d;\">Zavřít</span>\n  </div>\n  <div style=\"margin-top:12px;border-top:1px solid #eeeeee;\">\n    <div style=\"padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;\">Odšťavňovače</div>\n    <div style=\"padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;\">Citrusovače</div>\n    <div style=\"padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;\">Mixéry a blendery</div>\n    <div style=\"padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;\">Pronájem</div>\n    <div style=\"padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;\">Čerstvé šťávy</div>\n    <div style=\"padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;\">O nás</div>\n    <div style=\"padding:12px 0;font-weight:700;color:#2d2d2d;\">Kontakty</div>\n  </div>\n  <div style=\"margin-top:10px;color:#6a6a6a;font-size:12px;line-height:1.35;\">Duplicitní položka „Pronájem“ byla odstraněna.</div>\n</div></div></div></div>","HERO":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">HERO</span><span style=\"font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fee2e2;color:#dc2626;font-weight:700;\">✓ opraveno</span><span style=\"font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;\">Z hera udělat jasný nákupní vstup</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"padding:.6rem .9rem;background:#fff;\"><div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px 16px 14px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"background:linear-gradient(90deg,#f6b044 0%,#f2c15a 45%,#f7d38a 100%);border-radius:12px;padding:18px 18px 16px;position:relative;overflow:hidden;\">\n    <div style=\"position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:999px;background:rgba(255,255,255,0.18);\"></div>\n    <div style=\"position:absolute;right:12px;bottom:-30px;width:220px;height:220px;border-radius:999px;background:rgba(255,255,255,0.12);\"></div>\n    <div style=\"max-width:420px;position:relative;\">\n      <div style=\"color:#b55b12;font-weight:800;font-size:30px;line-height:1.12;margin:0 0 10px;\">Prémiové odšťavňovače pro domácí i profi použití</div>\n      <div style=\"color:#6b3b10;font-size:14px;line-height:1.5;margin:0 0 14px;opacity:0.95;\">Výběr ověřených značek, poradenství a servis v&nbsp;ČR. Pomůžeme vám zvolit model podle použití a rozpočtu.</div>\n      <div style=\"display:flex;gap:10px;flex-wrap:wrap;align-items:center;\">\n        <span style=\"display:inline-block;background:#3f7f2b;color:#ffffff;font-weight:700;font-size:14px;padding:11px 14px;border-radius:10px;box-shadow:0 2px 0 rgba(0,0,0,0.10);\">Vybrat odšťavňovač</span>\n        <span style=\"display:inline-block;color:#2f6d22;font-weight:700;font-size:13px;padding:10px 12px;border-radius:10px;border:1px solid rgba(63,127,43,0.35);background:rgba(255,255,255,0.35);\">Pro domácnost</span>\n        <span style=\"display:inline-block;color:#2f6d22;font-weight:700;font-size:13px;padding:10px 12px;border-radius:10px;border:1px solid rgba(63,127,43,0.35);background:rgba(255,255,255,0.35);\">Pro gastronomii</span>\n      </div>\n    </div>\n    <div style=\"margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;\">\n      <span style=\"display:inline-block;background:rgba(255,255,255,0.35);color:#6b3b10;font-size:12px;font-weight:700;padding:8px 10px;border-radius:999px;\">Doprava zdarma nad 5000 Kč</span>\n      <span style=\"display:inline-block;background:rgba(255,255,255,0.35);color:#6b3b10;font-size:12px;font-weight:700;padding:8px 10px;border-radius:999px;\">20letá zkušenost</span>\n      <span style=\"display:inline-block;background:rgba(255,255,255,0.35);color:#6b3b10;font-size:12px;font-weight:700;padding:8px 10px;border-radius:999px;\">Česká firma</span>\n    </div>\n  </div>\n</div></div></div></div>","CATS":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">CATS</span><span style=\"font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#fee2e2;color:#dc2626;font-weight:700;\">✓ opraveno</span><span style=\"font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;\">Ztlumit odliv na FreshUp.cz v rozcestníku</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"padding:.6rem .9rem;background:#fff;\"><div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"font-weight:800;color:#2d2d2d;font-size:16px;margin:0 0 10px;\">Kategorie</div>\n  <div style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;\">\n    <div style=\"background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:78px;\">\n      <div style=\"font-weight:800;font-size:15px;margin-bottom:6px;\">Odšťavňovače</div>\n      <div style=\"font-size:12px;opacity:0.95;line-height:1.35;\">Odšťedivé • Šněkové</div>\n    </div>\n    <div style=\"background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:78px;\">\n      <div style=\"font-weight:800;font-size:15px;margin-bottom:6px;\">Citrusovače</div>\n      <div style=\"font-size:12px;opacity:0.95;line-height:1.35;\">Pro gastronomii • Pro domácnost</div>\n    </div>\n    <div style=\"background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:78px;\">\n      <div style=\"font-weight:800;font-size:15px;margin-bottom:6px;\">Mixéry a blendery</div>\n      <div style=\"font-size:12px;opacity:0.95;line-height:1.35;\">Pro domácnost • Pro gastronomii</div>\n    </div>\n    <div style=\"background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:78px;\">\n      <div style=\"font-weight:800;font-size:15px;margin-bottom:6px;\">Pronájem</div>\n      <div style=\"font-size:12px;opacity:0.95;line-height:1.35;\">Krátkodobě i dlouhodobě</div>\n    </div>\n  </div>\n  <div style=\"margin-top:14px;padding-top:12px;border-top:1px solid #eeeeee;display:flex;align-items:center;justify-content:space-between;gap:12px;\">\n    <div>\n      <div style=\"font-weight:800;color:#2d2d2d;font-size:14px;margin-bottom:4px;\">Čerstvé šťávy (jiný web)</div>\n      <div style=\"color:#6a6a6a;font-size:12px;line-height:1.35;\">FreshUp.cz • Fresh juice • Ovoce a zelenina</div>\n    </div>\n    <span style=\"display:inline-block;background:#f3f3f3;color:#2d2d2d;font-weight:700;font-size:12px;padding:10px 12px;border-radius:10px;border:1px solid #e5e5e5;white-space:nowrap;\">Přejít na FreshUp.cz</span>\n  </div>\n</div></div></div></div>","USP":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">USP</span><span style=\"font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;\">✓ opraveno</span><span style=\"font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;\">Posílit USP lištu o tvrdší důkazy</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"padding:.6rem .9rem;background:#fff;\"><div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;\">\n    <div style=\"display:flex;gap:10px;align-items:flex-start;\">\n      <div style=\"width:34px;height:34px;border-radius:999px;border:2px solid #3f7f2b;display:flex;align-items:center;justify-content:center;color:#3f7f2b;font-weight:900;\">✓</div>\n      <div>\n        <div style=\"font-weight:800;color:#2d2d2d;font-size:13px;\">Doprava zdarma nad 5000 Kč</div>\n        <div style=\"color:#6a6a6a;font-size:12px;line-height:1.35;\">Bez skrytých poplatků u většiny objednávek.</div>\n      </div>\n    </div>\n    <div style=\"display:flex;gap:10px;align-items:flex-start;\">\n      <div style=\"width:34px;height:34px;border-radius:999px;border:2px solid #3f7f2b;display:flex;align-items:center;justify-content:center;color:#3f7f2b;font-weight:900;\">✓</div>\n      <div>\n        <div style=\"font-weight:800;color:#2d2d2d;font-size:13px;\">Autorizované poradenství k Hurom</div>\n        <div style=\"color:#6a6a6a;font-size:12px;line-height:1.35;\">Pomůžeme vybrat správný model i příslušenství.</div>\n      </div>\n    </div>\n    <div style=\"display:flex;gap:10px;align-items:flex-start;\">\n      <div style=\"width:34px;height:34px;border-radius:999px;border:2px solid #3f7f2b;display:flex;align-items:center;justify-content:center;color:#3f7f2b;font-weight:900;\">✓</div>\n      <div>\n        <div style=\"font-weight:800;color:#2d2d2d;font-size:13px;\">Rychlé odeslání skladových kusů (Skladem)</div>\n        <div style=\"color:#6a6a6a;font-size:12px;line-height:1.35;\">U produktů označených „Skladem“ expedujeme co nejdříve.</div>\n      </div>\n    </div>\n    <div style=\"display:flex;gap:10px;align-items:flex-start;\">\n      <div style=\"width:34px;height:34px;border-radius:999px;border:2px solid #3f7f2b;display:flex;align-items:center;justify-content:center;color:#3f7f2b;font-weight:900;\">✓</div>\n      <div>\n        <div style=\"font-weight:800;color:#2d2d2d;font-size:13px;\">Záruční a pozáruční servis v ČR</div>\n        <div style=\"color:#6a6a6a;font-size:12px;line-height:1.35;\">Řešíte servis rychle a lokálně.</div>\n      </div>\n    </div>\n  </div>\n  <div style=\"margin-top:12px;padding-top:12px;border-top:1px solid #eeeeee;display:flex;align-items:center;justify-content:space-between;gap:10px;\">\n    <div style=\"color:#2d2d2d;font-weight:800;font-size:13px;\">Pomůžeme vybrat: <span style=\"color:#2f6d22;\">+420 774 631 631</span></div>\n    <span style=\"display:inline-block;background:#3f7f2b;color:#ffffff;font-weight:800;font-size:12px;padding:10px 12px;border-radius:10px;white-space:nowrap;\">Zavolat</span>\n  </div>\n</div></div></div></div>","PRODUCTS":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">PRODUCTS</span><span style=\"font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;\">✓ opraveno</span><span style=\"font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;\">Změnit CTA „Detail“ na akčnější na kartách</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"padding:.6rem .9rem;background:#fff;\"><div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"font-weight:900;color:#2d2d2d;font-size:18px;text-align:center;margin:2px 0 12px;\">Produkty</div>\n  <div style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;\">\n    <div style=\"border:1px solid #ededed;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);\">\n      <div style=\"height:120px;border-radius:10px;background:#f4f4f4;display:flex;align-items:center;justify-content:center;color:#9a9a9a;font-weight:800;\">Produkt</div>\n      <div style=\"margin-top:10px;font-weight:800;color:#2d2d2d;font-size:13px;\">Hurom H 400 bílý</div>\n      <div style=\"margin-top:6px;color:#6a6a6a;font-size:11px;line-height:1.35;\">Hurom H400 přináší moderní design, který se stane ozdobou každé kuchyně…</div>\n      <div style=\"margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;\">\n        <div>\n          <div style=\"font-weight:900;color:#2d2d2d;font-size:13px;\">16 900 Kč</div>\n          <div style=\"color:#2f6d22;font-weight:800;font-size:11px;margin-top:3px;\">Skladem</div>\n        </div>\n        <span style=\"display:inline-block;background:#e07a2f;color:#ffffff;font-weight:900;font-size:12px;padding:10px 12px;border-radius:10px;\">Zobrazit odšťavňovač</span>\n      </div>\n    </div>\n    <div style=\"border:1px solid #ededed;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);\">\n      <div style=\"height:120px;border-radius:10px;background:#f4f4f4;display:flex;align-items:center;justify-content:center;color:#9a9a9a;font-weight:800;\">Produkt</div>\n      <div style=\"margin-top:10px;font-weight:800;color:#2d2d2d;font-size:13px;\">Odšťavňovač Hurom H 320N bílý</div>\n      <div style=\"margin-top:6px;color:#6a6a6a;font-size:11px;line-height:1.35;\">Hurom H320N je špičkový šnekový odšťavňovač navržený pro maximální…</div>\n      <div style=\"margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;\">\n        <div>\n          <div style=\"font-weight:900;color:#2d2d2d;font-size:13px;\">14 900 Kč</div>\n          <div style=\"color:#2f6d22;font-weight:800;font-size:11px;margin-top:3px;\">Skladem</div>\n        </div>\n        <span style=\"display:inline-block;background:#e07a2f;color:#ffffff;font-weight:900;font-size:12px;padding:10px 12px;border-radius:10px;\">Vybrat variantu</span>\n      </div>\n    </div>\n  </div>\n</div></div></div></div>","CTA":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">CTA</span><span style=\"font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;\">✓ opraveno</span><span style=\"font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;\">Přidat CTA blok pod produkty pro nerozhodné</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"padding:.6rem .9rem;background:#fff;\"><div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"border-radius:12px;border:1px solid rgba(63,127,43,0.20);background:linear-gradient(180deg,rgba(63,127,43,0.08) 0%,rgba(63,127,43,0.03) 100%);padding:16px;\">\n    <div style=\"font-weight:900;color:#2d2d2d;font-size:18px;line-height:1.2;margin-bottom:6px;\">Nevíte, který odšťavňovač vybrat?</div>\n    <div style=\"color:#6a6a6a;font-size:13px;line-height:1.45;margin-bottom:12px;\">Napište nám nebo zavolejte — doporučíme konkrétní model podle použití (domácnost / gastronomie) a rozpočtu.</div>\n    <div style=\"display:flex;gap:10px;flex-wrap:wrap;align-items:center;\">\n      <span style=\"display:inline-block;background:#3f7f2b;color:#ffffff;font-weight:900;font-size:13px;padding:11px 14px;border-radius:10px;\">Chci doporučit model</span>\n      <span style=\"display:inline-block;background:#ffffff;color:#2f6d22;font-weight:900;font-size:13px;padding:11px 14px;border-radius:10px;border:1px solid rgba(63,127,43,0.35);\">+420 774 631 631</span>\n      <span style=\"display:inline-block;color:#6a6a6a;font-size:12px;\">Odkaz: /kontakty/</span>\n    </div>\n  </div>\n</div></div></div></div>","SOCIAL":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">SOCIAL</span><span style=\"font-size:.58rem;padding:.12rem .45rem;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;\">✓ opraveno</span><span style=\"font-size:.58rem;color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:340px;\">Doplnit sociální důkaz (recenze/hodnocení)</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"padding:.6rem .9rem;background:#fff;\"><div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;\">\n    <div style=\"font-weight:900;color:#2d2d2d;font-size:18px;\">Hodnocení zákazníků</div>\n    <div style=\"color:#6a6a6a;font-size:12px;font-weight:800;\">★★★★★ 4,9 / 5</div>\n  </div>\n  <div style=\"margin-top:10px;display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:10px;\">\n    <div style=\"border:1px solid #eeeeee;border-radius:12px;padding:12px;background:#fafafa;\">\n      <div style=\"color:#e07a2f;font-weight:900;font-size:12px;margin-bottom:6px;\">★★★★★</div>\n      <div style=\"color:#2d2d2d;font-size:13px;line-height:1.45;font-weight:700;\">„Rychlé a věcné poradenství po telefonu. Doporučený Hurom sedí přesně pro naši domácnost.“</div>\n      <div style=\"color:#6a6a6a;font-size:12px;margin-top:6px;\">Zákazník z e‑shopu</div>\n    </div>\n    <div style=\"border:1px solid #eeeeee;border-radius:12px;padding:12px;background:#fafafa;\">\n      <div style=\"color:#e07a2f;font-weight:900;font-size:12px;margin-bottom:6px;\">★★★★★</div>\n      <div style=\"color:#2d2d2d;font-size:13px;line-height:1.45;font-weight:700;\">„Expedice byla rychlá a zboží dorazilo perfektně zabalené. Oceňuji český servis.“</div>\n      <div style=\"color:#6a6a6a;font-size:12px;margin-top:6px;\">Zákazník z e‑shopu</div>\n    </div>\n    <div style=\"border:1px solid #eeeeee;border-radius:12px;padding:12px;background:#fafafa;\">\n      <div style=\"color:#e07a2f;font-weight:900;font-size:12px;margin-bottom:6px;\">★★★★★</div>\n      <div style=\"color:#2d2d2d;font-size:13px;line-height:1.45;font-weight:700;\">„Pomohli nám vybrat model pro menší provoz. Šťávy jsou super a obsluha je jednoduchá.“</div>\n      <div style=\"color:#6a6a6a;font-size:12px;margin-top:6px;\">Gastro zákazník</div>\n    </div>\n  </div>\n  <div style=\"margin-top:12px;padding-top:12px;border-top:1px solid #eeeeee;\">\n    <div style=\"font-weight:900;color:#2d2d2d;font-size:16px;\">Články</div>\n    <div style=\"margin-top:8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;\">\n      <div style=\"border:1px solid #ededed;border-radius:12px;overflow:hidden;\">\n        <div style=\"height:60px;background:#f4f4f4;\"></div>\n        <div style=\"padding:10px;\">\n          <div style=\"font-weight:800;color:#2d2d2d;font-size:12px;line-height:1.3;\">Jak vybrat odšťavňovač</div>\n          <div style=\"color:#6a6a6a;font-size:11px;margin-top:6px;\">5. 3. 2025</div>\n        </div>\n      </div>\n      <div style=\"border:1px solid #ededed;border-radius:12px;overflow:hidden;\">\n        <div style=\"height:60px;background:#f4f4f4;\"></div>\n        <div style=\"padding:10px;\">\n          <div style=\"font-weight:800;color:#2d2d2d;font-size:12px;line-height:1.3;\">Proč pít fresh?</div>\n          <div style=\"color:#6a6a6a;font-size:11px;margin-top:6px;\">5. 3. 2025</div>\n        </div>\n      </div>\n      <div style=\"border:1px solid #ededed;border-radius:12px;overflow:hidden;\">\n        <div style=\"height:60px;background:#f4f4f4;\"></div>\n        <div style=\"padding:10px;\">\n          <div style=\"font-weight:800;color:#2d2d2d;font-size:12px;line-height:1.3;\">Test odšťavňovačů</div>\n          <div style=\"color:#6a6a6a;font-size:11px;margin-top:6px;\">5. 3. 2025</div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div></div></div></div>","FOOTER":"<div style=\"border-bottom:1px solid #e5e7eb;\"><div style=\"background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:.28rem .9rem;display:flex;align-items:center;gap:.5rem;\"><span style=\"font-size:.58rem;font-weight:700;letter-spacing:.09em;color:#9ca3af;text-transform:uppercase;\">FOOTER</span><span style=\"font-size:.58rem;color:#9ca3af;\">bez změny</span></div><div style=\"padding:.65rem 1rem .8rem;\"><div style=\"height:36px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#9ca3af;\">FOOTER — bez doporučení</div></div></div>"};
+var LLM_MOCKS={"1":"<div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px 16px 14px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"background:linear-gradient(90deg,#f6b044 0%,#f2c15a 45%,#f7d38a 100%);border-radius:12px;padding:18px 18px 16px;position:relative;overflow:hidden;\">\n    <div style=\"position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:999px;background:rgba(255,255,255,0.18);\"></div>\n    <div style=\"position:absolute;right:12px;bottom:-30px;width:220px;height:220px;border-radius:999px;background:rgba(255,255,255,0.12);\"></div>\n    <div style=\"max-width:420px;position:relative;\">\n      <div style=\"color:#b55b12;font-weight:800;font-size:30px;line-height:1.12;margin:0 0 10px;\">Prémiové odšťavňovače pro domácí i profi použití</div>\n      <div style=\"color:#6b3b10;font-size:14px;line-height:1.5;margin:0 0 14px;opacity:0.95;\">Výběr ověřených značek, poradenství a servis v&nbsp;ČR. Pomůžeme vám zvolit model podle použití a rozpočtu.</div>\n      <div style=\"display:flex;gap:10px;flex-wrap:wrap;align-items:center;\">\n        <span style=\"display:inline-block;background:#3f7f2b;color:#ffffff;font-weight:700;font-size:14px;padding:11px 14px;border-radius:10px;box-shadow:0 2px 0 rgba(0,0,0,0.10);\">Vybrat odšťavňovač</span>\n        <span style=\"display:inline-block;color:#2f6d22;font-weight:700;font-size:13px;padding:10px 12px;border-radius:10px;border:1px solid rgba(63,127,43,0.35);background:rgba(255,255,255,0.35);\">Pro domácnost</span>\n        <span style=\"display:inline-block;color:#2f6d22;font-weight:700;font-size:13px;padding:10px 12px;border-radius:10px;border:1px solid rgba(63,127,43,0.35);background:rgba(255,255,255,0.35);\">Pro gastronomii</span>\n      </div>\n    </div>\n    <div style=\"margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;position:relative;\">\n      <span style=\"display:inline-block;background:rgba(255,255,255,0.35);color:#6b3b10;font-size:12px;font-weight:700;padding:8px 10px;border-radius:999px;\">Doprava zdarma nad 5000 Kč</span>\n      <span style=\"display:inline-block;background:rgba(255,255,255,0.35);color:#6b3b10;font-size:12px;font-weight:700;padding:8px 10px;border-radius:999px;\">20letá zkušenost</span>\n      <span style=\"display:inline-block;background:rgba(255,255,255,0.35);color:#6b3b10;font-size:12px;font-weight:700;padding:8px 10px;border-radius:999px;\">Česká firma</span>\n    </div>\n  </div>\n</div>","2":"<div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"font-weight:800;color:#2d2d2d;font-size:16px;margin:0 0 10px;\">Kategorie</div>\n  <div style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;\">\n    <div style=\"background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:78px;\">\n      <div style=\"font-weight:800;font-size:15px;margin-bottom:6px;\">Odšťavňovače</div>\n      <div style=\"font-size:12px;opacity:0.95;line-height:1.35;\">Odšťedivé • Šněkové</div>\n    </div>\n    <div style=\"background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:78px;\">\n      <div style=\"font-weight:800;font-size:15px;margin-bottom:6px;\">Citrusovače</div>\n      <div style=\"font-size:12px;opacity:0.95;line-height:1.35;\">Pro gastronomii • Pro domácnost</div>\n    </div>\n    <div style=\"background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:78px;\">\n      <div style=\"font-weight:800;font-size:15px;margin-bottom:6px;\">Mixéry a blendery</div>\n      <div style=\"font-size:12px;opacity:0.95;line-height:1.35;\">Pro domácnost • Pro gastronomii</div>\n    </div>\n    <div style=\"background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:78px;\">\n      <div style=\"font-weight:800;font-size:15px;margin-bottom:6px;\">Pronájem</div>\n      <div style=\"font-size:12px;opacity:0.95;line-height:1.35;\">Krátkodobě i dlouhodobě</div>\n    </div>\n  </div>\n  <div style=\"margin-top:14px;padding-top:12px;border-top:1px solid #eeeeee;display:flex;align-items:center;justify-content:space-between;gap:12px;\">\n    <div>\n      <div style=\"font-weight:800;color:#2d2d2d;font-size:14px;margin-bottom:4px;\">Čerstvé šťávy (jiný web)</div>\n      <div style=\"color:#6a6a6a;font-size:12px;line-height:1.35;\">FreshUp.cz • Fresh juice • Ovoce a zelenina</div>\n    </div>\n    <span style=\"display:inline-block;background:#f3f3f3;color:#2d2d2d;font-weight:700;font-size:12px;padding:10px 12px;border-radius:10px;border:1px solid #e5e5e5;white-space:nowrap;\">Přejít na FreshUp.cz</span>\n  </div>\n</div>","3":"<div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"font-weight:800;color:#2d2d2d;font-size:16px;margin:0 0 10px;\">Kategorie</div>\n  <div style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;\">\n    <div style=\"background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:88px;\">\n      <div style=\"font-weight:800;font-size:15px;margin-bottom:6px;\">Odšťavňovače</div>\n      <div style=\"display:flex;gap:8px;flex-wrap:wrap;\">\n        <span style=\"background:rgba(255,255,255,0.22);padding:7px 10px;border-radius:999px;font-size:12px;font-weight:700;\">Odšťedivé</span>\n        <span style=\"background:rgba(255,255,255,0.22);padding:7px 10px;border-radius:999px;font-size:12px;font-weight:700;\">Šněkové</span>\n      </div>\n      <div style=\"margin-top:8px;color:rgba(255,255,255,0.9);font-size:11px;\">Odkaz sjednocen: /kat/odstavnovace/snekove-odstavnovace/</div>\n    </div>\n    <div style=\"background:#3f7f2b;color:#ffffff;border-radius:10px;padding:14px 14px 12px;min-height:88px;\">\n      <div style=\"font-weight:800;font-size:15px;margin-bottom:6px;\">Citrusovače</div>\n      <div style=\"color:rgba(255,255,255,0.95);font-size:12px;line-height:1.35;\">Pro gastronomii • Pro domácnost</div>\n    </div>\n  </div>\n</div>","4":"<div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\">\n    <div style=\"font-weight:800;color:#2d2d2d;\">Menu</div>\n    <span style=\"background:#f3f3f3;border:1px solid #e5e5e5;border-radius:10px;padding:8px 10px;font-weight:700;font-size:12px;color:#2d2d2d;\">Zavřít</span>\n  </div>\n  <div style=\"margin-top:12px;border-top:1px solid #eeeeee;\">\n    <div style=\"padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;\">Odšťavňovače</div>\n    <div style=\"padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;\">Citrusovače</div>\n    <div style=\"padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;\">Mixéry a blendery</div>\n    <div style=\"padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;\">Pronájem</div>\n    <div style=\"padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;\">Čerstvé šťávy</div>\n    <div style=\"padding:12px 0;border-bottom:1px solid #eeeeee;font-weight:700;color:#2d2d2d;\">O nás</div>\n    <div style=\"padding:12px 0;font-weight:700;color:#2d2d2d;\">Kontakty</div>\n  </div>\n  <div style=\"margin-top:10px;color:#6a6a6a;font-size:12px;line-height:1.35;\">Duplicitní položka „Pronájem“ byla odstraněna.</div>\n</div>","5":"<div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"display:flex;align-items:center;justify-content:space-between;gap:12px;\">\n    <div style=\"font-weight:800;color:#2d2d2d;font-size:22px;letter-spacing:0.2px;\">fresh<span style=\"color:#3f7f2b;\">juice</span></div>\n    <div style=\"flex:1;max-width:280px;background:#f4f4f4;border:1px solid #e6e6e6;border-radius:10px;padding:10px 12px;color:#6a6a6a;font-size:12px;\">hledaný výraz</div>\n    <span style=\"background:#e07a2f;color:#ffffff;font-weight:800;border-radius:10px;padding:10px 12px;white-space:nowrap;\">0 Kč</span>\n  </div>\n  <div style=\"margin-top:10px;display:flex;align-items:center;justify-content:flex-end;gap:10px;\">\n    <div style=\"text-align:right;\">\n      <div style=\"color:#6a6a6a;font-size:12px;\">Potřebujete poradit?</div>\n      <span style=\"display:inline-block;color:#2f6d22;font-weight:900;font-size:14px;text-decoration:underline;\">+420 774 631 631</span>\n      <div style=\"color:#6a6a6a;font-size:11px;\">Kliknutím voláte (tel:+420774631631)</div>\n    </div>\n  </div>\n</div>","6":"<div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;\">\n    <div style=\"display:flex;gap:10px;align-items:flex-start;\">\n      <div style=\"width:34px;height:34px;border-radius:999px;border:2px solid #3f7f2b;display:flex;align-items:center;justify-content:center;color:#3f7f2b;font-weight:900;\">✓</div>\n      <div>\n        <div style=\"font-weight:800;color:#2d2d2d;font-size:13px;\">Doprava zdarma nad 5000 Kč</div>\n        <div style=\"color:#6a6a6a;font-size:12px;line-height:1.35;\">Bez skrytých poplatků u většiny objednávek.</div>\n      </div>\n    </div>\n    <div style=\"display:flex;gap:10px;align-items:flex-start;\">\n      <div style=\"width:34px;height:34px;border-radius:999px;border:2px solid #3f7f2b;display:flex;align-items:center;justify-content:center;color:#3f7f2b;font-weight:900;\">✓</div>\n      <div>\n        <div style=\"font-weight:800;color:#2d2d2d;font-size:13px;\">Autorizované poradenství k Hurom</div>\n        <div style=\"color:#6a6a6a;font-size:12px;line-height:1.35;\">Pomůžeme vybrat správný model i příslušenství.</div>\n      </div>\n    </div>\n    <div style=\"display:flex;gap:10px;align-items:flex-start;\">\n      <div style=\"width:34px;height:34px;border-radius:999px;border:2px solid #3f7f2b;display:flex;align-items:center;justify-content:center;color:#3f7f2b;font-weight:900;\">✓</div>\n      <div>\n        <div style=\"font-weight:800;color:#2d2d2d;font-size:13px;\">Rychlé odeslání skladových kusů (Skladem)</div>\n        <div style=\"color:#6a6a6a;font-size:12px;line-height:1.35;\">U produktů označených „Skladem“ expedujeme co nejdříve.</div>\n      </div>\n    </div>\n    <div style=\"display:flex;gap:10px;align-items:flex-start;\">\n      <div style=\"width:34px;height:34px;border-radius:999px;border:2px solid #3f7f2b;display:flex;align-items:center;justify-content:center;color:#3f7f2b;font-weight:900;\">✓</div>\n      <div>\n        <div style=\"font-weight:800;color:#2d2d2d;font-size:13px;\">Záruční a pozáruční servis v ČR</div>\n        <div style=\"color:#6a6a6a;font-size:12px;line-height:1.35;\">Řešíte servis rychle a lokálně.</div>\n      </div>\n    </div>\n  </div>\n  <div style=\"margin-top:12px;padding-top:12px;border-top:1px solid #eeeeee;display:flex;align-items:center;justify-content:space-between;gap:10px;\">\n    <div style=\"color:#2d2d2d;font-weight:800;font-size:13px;\">Pomůžeme vybrat: <span style=\"color:#2f6d22;\">+420 774 631 631</span></div>\n    <span style=\"display:inline-block;background:#3f7f2b;color:#ffffff;font-weight:800;font-size:12px;padding:10px 12px;border-radius:10px;white-space:nowrap;\">Zavolat</span>\n  </div>\n</div>","7":"<div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"font-weight:900;color:#2d2d2d;font-size:18px;text-align:center;margin:2px 0 12px;\">Produkty</div>\n  <div style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;\">\n    <div style=\"border:1px solid #ededed;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);\">\n      <div style=\"height:120px;border-radius:10px;background:#f4f4f4;display:flex;align-items:center;justify-content:center;color:#9a9a9a;font-weight:800;\">Produkt</div>\n      <div style=\"margin-top:10px;font-weight:800;color:#2d2d2d;font-size:13px;\">Hurom H 400 bílý</div>\n      <div style=\"margin-top:6px;color:#6a6a6a;font-size:11px;line-height:1.35;\">Hurom H400 přináší moderní design, který se stane ozdobou každé kuchyně…</div>\n      <div style=\"margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;\">\n        <div>\n          <div style=\"font-weight:900;color:#2d2d2d;font-size:13px;\">16 900 Kč</div>\n          <div style=\"color:#2f6d22;font-weight:800;font-size:11px;margin-top:3px;\">Skladem</div>\n        </div>\n        <span style=\"display:inline-block;background:#e07a2f;color:#ffffff;font-weight:900;font-size:12px;padding:10px 12px;border-radius:10px;\">Zobrazit odšťavňovač</span>\n      </div>\n    </div>\n    <div style=\"border:1px solid #ededed;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);\">\n      <div style=\"height:120px;border-radius:10px;background:#f4f4f4;display:flex;align-items:center;justify-content:center;color:#9a9a9a;font-weight:800;\">Produkt</div>\n      <div style=\"margin-top:10px;font-weight:800;color:#2d2d2d;font-size:13px;\">Odšťavňovač Hurom H 320N bílý</div>\n      <div style=\"margin-top:6px;color:#6a6a6a;font-size:11px;line-height:1.35;\">Hurom H320N je špičkový šnekový odšťavňovač navržený pro maximální…</div>\n      <div style=\"margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;\">\n        <div>\n          <div style=\"font-weight:900;color:#2d2d2d;font-size:13px;\">14 900 Kč</div>\n          <div style=\"color:#2f6d22;font-weight:800;font-size:11px;margin-top:3px;\">Skladem</div>\n        </div>\n        <span style=\"display:inline-block;background:#e07a2f;color:#ffffff;font-weight:900;font-size:12px;padding:10px 12px;border-radius:10px;\">Vybrat variantu</span>\n      </div>\n    </div>\n  </div>\n</div>","8":"<div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"text-align:center;font-weight:900;color:#2d2d2d;font-size:18px;margin:2px 0 10px;\">Produkty</div>\n  <div style=\"display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;\">\n    <span style=\"display:inline-block;background:#3f7f2b;color:#ffffff;font-weight:900;font-size:12px;padding:10px 14px;border-radius:999px;\">Pro domácnost</span>\n    <span style=\"display:inline-block;background:#ffffff;color:#2f6d22;font-weight:900;font-size:12px;padding:10px 14px;border-radius:999px;border:1px solid rgba(63,127,43,0.35);\">Pro gastronomii</span>\n  </div>\n  <div style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;\">\n    <div style=\"border:1px solid #ededed;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);\">\n      <div style=\"height:120px;border-radius:10px;background:#f4f4f4;display:flex;align-items:center;justify-content:center;color:#9a9a9a;font-weight:800;\">Produkt</div>\n      <div style=\"margin-top:10px;font-weight:800;color:#2d2d2d;font-size:13px;\">Hurom H 400 černý</div>\n      <div style=\"margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;\">\n        <div style=\"font-weight:900;color:#2d2d2d;font-size:13px;\">16 900 Kč</div>\n        <span style=\"background:#e07a2f;color:#ffffff;font-weight:900;font-size:12px;padding:10px 12px;border-radius:10px;\">Zobrazit odšťavňovač</span>\n      </div>\n    </div>\n    <div style=\"border:1px solid #ededed;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);\">\n      <div style=\"height:120px;border-radius:10px;background:#f4f4f4;display:flex;align-items:center;justify-content:center;color:#9a9a9a;font-weight:800;\">Produkt</div>\n      <div style=\"margin-top:10px;font-weight:800;color:#2d2d2d;font-size:13px;\">Hurom E 30 ST</div>\n      <div style=\"margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;\">\n        <div style=\"font-weight:900;color:#2d2d2d;font-size:13px;\">7 999 Kč</div>\n        <span style=\"background:#e07a2f;color:#ffffff;font-weight:900;font-size:12px;padding:10px 12px;border-radius:10px;\">Vybrat variantu</span>\n      </div>\n    </div>\n  </div>\n</div>","9":"<div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;\">\n    <div style=\"font-weight:900;color:#2d2d2d;font-size:18px;\">Hodnocení zákazníků</div>\n    <div style=\"color:#6a6a6a;font-size:12px;font-weight:800;\">★★★★★ 4,9 / 5</div>\n  </div>\n  <div style=\"margin-top:10px;display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:10px;\">\n    <div style=\"border:1px solid #eeeeee;border-radius:12px;padding:12px;background:#fafafa;\">\n      <div style=\"color:#e07a2f;font-weight:900;font-size:12px;margin-bottom:6px;\">★★★★★</div>\n      <div style=\"color:#2d2d2d;font-size:13px;line-height:1.45;font-weight:700;\">„Rychlé a věcné poradenství po telefonu. Doporučený Hurom sedí přesně pro naši domácnost.“</div>\n      <div style=\"color:#6a6a6a;font-size:12px;margin-top:6px;\">Zákazník z e‑shopu</div>\n    </div>\n    <div style=\"border:1px solid #eeeeee;border-radius:12px;padding:12px;background:#fafafa;\">\n      <div style=\"color:#e07a2f;font-weight:900;font-size:12px;margin-bottom:6px;\">★★★★★</div>\n      <div style=\"color:#2d2d2d;font-size:13px;line-height:1.45;font-weight:700;\">„Expedice byla rychlá a zboží dorazilo perfektně zabalené. Oceňuji český servis.“</div>\n      <div style=\"color:#6a6a6a;font-size:12px;margin-top:6px;\">Zákazník z e‑shopu</div>\n    </div>\n    <div style=\"border:1px solid #eeeeee;border-radius:12px;padding:12px;background:#fafafa;\">\n      <div style=\"color:#e07a2f;font-weight:900;font-size:12px;margin-bottom:6px;\">★★★★★</div>\n      <div style=\"color:#2d2d2d;font-size:13px;line-height:1.45;font-weight:700;\">„Pomohli nám vybrat model pro menší provoz. Šťávy jsou super a obsluha je jednoduchá.“</div>\n      <div style=\"color:#6a6a6a;font-size:12px;margin-top:6px;\">Gastro zákazník</div>\n    </div>\n  </div>\n  <div style=\"margin-top:12px;padding-top:12px;border-top:1px solid #eeeeee;\">\n    <div style=\"font-weight:900;color:#2d2d2d;font-size:16px;\">Články</div>\n    <div style=\"margin-top:8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;\">\n      <div style=\"border:1px solid #ededed;border-radius:12px;overflow:hidden;\">\n        <div style=\"height:60px;background:#f4f4f4;\"></div>\n        <div style=\"padding:10px;\">\n          <div style=\"font-weight:800;color:#2d2d2d;font-size:12px;line-height:1.3;\">Jak vybrat odšťavňovač</div>\n          <div style=\"color:#6a6a6a;font-size:11px;margin-top:6px;\">5. 3. 2025</div>\n        </div>\n      </div>\n      <div style=\"border:1px solid #ededed;border-radius:12px;overflow:hidden;\">\n        <div style=\"height:60px;background:#f4f4f4;\"></div>\n        <div style=\"padding:10px;\">\n          <div style=\"font-weight:800;color:#2d2d2d;font-size:12px;line-height:1.3;\">Proč pít fresh?</div>\n          <div style=\"color:#6a6a6a;font-size:11px;margin-top:6px;\">5. 3. 2025</div>\n        </div>\n      </div>\n      <div style=\"border:1px solid #ededed;border-radius:12px;overflow:hidden;\">\n        <div style=\"height:60px;background:#f4f4f4;\"></div>\n        <div style=\"padding:10px;\">\n          <div style=\"font-weight:800;color:#2d2d2d;font-size:12px;line-height:1.3;\">Test odšťavňovačů</div>\n          <div style=\"color:#6a6a6a;font-size:11px;margin-top:6px;\">5. 3. 2025</div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>","10":"<div style=\"max-width:640px;margin:0 auto;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #e9e9e9;font-family:Arial,Helvetica,sans-serif;\">\n  <div style=\"border-radius:12px;border:1px solid rgba(63,127,43,0.20);background:linear-gradient(180deg,rgba(63,127,43,0.08) 0%,rgba(63,127,43,0.03) 100%);padding:16px;\">\n    <div style=\"font-weight:900;color:#2d2d2d;font-size:18px;line-height:1.2;margin-bottom:6px;\">Nevíte, který odšťavňovač vybrat?</div>\n    <div style=\"color:#6a6a6a;font-size:13px;line-height:1.45;margin-bottom:12px;\">Napište nám nebo zavolejte — doporučíme konkrétní model podle použití (domácnost / gastronomie) a rozpočtu.</div>\n    <div style=\"display:flex;gap:10px;flex-wrap:wrap;align-items:center;\">\n      <span style=\"display:inline-block;background:#3f7f2b;color:#ffffff;font-weight:900;font-size:13px;padding:11px 14px;border-radius:10px;\">Chci doporučit model</span>\n      <span style=\"display:inline-block;background:#ffffff;color:#2f6d22;font-weight:900;font-size:13px;padding:11px 14px;border-radius:10px;border:1px solid rgba(63,127,43,0.35);\">+420 774 631 631</span>\n      <span style=\"display:inline-block;color:#6a6a6a;font-size:12px;\">Odkaz: /kontakty/</span>\n    </div>\n  </div>\n</div>"};
+var REC_SHOTS={"1":"https://api.apiflash.com/v1/urltoimage/cache/j08z7pdlvw.jpeg?access_key=9b87c5ac32524cd0926966db6927bb61","2":"https://api.apiflash.com/v1/urltoimage/cache/1qx6ol7qyw.jpeg?access_key=9b87c5ac32524cd0926966db6927bb61","3":"https://api.apiflash.com/v1/urltoimage/cache/j2xpq45d51.jpeg?access_key=9b87c5ac32524cd0926966db6927bb61","4":"https://api.apiflash.com/v1/urltoimage/cache/1p5ky8d0xw.jpeg?access_key=9b87c5ac32524cd0926966db6927bb61","5":"https://api.apiflash.com/v1/urltoimage/cache/jn5olqxepj.jpeg?access_key=9b87c5ac32524cd0926966db6927bb61","6":"https://api.apiflash.com/v1/urltoimage/cache/1v5k9yo2dw.jpeg?access_key=9b87c5ac32524cd0926966db6927bb61","7":"https://api.apiflash.com/v1/urltoimage/cache/176qyk8m9j.jpeg?access_key=9b87c5ac32524cd0926966db6927bb61","8":"https://api.apiflash.com/v1/urltoimage/cache/wl4r07zkvj.jpeg?access_key=9b87c5ac32524cd0926966db6927bb61","9":"https://api.apiflash.com/v1/urltoimage/cache/j49znylq3w.jpeg?access_key=9b87c5ac32524cd0926966db6927bb61","10":"https://api.apiflash.com/v1/urltoimage/cache/j5nzlop37j.jpeg?access_key=9b87c5ac32524cd0926966db6927bb61"};
+function buildWireframe(r){
+var sol=(r.solution||r.fix||'');
+var title=(r.title||'');
+var sk=r.screenshotKey||'';
+var _lp=/audit|report|saas|software|anal|konverz|landing|slu\u017eb|formul|kalkul|cro|\burl\b|tooltip|demo|klik/.test((sol+' '+title).toLowerCase());
+
+function mockWrap(m){return '<div class="wf-panel"><div style="font-size:.72rem;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">\u2713 N\u00e1vrh \u2014 jak bude sekce vypadat</div><div style="background:#fff;border-radius:10px;overflow:hidden;padding:.5rem;">'+m+'</div></div>';}
+function tryMock(){ if(typeof SEC_MOCKS!=='undefined'&&SEC_MOCKS[sk]){return mockWrap(SEC_MOCKS[sk]);} return null; }
+if(typeof LLM_MOCKS!=='undefined'&&r.num&&LLM_MOCKS[r.num]){return mockWrap(LLM_MOCKS[r.num]);}
+
+function extractLines(text, prefixes) {
+  var lines = text.split(/[\n\r]+/);
+  var results = [];
+  lines.forEach(function(line) {
+    line = line.trim().replace(/^[-\u2022\u2013]\s*/, '');
+    for (var i=0; i<prefixes.length; i++) {
+      var p = prefixes[i].toLowerCase();
+      if (line.toLowerCase().startsWith(p)) {
+        results.push(line.substring(prefixes[i].length).replace(/^[:\s]+/, '').trim());
+        break;
+      }
+    }
+  });
+  return results;
+}
+
+function qLines(t) {
+  var re=/[\u201e\u201a]([^\u201c\u201d]{3,60})[\u201c\u201d]/g,m,o=[];
+  while((m=re.exec(t))!==null){o.push(m[1].trim());}
+  return o;
+}
+
+function bulletLines(text) {
+  var lines = text.split(/[\n\r]+/);
+  var results = [];
+  lines.forEach(function(line) {
+    line = line.trim();
+    if (line.startsWith('-') || line.startsWith('\u2022') || line.startsWith('\u2013')) {
+      results.push(line.replace(/^[-\u2022\u2013]\s*/, '').trim());
+    }
+  });
+  return results;
+}
+
+function pickIcon(t){
+  t=(t||'').toLowerCase();
+  if(/stripe|platb|pci|kart|zabezpe/.test(t))return '\ud83d\udd12';
+  if(/garanc|z\u00e1ruk|vr\u00e1cen|vr\u00e1t\u00edme/.test(t))return '\u2705';
+  if(/podpor|e-?mail|kontakt|info@|telefon/.test(t))return '\u2709\ufe0f';
+  if(/doprav|dod\u00e1n|zdarma nad/.test(t))return '\ud83d\ude9a';
+  if(/rychl|minut|ihned|do 24|okam\u017eit/.test(t))return '\u26a1';
+  if(/data|gdpr|soukrom|ukl\u00e1d|p\u0159\u00edstup/.test(t))return '\ud83d\udee1\ufe0f';
+  if(/zku\u0161en|let v|oboru|expert/.test(t))return '\ud83c\udfc6';
+  if(/z\u00e1kazn|klient|web\u016f|hodnocen|recenz/.test(t))return '\u2b50';
+  return '\u2713';
+}
+
+function solutionBox(title, sol) {
+  var bullets = bulletLines(sol);
+  var solShort = sol.length > 350 ? sol.substring(0, 350) + '\u2026' : sol;
+  var html = '<div class="wf-panel">';
+  html += '<div style="font-size:.72rem;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">\u2713 Navrhovan\u00e9 \u0159e\u0161en\u00ed</div>';
+  if (bullets.length >= 2) {
+    html += '<ul style="padding-left:1rem;margin:0;">';
+    bullets.slice(0,5).forEach(function(b) {
+      html += '<li style="font-size:.82rem;color:rgba(255,255,255,.85);line-height:1.6;margin-bottom:.3rem;">' + b + '</li>';
+    });
+    html += '</ul>';
+  } else {
+    html += '<div style="font-size:.85rem;color:rgba(255,255,255,.85);line-height:1.6;">' + solShort + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+if(sk==='HERO'||sk==='SLIDER'){
+  var h1s = extractLines(sol, ['H1:', 'Headline:', 'Nadpis:', 'H1 ']);
+  var ctas = extractLines(sol, ['Prim\u00e1rn\u00ed CTA:', 'CTA:', 'Tla\u010d\u00edtko:']);
+  var subs = extractLines(sol, ['Podnadpis:', 'Popis:', 'Podtitul:', 'Subheadline:']);
+  var trusts = bulletLines(sol);
+  var qs = qLines(sol).filter(function(q){return q.length>=8;});
+  var h1 = h1s[0] || qs[0] || '';
+  var cta = ctas[0] || (h1===qs[0] ? qs[1] : qs[0]) || '';
+  if(!h1 && !cta){ return tryMock() || solutionBox(title, sol); }
+  var html = '<div class="wf-panel"><div class="wf-hero-block"' + (_lp ? ' style="display:block;"' : '') + '><div>';
+  html += '<div class="wf-h1">' + (h1 || title) + '</div>';
+  if(subs[0]) html += '<div class="wf-p">' + subs[0] + '</div>';
+  html += '<div>';
+  if(cta) html += '<span class="wf-btn">' + cta + '</span>';
+  if(ctas[1]) html += '<span class="wf-btn wf-btn-sec">' + ctas[1] + '</span>';
+  html += '</div>';
+  if(trusts.length>0) {
+    html += '<div class="wf-trust">';
+    trusts.slice(0,3).forEach(function(t){ html += '<span class="wf-trust-item">\u2713 '+t+'</span>'; });
+    html += '</div>';
+  }
+  html += '</div>' + (_lp ? '' : '<div class="wf-img-ph">Vizu\u00e1l / foto</div>') + '</div></div>';
+  return html;
+}
+
+if(sk==='NAV'){
+  var items = extractLines(sol, ['polo\u017eky:', 'menu:', 'navigace:']);
+  var html = '<div class="wf-panel"><div class="wf-nav">';
+  html += '<div style="background:#15803d;color:#fff;padding:.3rem .75rem;border-radius:5px;font-size:.72rem;font-weight:700;">Logo</div>';
+  if(items.length>0) {
+    items[0].split(/[,|]/).slice(0,5).forEach(function(item) {
+      html += '<span class="wf-nav-item">'+item.trim()+'</span>';
+    });
+    html += '<div class="wf-nav-cta">CTA \u2192</div></div>';
+    html += '</div>';
+    return html;
+  }
+  return tryMock() || solutionBox(title, sol);
+}
+
+if(sk==='USP'){
+  var uspItems = bulletLines(sol);
+  if(uspItems.length<2){ uspItems = qLines(sol); }
+  if(uspItems.length<2){ return tryMock() || ''; }
+  var html = '<div class="wf-panel"><div class="wf-usp-bar">';
+  uspItems.slice(0,4).forEach(function(item) {
+    html += '<div class="wf-usp-item">'+pickIcon(item)+' '+item+'</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+if(sk==='CATS'){
+  var catItems = bulletLines(sol);
+  if(catItems.length<2){ catItems = qLines(sol); }
+  if(catItems.length<2){ return tryMock() || solutionBox(title, sol); }
+  var html = '<div class="wf-panel"><div style="font-size:.8rem;font-weight:700;color:#fff;text-align:center;margin-bottom:.6rem;">' + (_lp ? 'Co z\u00edsk\u00e1te' : 'Co hled\u00e1te?') + '</div><div class="wf-cats">';
+  catItems.slice(0,4).forEach(function(item) {
+    var parts = item.split(':');
+    html += '<div class="wf-cat"><div class="wf-cat-name">'+parts[0].trim()+'</div>';
+    if(parts[1]) html += '<div class="wf-cat-desc">'+parts[1].trim()+'</div>';
+    html += '</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+if(sk==='PRODUCTS'){
+  var prodItems = bulletLines(sol);
+  if(prodItems.length<2){ prodItems = qLines(sol); }
+  if(prodItems.length<2){ return tryMock() || solutionBox(title, sol); }
+  var html = '<div class="wf-panel"><div style="font-size:.8rem;font-weight:700;color:#fff;text-align:center;margin-bottom:.6rem;">' + (_lp ? 'Nab\u00eddka / obsah' : 'Produkty') + '</div><div class="wf-prods">';
+  prodItems.slice(0,3).forEach(function(item, i) {
+    var parts = item.split(':');
+    html += '<div class="wf-prod"><div class="wf-prod-badge">'+pickIcon(item)+'</div><div class="wf-prod-name" style="margin-top:.35rem;">'+parts[0].trim()+'</div>';
+    if(parts[1]) html += '<div class="wf-cat-desc">'+parts[1].trim().substring(0,60)+'</div>';
+    html += '</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+if(sk==='SOCIAL'){
+  var quotes = qLines(sol);
+  var socialItems = bulletLines(sol);
+  if(quotes.length>=1){
+    var html = '<div class="wf-panel"><div style="font-size:.8rem;font-weight:700;color:#fff;text-align:center;margin-bottom:.6rem;">Soci\u00e1ln\u00ed d\u016fkaz \u2014 navrhovan\u00e9 prvky</div><div class="wf-reviews">';
+    quotes.slice(0,3).forEach(function(q){
+      html += '<div class="wf-review"><div class="wf-stars">\u2605\u2605\u2605\u2605\u2605</div><div class="wf-review-text">\u201e'+q+'\u201c</div></div>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+  if(socialItems.length>=2){
+    var html = '<div class="wf-panel">';
+    socialItems.slice(0,4).forEach(function(b){
+      html += '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:.55rem .75rem;margin-bottom:.4rem;font-size:.78rem;color:rgba(255,255,255,.85);">\u2b50 '+b+'</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+  return tryMock() || solutionBox(title, sol);
+}
+
+if(sk==='FOOTER'){
+  var fItems = bulletLines(sol);
+  if(fItems.length<2){ fItems = qLines(sol); }
+  if(fItems.length<2){ return tryMock() || solutionBox(title, sol); }
+  var html = '<div class="wf-panel"><div style="background:#0d1117;border-radius:6px;padding:.75rem 1rem;">';
+  fItems.slice(0,5).forEach(function(f){
+    html += '<div style="font-size:.68rem;color:rgba(255,255,255,.75);line-height:1.9;">'+pickIcon(f)+' '+f+'</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+if(sk==='CTA'){
+  var h1s = extractLines(sol, ['Headline:', 'H1:', 'Nadpis:']);
+  var ctas = extractLines(sol, ['Prim\u00e1rn\u00ed CTA:', 'CTA:', 'Tla\u010d\u00edtko:']);
+  var micro = extractLines(sol, ['Mikrocopy:', 'Microcopy:', 'Text:', 'Popis:']);
+  var qs = qLines(sol).filter(function(q){return q.length>=8;});
+  var h1 = h1s[0] || qs[0] || '';
+  var cta = ctas[0] || (h1===qs[0] ? qs[1] : qs[0]) || '';
+  if(!h1 && !cta){ return tryMock() || solutionBox(title, sol); }
+  var html = '<div class="wf-panel"><div class="wf-hero-block"' + (_lp ? ' style="display:block;"' : '') + '><div>';
+  if(h1) html += '<div class="wf-h1" style="font-size:.82rem;">' + h1 + '</div>';
+  if(micro[0]) html += '<div class="wf-p">' + micro[0] + '</div>';
+  if(cta) html += '<span class="wf-btn">' + cta + '</span>';
+  var ctaItems = bulletLines(sol);
+  if(ctaItems.length>0){
+    html += '<div class="wf-trust">';
+    ctaItems.slice(0,3).forEach(function(t){ html += '<span class="wf-trust-item">\u2713 '+t+'</span>'; });
+    html += '</div>';
+  }
+  html += '</div>' + (_lp ? '' : '<div class="wf-img-ph">Formul\u00e1\u0159</div>') + '</div></div>';
+  return html;
+}
+
+return tryMock() || solutionBox(title, sol);
+}
+var issues={"1":{"num":1,"title":"Z hera udělat jasný nákupní vstup","problem":"Hero je jen slider obrázků bez headline/benefitu a bez viditelného CTA; nevede do nákupu.","fix":"Headline: „Prémiové odšťavňovače pro domácí i profi použití“; CTA: „Vybrat odšťavňovač“ (odkaz /kat/odstavnovace/)","solution":"Headline: „Prémiové odšťavňovače pro domácí i profi použití“; CTA: „Vybrat odšťavňovač“ (odkaz /kat/odstavnovace/)","impact":"+6 %","sev":"KRITICKÉ","screenshotKey":"HERO","kotva":""},"2":{"num":2,"title":"Ztlumit odliv na FreshUp.cz v rozcestníku","problem":"Crossroads posílá významnou část návštěvníků pryč na jiný web (FreshUp.cz) dřív, než nakoupí.","fix":"Přesuňte „FreshUp.cz“ níž + text „Čerstvé šťávy (jiný web)“; ne mezi hlavní volby","solution":"Přesuňte „FreshUp.cz“ níž + text „Čerstvé šťávy (jiný web)“; ne mezi hlavní volby","impact":"+3 %","sev":"KRITICKÉ","screenshotKey":"CATS","kotva":"FreshUp.cz"},"3":{"num":3,"title":"Sjednotit URL pro „Šněkové“ v rozcestníku","problem":"V rozcestníku je „Šněkové“ na odlišné URL (/kat/snekove-odstavnovace/) než v menu (vnořená kategorie). Riziko zmatku/SEO duplicit.","fix":"Odkaz „Šněkové“ přepnout na /kat/odstavnovace/snekove-odstavnovace/","solution":"Odkaz „Šněkové“ přepnout na /kat/odstavnovace/snekove-odstavnovace/","impact":"+2 %","sev":"VYSOKÉ","screenshotKey":"CATS","kotva":"Šněkové"},"4":{"num":4,"title":"Zrušit duplicitu „Pronájem“ v mobilním menu","problem":"V mobilním menu je „Pronájem“ dvakrát, působí to jako chyba a snižuje důvěru v navigaci.","fix":"Odeberte jednu položku „Pronájem“ z menu-menu_mobil","solution":"Odeberte jednu položku „Pronájem“ z menu-menu_mobil","impact":"+1 %","sev":"VYSOKÉ","screenshotKey":"NAV","kotva":"Čerstvé šťávy"},"5":{"num":5,"title":"Udělat telefon nahoře klikací","problem":"V hlavičce je číslo „+420 774 631 631“ jako text (ne tel: odkaz), na mobilu zbytečná třecí plocha.","fix":"Obalte číslo odkazem: `<a href=\"tel:+420774631631\">+420 774 631 631</a>`","solution":"Obalte číslo odkazem: `<a href=\"tel:+420774631631\">+420 774 631 631</a>`","impact":"+1 %","sev":"VYSOKÉ","screenshotKey":"NAV","kotva":"Potřebujete poradit?"},"6":{"num":6,"title":"Posílit USP lištu o tvrdší důkazy","problem":"USP jsou obecná („kvalitní produkty“), chybí konkrétní důkazy pro drahé spotřebiče (servis, záruky, dostupnost).","fix":"Přidejte 3–4 body:  \n• „Autorizované poradenství k Hurom“  \n• „Rychlé odeslání skladových kusů (Skladem)“  \n• „Záruční a pozáruční servis v ČR“  \n• „Pomůžeme vybrat: +420 774 631 631“","solution":"Přidejte 3–4 body:  \n• „Autorizované poradenství k Hurom“  \n• „Rychlé odeslání skladových kusů (Skladem)“  \n• „Záruční a pozáruční servis v ČR“  \n• „Pomůžeme vybrat: +420 774 631 631“","impact":"+2 %","sev":"STŘEDNÍ","screenshotKey":"USP","kotva":"Doprava zdarma nad 5000 Kč"},"7":{"num":7,"title":"Změnit CTA „Detail“ na akčnější na kartách","problem":"Tlačítko „Detail“ je slabé a neříká užitek; u HP listingu to brzdí proklik do nákupu.","fix":"Změňte copy na „Zobrazit odšťavňovač“ nebo „Vybrat variantu“ (místo „Detail“)","solution":"Změňte copy na „Zobrazit odšťavňovač“ nebo „Vybrat variantu“ (místo „Detail“)","impact":"+3 %","sev":"STŘEDNÍ","screenshotKey":"PRODUCTS","kotva":"Detail"},"8":{"num":8,"title":"Přidat rychlé přepnutí domácnost vs. gastronomie","problem":"Na HP v sekci „Produkty“ chybí rychlé navedení podle použití; uživatel musí zpět do kategorií.","fix":"Nad mřížku přidejte 2 odkazy: „Pro domácnost“ a „Pro gastronomii“ (na relevantní kategorie)","solution":"Nad mřížku přidejte 2 odkazy: „Pro domácnost“ a „Pro gastronomii“ (na relevantní kategorie)","impact":"+2 %","sev":"STŘEDNÍ","screenshotKey":"PRODUCTS","kotva":"Produkty"},"9":{"num":9,"title":"Doplnit sociální důkaz (recenze/hodnocení)","problem":"Místo recenzí je na HP jen sekce „Články“; chybí hodnocení obchodu/produktů pro zvýšení důvěry.","fix":"Přidejte blok „Hodnocení zákazníků“ + 3 citace; vedle „Články“ nebo nad nimi","solution":"Přidejte blok „Hodnocení zákazníků“ + 3 citace; vedle „Články“ nebo nad nimi","impact":"+3 %","sev":"STŘEDNÍ","screenshotKey":"SOCIAL","kotva":"Články"},"10":{"num":10,"title":"Přidat CTA blok pod produkty pro nerozhodné","problem":"Po produktech stránka přejde rovnou do „Články“; chybí krok pro lidi, co ještě neví co vybrat.","fix":"Headline: „Nevíte, který odšťavňovač vybrat?“; CTA: „Chci doporučit model“ (odkaz /kontakty/)","solution":"Headline: „Nevíte, který odšťavňovač vybrat?“; CTA: „Chci doporučit model“ (odkaz /kontakty/)","impact":"+2 %","sev":"STŘEDNÍ","screenshotKey":"CTA","kotva":""}};
+var roadItems={"1":{"num":1,"title":"Z hera udělat jasný nákupní vstup","problem":"Hero je jen slider obrázků bez headline/benefitu a bez viditelného CTA; nevede do nákupu.","fix":"Headline: „Prémiové odšťavňovače pro domácí i profi použití“; CTA: „Vybrat odšťavňovač“ (odkaz /kat/odstavnovace/)","solution":"Headline: „Prémiové odšťavňovače pro domácí i profi použití“; CTA: „Vybrat odšťavňovač“ (odkaz /kat/odstavnovace/)","before":"Hero je jen slider obrázků bez headline/benefitu a bez viditelného CTA; nevede do nákupu.","after":"Headline: „Prémiové odšťavňovače pro domácí i profi použití“; CTA: „Vybrat odšťavňovač“ (odkaz /kat/odstavnovace/)","screenshotKey":"HERO","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Headline: „Prémiové odšťavňovače pro domácí i profi použití“; CTA: „Vybrat odšťavňovač“ (odkaz /kat/odstavnovace/).</div></div></div>"},"2":{"num":2,"title":"Ztlumit odliv na FreshUp.cz v rozcestníku","problem":"Crossroads posílá významnou část návštěvníků pryč na jiný web (FreshUp.cz) dřív, než nakoupí.","fix":"Přesuňte „FreshUp.cz“ níž + text „Čerstvé šťávy (jiný web)“; ne mezi hlavní volby","solution":"Přesuňte „FreshUp.cz“ níž + text „Čerstvé šťávy (jiný web)“; ne mezi hlavní volby","before":"Crossroads posílá významnou část návštěvníků pryč na jiný web (FreshUp.cz) dřív, než nakoupí.","after":"Přesuňte „FreshUp.cz“ níž + text „Čerstvé šťávy (jiný web)“; ne mezi hlavní volby","screenshotKey":"CATS","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „FreshUp.cz“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Přesuňte „FreshUp.cz“ níž + text „Čerstvé šťávy (jiný web)“; ne mezi hlavní volby.</div></div></div>"},"3":{"num":3,"title":"Sjednotit URL pro „Šněkové“ v rozcestníku","problem":"V rozcestníku je „Šněkové“ na odlišné URL (/kat/snekove-odstavnovace/) než v menu (vnořená kategorie). Riziko zmatku/SEO duplicit.","fix":"Odkaz „Šněkové“ přepnout na /kat/odstavnovace/snekove-odstavnovace/","solution":"Odkaz „Šněkové“ přepnout na /kat/odstavnovace/snekove-odstavnovace/","before":"V rozcestníku je „Šněkové“ na odlišné URL (/kat/snekove-odstavnovace/) než v menu (vnořená kategorie). Riziko zmatku/SEO duplicit.","after":"Odkaz „Šněkové“ přepnout na /kat/odstavnovace/snekove-odstavnovace/","screenshotKey":"CATS","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „Šněkové“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Odkaz „Šněkové“ přepnout na /kat/odstavnovace/snekove-odstavnovace/.</div></div></div>"},"4":{"num":4,"title":"Zrušit duplicitu „Pronájem“ v mobilním menu","problem":"V mobilním menu je „Pronájem“ dvakrát, působí to jako chyba a snižuje důvěru v navigaci.","fix":"Odeberte jednu položku „Pronájem“ z menu-menu_mobil","solution":"Odeberte jednu položku „Pronájem“ z menu-menu_mobil","before":"V mobilním menu je „Pronájem“ dvakrát, působí to jako chyba a snižuje důvěru v navigaci.","after":"Odeberte jednu položku „Pronájem“ z menu-menu_mobil","screenshotKey":"NAV","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „Čerstvé šťávy“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Odeberte jednu položku „Pronájem“ z menu-menu_mobil.</div></div></div>"},"5":{"num":5,"title":"Udělat telefon nahoře klikací","problem":"V hlavičce je číslo „+420 774 631 631“ jako text (ne tel: odkaz), na mobilu zbytečná třecí plocha.","fix":"Obalte číslo odkazem: `<a href=\"tel:+420774631631\">+420 774 631 631</a>`","solution":"Obalte číslo odkazem: `<a href=\"tel:+420774631631\">+420 774 631 631</a>`","before":"V hlavičce je číslo „+420 774 631 631“ jako text (ne tel: odkaz), na mobilu zbytečná třecí plocha.","after":"Obalte číslo odkazem: `<a href=\"tel:+420774631631\">+420 774 631 631</a>`","screenshotKey":"NAV","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „Potřebujete poradit?“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Obalte číslo odkazem: `<a href=\"tel:+420774631631\">+420 774 631 631</a>`.</div></div></div>"},"6":{"num":6,"title":"Posílit USP lištu o tvrdší důkazy","problem":"USP jsou obecná („kvalitní produkty“), chybí konkrétní důkazy pro drahé spotřebiče (servis, záruky, dostupnost).","fix":"Přidejte 3–4 body:  \n- „Autorizované poradenství k Hurom“  \n- „Rychlé odeslání skladových kusů (Skladem)“  \n- „Záruční a pozáruční servis v ČR“  \n- „Pomůžeme vybrat: +420 774 631 631“","solution":"Přidejte 3–4 body:  \n- „Autorizované poradenství k Hurom“  \n- „Rychlé odeslání skladových kusů (Skladem)“  \n- „Záruční a pozáruční servis v ČR“  \n- „Pomůžeme vybrat: +420 774 631 631“","before":"USP jsou obecná („kvalitní produkty“), chybí konkrétní důkazy pro drahé spotřebiče (servis, záruky, dostupnost).","after":"Přidejte 3–4 body:  \n- „Autorizované poradenství k Hurom“  \n- „Rychlé odeslání skladových kusů (Skladem)“  \n- „Záruční a pozáruční servis v ČR“  \n- „Pomůžeme vybrat: +420 774 631 631“","screenshotKey":"USP","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „Doprava zdarma nad 5000 Kč“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> „Autorizované poradenství k Hurom“.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">2</div><div class=\"road-step-text\"><strong>Krok 2</strong> „Rychlé odeslání skladových kusů (Skladem)“.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">3</div><div class=\"road-step-text\"><strong>Krok 3</strong> „Záruční a pozáruční servis v ČR“.</div></div><div class=\"road-step\"><div class=\"road-step-icon\">4</div><div class=\"road-step-text\"><strong>Krok 4</strong> „Pomůžeme vybrat: +420 774 631 631“.</div></div></div>"},"7":{"num":7,"title":"Změnit CTA „Detail“ na akčnější na kartách","problem":"Tlačítko „Detail“ je slabé a neříká užitek; u HP listingu to brzdí proklik do nákupu.","fix":"Změňte copy na „Zobrazit odšťavňovač“ nebo „Vybrat variantu“ (místo „Detail“)","solution":"Změňte copy na „Zobrazit odšťavňovač“ nebo „Vybrat variantu“ (místo „Detail“)","before":"Tlačítko „Detail“ je slabé a neříká užitek; u HP listingu to brzdí proklik do nákupu.","after":"Změňte copy na „Zobrazit odšťavňovač“ nebo „Vybrat variantu“ (místo „Detail“)","screenshotKey":"PRODUCTS","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „Detail“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Změňte copy na „Zobrazit odšťavňovač“ nebo „Vybrat variantu“ (místo „Detail“).</div></div></div>"},"8":{"num":8,"title":"Přidat rychlé přepnutí domácnost vs. gastronomie","problem":"Na HP v sekci „Produkty“ chybí rychlé navedení podle použití; uživatel musí zpět do kategorií.","fix":"Nad mřížku přidejte 2 odkazy: „Pro domácnost“ a „Pro gastronomii“ (na relevantní kategorie)","solution":"Nad mřížku přidejte 2 odkazy: „Pro domácnost“ a „Pro gastronomii“ (na relevantní kategorie)","before":"Na HP v sekci „Produkty“ chybí rychlé navedení podle použití; uživatel musí zpět do kategorií.","after":"Nad mřížku přidejte 2 odkazy: „Pro domácnost“ a „Pro gastronomii“ (na relevantní kategorie)","screenshotKey":"PRODUCTS","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „Produkty“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Nad mřížku přidejte 2 odkazy: „Pro domácnost“ a „Pro gastronomii“ (na relevantní kategorie).</div></div></div>"},"9":{"num":9,"title":"Doplnit sociální důkaz (recenze/hodnocení)","problem":"Místo recenzí je na HP jen sekce „Články“; chybí hodnocení obchodu/produktů pro zvýšení důvěry.","fix":"Přidejte blok „Hodnocení zákazníků“ + 3 citace; vedle „Články“ nebo nad nimi","solution":"Přidejte blok „Hodnocení zákazníků“ + 3 citace; vedle „Články“ nebo nad nimi","before":"Místo recenzí je na HP jen sekce „Články“; chybí hodnocení obchodu/produktů pro zvýšení důvěry.","after":"Přidejte blok „Hodnocení zákazníků“ + 3 citace; vedle „Články“ nebo nad nimi","screenshotKey":"SOCIAL","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">📍</div><div class=\"road-step-text\"><strong>Kde:</strong> najděte prvek „Články“</div></div><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Přidejte blok „Hodnocení zákazníků“ + 3 citace; vedle „Články“ nebo nad nimi.</div></div></div>"},"10":{"num":10,"title":"Přidat CTA blok pod produkty pro nerozhodné","problem":"Po produktech stránka přejde rovnou do „Články“; chybí krok pro lidi, co ještě neví co vybrat.","fix":"Headline: „Nevíte, který odšťavňovač vybrat?“; CTA: „Chci doporučit model“ (odkaz /kontakty/)","solution":"Headline: „Nevíte, který odšťavňovač vybrat?“; CTA: „Chci doporučit model“ (odkaz /kontakty/)","before":"Po produktech stránka přejde rovnou do „Články“; chybí krok pro lidi, co ještě neví co vybrat.","after":"Headline: „Nevíte, který odšťavňovač vybrat?“; CTA: „Chci doporučit model“ (odkaz /kontakty/)","screenshotKey":"CTA","wireframe":"<div class=\"wf-panel\"><div class=\"road-step\"><div class=\"road-step-icon\">1</div><div class=\"road-step-text\"><strong>Krok 1</strong> Headline: „Nevíte, který odšťavňovač vybrat?“; CTA: „Chci doporučit model“ (odkaz /kontakty/).</div></div></div>"}};
+var screenshots={};
+function getScreenshots(){var full="https://api.apiflash.com/v1/urltoimage/cache/1ovgr0m26w.jpeg?access_key=9b87c5ac32524cd0926966db6927bb61";var ss={};return {FULL:full,NAV:ss.NAV||full,HERO:ss.HERO||full,SLIDER:ss.SLIDER||ss.HERO||full,CATS:ss.CATS||full,USP:ss.USP||full,PRODUCTS:ss.PRODUCTS||full,PRICING:ss.PRICING||full,CTA:ss.CTA||ss.HERO||full,SOCIAL:ss.SOCIAL||full,FOOTER:ss.FOOTER||full};}function openIssue(n){
+var issue=issues[n];if(!issue)return;
+document.getElementById('popup-title').textContent=issue.title;
+document.getElementById('popup-problem').innerHTML=(issue.problem||'').replace(/\n/g,'<br>');
+if(issue.kotva){document.getElementById('popup-problem').innerHTML+='<br><span style="color:#9ca3af;font-size:.8rem;">📍 Kde: „'+issue.kotva+'“</span>';}
+document.getElementById('popup-fix').innerHTML=(issue.fix||'').replace(/\n/g,'<br>');
+var sc=getScreenshots();
+var _rsu=(typeof REC_SHOTS!=='undefined'&&issue.num&&REC_SHOTS[issue.num])?REC_SHOTS[issue.num]:null;
+if(_rsu){sc=Object.assign({},sc);sc[issue.screenshotKey]=_rsu;}var html='';
+if(issue.screenshotKey&&sc[issue.screenshotKey]){
+var _imgUrl=sc[issue.screenshotKey]!==sc.FULL?sc[issue.screenshotKey]:sc.FULL;
+var _top=(SECTION_POS[issue.screenshotKey]||{top:0}).top;
+var _ty=sc[issue.screenshotKey]!==sc.FULL?0:_top;
+html+='<div class=\"popup-img-label\">&#128248; Sekce: '+issue.screenshotKey+' &mdash; top: '+_top+'%</div>';
+html+='<div style=\"overflow:hidden;border-radius:10px;border:2px solid #dc2626;height:480px;position:relative;\">'+'<img src=\"'+_imgUrl+'\" style=\"width:100%;height:auto;display:block;transform:translateY(-'+_ty+'%);transform-origin:top left;\">'+'<div style=\"position:absolute;bottom:0;left:0;right:0;background:rgba(220,38,38,.88);padding:.35rem .75rem;font-size:.7rem;font-weight:700;color:#fff;\">&#9888; '+issue.title+'</div>'+'</div>';
+}
+html+='<div class="popup-img-label" style="margin-top:1.25rem;">Grafický návrh řešení</div>';
+html+=buildWireframe(issue);
+if(issue.impact){
+  html+='<div class="popup-img-label" style="margin-top:1rem;">Očekávaný dopad</div>';
+  html+='<div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:.85rem;font-size:.85rem;color:rgba(255,255,255,.8);">'+(issue.impact||'')+'</div>';
+}
+document.getElementById('popup-bottom').innerHTML=html;
+document.querySelectorAll('.issue-btn').forEach(function(b){b.classList.remove('active');});
+var btn=document.getElementById('ib-'+n);if(btn)btn.classList.add('active');
+document.getElementById('issue-popup').classList.add('visible');
+document.body.style.overflow='hidden';
+}
+function closeIssue(){
+document.getElementById('issue-popup').classList.remove('visible');
+document.querySelectorAll('.issue-btn').forEach(function(b){b.classList.remove('active');});
+document.body.style.overflow='';
+}
+function closeIssueOnBg(e){if(e.target===document.getElementById('issue-popup'))closeIssue();}
+function openRoad(n){
+var item=roadItems[n];if(!item)return;
+document.getElementById('rp-title').textContent=item.title;
+document.getElementById('rp-before').innerHTML=(item.before||'').replace(/\n/g,'<br>');
+document.getElementById('rp-after').innerHTML=(item.after||'').replace(/\n/g,'<br>');
+var sc=getScreenshots();var html='';
+if(item.screenshotKey&&sc[item.screenshotKey]){
+var _imgUrl2=sc[item.screenshotKey]!==sc.FULL?sc[item.screenshotKey]:sc.FULL;
+var _top2=(SECTION_POS[item.screenshotKey]||{top:0}).top;
+var _ty2=sc[item.screenshotKey]!==sc.FULL?0:_top2;
+html+='<div class=\"popup-img-label\">&#128248; Aktuální stav k opravě</div>';
+html+='<div style=\"overflow:hidden;border-radius:10px;border:2px solid #dc2626;height:480px;position:relative;\">'+'<img src=\"'+_imgUrl2+'\" style=\"width:100%;height:auto;display:block;transform:translateY(-'+_ty2+'%);transform-origin:top left;\">'+'<div style=\"position:absolute;bottom:0;left:0;right:0;background:rgba(220,38,38,.88);padding:.35rem .75rem;font-size:.7rem;font-weight:700;color:#fff;\">&#9888; '+item.title+'</div>'+'</div>';
+}
+html+='<div class="popup-img-label" style="margin-top:1.25rem;">Grafický návrh změny</div>';
+html+=buildWireframe(item);
+html+='<div class="popup-img-label" style="margin-top:1rem;">Instrukce pro webmastera</div>';
+html+=item.wireframe;
+document.getElementById('rp-body').innerHTML=html;
+document.getElementById('road-popup').classList.add('visible');
+document.body.style.overflow='hidden';
+}
+function closeRoad(){document.getElementById('road-popup').classList.remove('visible');document.body.style.overflow='';}
+function closeRoadOnBg(e){if(e.target===document.getElementById('road-popup'))closeRoad();}
+function openPotential(){document.getElementById("pot-pct").textContent="+20%";document.getElementById("pot-summary").textContent="≈ +20% — reálně dosažitelné při implementaci";document.getElementById("potential-items").innerHTML="<div style=\"display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.1rem;\"><div style=\"width:36px;height:36px;border-radius:50%;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;flex-shrink:0;\">1</div><div style=\"flex:1;\"><div style=\"font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.15rem;\">Z hera udělat jasný nákupní vstup</div><div style=\"font-size:.75rem;color:#6b7280;\">+6 %</div></div><div style=\"font-size:1.1rem;font-weight:800;color:#22c55e;white-space:nowrap;\">+8%</div></div><div style=\"display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.1rem;\"><div style=\"width:36px;height:36px;border-radius:50%;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;flex-shrink:0;\">2</div><div style=\"flex:1;\"><div style=\"font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.15rem;\">Ztlumit odliv na FreshUp.cz v rozcestníku</div><div style=\"font-size:.75rem;color:#6b7280;\">+3 %</div></div><div style=\"font-size:1.1rem;font-weight:800;color:#22c55e;white-space:nowrap;\">+6%</div></div><div style=\"display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.1rem;\"><div style=\"width:36px;height:36px;border-radius:50%;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;flex-shrink:0;\">3</div><div style=\"flex:1;\"><div style=\"font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.15rem;\">Sjednotit URL pro „Šněkové“ v rozcestníku</div><div style=\"font-size:.75rem;color:#6b7280;\">+2 %</div></div><div style=\"font-size:1.1rem;font-weight:800;color:#22c55e;white-space:nowrap;\">+4%</div></div><div style=\"display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.1rem;\"><div style=\"width:36px;height:36px;border-radius:50%;background:#14532d;color:#86efac;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;flex-shrink:0;\">4</div><div style=\"flex:1;\"><div style=\"font-size:.88rem;font-weight:600;color:#fff;margin-bottom:.15rem;\">Zrušit duplicitu „Pronájem“ v mobilním menu</div><div style=\"font-size:.75rem;color:#6b7280;\">+1 %</div></div><div style=\"font-size:1.1rem;font-weight:800;color:#22c55e;white-space:nowrap;\">+2%</div></div>";document.getElementById("potential-popup").classList.add("visible");document.body.style.overflow="hidden";}function closePotential(){document.getElementById("potential-popup").classList.remove("visible");document.body.style.overflow="";}
+
+function goToSlide(id) {
+  var el = document.getElementById(id);
+  if (el) el.scrollIntoView({behavior:'smooth'});
+}
+
+// Nav active state
+var sections = ['slide-title','slide-current','slide-improved','slide-roadmap','slide-compliance'].filter(function(id){var e=document.getElementById(id);return e && getComputedStyle(e).display !== 'none';});
+var navBtns = Array.prototype.filter.call(document.querySelectorAll('.nav-btn'),function(x){return getComputedStyle(x).display !== 'none';});
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      var i = sections.indexOf(e.target.id);
+      navBtns.forEach(function(b,j){b.classList.toggle('active',i===j);});
+    }
+  });
+},{threshold:0.1,rootMargin:'-10% 0px -80% 0px'});
+sections.forEach(function(id){var el=document.getElementById(id);if(el)obs.observe(el);});window.addEventListener('scroll',function(){var t=window.scrollY+100;var a=0;sections.forEach(function(id,i){var el=document.getElementById(id);if(el&&el.offsetTop<=t)a=i;});navBtns.forEach(function(b,j){b.classList.toggle('active',a===j);});},{passive:true});
+
+document.addEventListener('keydown', function(e) {
+  if(e.key==='Escape'){closeIssue();closeRoad();closeScore();}
+});
+
+function openScore() {
+  document.getElementById('score-popup').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+function closeScore() {
+  document.getElementById('score-popup').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+function closeScoreOnBg(e) {
+  if(e.target===document.getElementById('score-popup')) closeScore();
+}
+
+// Event delegation for hotspots
+document.addEventListener("click",function(e){var hs=e.target.closest(".hotspot");if(hs){var n=parseInt(hs.getAttribute("data-issue"));if(n)openIssue(n);}});
+function openGlossary(){var p=document.getElementById("glossary-popup");if(p){p.classList.add("visible");document.body.style.overflow="hidden";}}
+function closeGlossary(){var p=document.getElementById("glossary-popup");if(p){p.classList.remove("visible");document.body.style.overflow="";}}
+</script>
+</body>
+</html>
